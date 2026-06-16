@@ -1,5 +1,5 @@
 // API Configuration
-const API_URL = 'http://localhost:5000/api';
+const API_URL = 'https://shoppies-backend.onrender.com/api';
 
 // Helper function for API calls
 async function apiCall(endpoint, method = 'GET', data = null) {
