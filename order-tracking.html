@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Track Order - Shoppies</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: #f8fafc; }
+        
+        :root {
+            --gradient-start: #6366f1;
+            --gradient-end: #8b5cf6;
+        }
+        
+        .container { max-width: 800px; margin: 0 auto; padding: 0 2rem; }
+        
+        .navbar {
+            background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            padding: 1rem 0;
+            margin-bottom: 2rem;
+        }
+        .navbar .container { display: flex; justify-content: space-between; align-items: center; }
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            cursor: pointer;
+        }
+        
+        .tracking-section {
+            margin-top: 2rem;
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        .search-box {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        .search-box input {
+            flex: 1;
+            padding: 0.75rem 1.5rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 50px;
+            font-size: 1rem;
+        }
+        .search-box button {
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            color: white;
+            border: none;
+            padding: 0.75rem 2rem;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        
+        .tracking-timeline {
+            position: relative;
+            padding: 1rem 0;
+        }
+        .timeline-item {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            align-items: flex-start;
+        }
+        .timeline-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .timeline-icon.completed { background: #10b981; color: white; }
+        .timeline-icon.active { background: #6366f1; color: white; animation: pulse 1.5s infinite; }
+        .timeline-icon.pending { background: #f59e0b; color: white; }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        
+        .timeline-content { flex: 1; }
+        .timeline-title { font-weight: 600; margin-bottom: 0.25rem; }
+        .timeline-date { font-size: 0.875rem; color: #64748b; }
+        .timeline-line {
+            position: absolute;
+            left: 20px;
+            top: 40px;
+            bottom: 0;
+            width: 2px;
+            background: #e2e8f0;
+        }
+        
+        .order-info {
+            background: #f8fafc;
+            padding: 1rem;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+        }
+        .order-info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        
+        .invoice-btn {
+            background: #10b981;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            cursor: pointer;
+            margin-top: 1rem;
+        }
+        
+        @media (max-width: 768px) {
+            .order-info-grid { grid-template-columns: 1fr; }
+            .search-box { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="logo" onclick="window.location.href='index.html'">🛍️ shoppies</div>
+            <div onclick="window.location.href='products.html'" style="color: #6366f1; cursor: pointer;"><i class="fas fa-arrow-left"></i> Back to Shop</div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="tracking-section">
+            <h1 style="margin-bottom: 1.5rem;">📦 Track Your Order</h1>
+            
+            <div class="search-box">
+                <input type="text" id="trackingInput" placeholder="Enter Order ID or Tracking Number">
+                <button onclick="trackOrder()"><i class="fas fa-search"></i> Track</button>
+            </div>
+            
+            <div id="trackingResult">
+                <p style="text-align: center; color: #64748b; padding: 2rem;">
+                    <i class="fas fa-truck" style="font-size: 3rem; display: block; margin-bottom: 1rem; color: #cbd5e1;"></i>
+                    Enter an order ID or tracking number to track your order
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:5000/api';
+
+        async function trackOrder() {
+            const input = document.getElementById('trackingInput').value.trim();
+            if (!input) {
+                alert('Please enter an order ID or tracking number');
+                return;
+            }
+
+            const resultDiv = document.getElementById('trackingResult');
+            resultDiv.innerHTML = '<p style="text-align: center; padding: 2rem;"><i class="fas fa-spinner fa-spin"></i> Searching...</p>';
+
+            try {
+                // Try to find order by ID or tracking number
+                const response = await fetch(`${API_URL}/orders`);
+                const orders = await response.json();
+                
+                const order = orders.find(o => 
+                    o.id === parseInt(input) || 
+                    (o.trackingNumber && o.trackingNumber.toLowerCase() === input.toLowerCase())
+                );
+
+                if (!order) {
+                    resultDiv.innerHTML = `
+                        <div style="text-align: center; padding: 2rem; color: #ef4444;">
+                            <i class="fas fa-exclamation-circle" style="font-size: 3rem; display: block; margin-bottom: 1rem;"></i>
+                            <h3>Order not found</h3>
+                            <p>Please check your order ID or tracking number and try again.</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                // Build tracking timeline based on order status
+                const statuses = [
+                    { status: 'pending', label: 'Order Received', icon: 'fa-receipt' },
+                    { status: 'approved', label: 'Order Confirmed', icon: 'fa-check-circle' },
+                    { status: 'shipped', label: 'Order Shipped', icon: 'fa-truck' },
+                    { status: 'delivered', label: 'Order Delivered', icon: 'fa-home' }
+                ];
+
+                const statusIndex = statuses.findIndex(s => s.status === order.orderStatus);
+                const currentStatusIndex = statusIndex === -1 ? 0 : statusIndex;
+
+                resultDiv.innerHTML = `
+                    <div class="order-info">
+                        <div class="order-info-grid">
+                            <div><strong>Order ID:</strong> #${order.id}</div>
+                            <div><strong>Tracking Number:</strong> ${order.trackingNumber || 'N/A'}</div>
+                            <div><strong>Status:</strong> <span style="background: #10b981; color: white; padding: 0.25rem 0.75rem; border-radius: 20px;">${order.orderStatus}</span></div>
+                            <div><strong>Total:</strong> Ksh ${(order.totalAmount || 0).toLocaleString()}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="tracking-timeline">
+                        ${statuses.map((s, index) => {
+                            const isCompleted = index <= currentStatusIndex;
+                            const isActive = index === currentStatusIndex;
+                            const iconClass = isCompleted ? 'completed' : 'pending';
+                            
+                            return `
+                                <div class="timeline-item">
+                                    <div class="timeline-icon ${isCompleted ? 'completed' : 'pending'}">
+                                        <i class="fas ${s.icon}"></i>
+                                    </div>
+                                    <div class="timeline-content">
+                                        <div class="timeline-title">${s.label}</div>
+                                        <div class="timeline-date">${isCompleted ? 'Completed' : (isActive ? 'In Progress...' : 'Pending')}</div>
+                                    </div>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                    
+                    <button class="invoice-btn" onclick="downloadInvoice(${order.id})">
+                        <i class="fas fa-file-pdf"></i> Download Invoice
+                    </button>
+                `;
+
+            } catch (error) {
+                console.error('Error tracking order:', error);
+                resultDiv.innerHTML = '<p style="text-align: center; padding: 2rem; color: red;">Error tracking order. Please try again.</p>';
+            }
+        }
+
+        async function downloadInvoice(orderId) {
+            try {
+                const response = await fetch(`${API_URL}/orders/${orderId}/invoice`);
+                const invoice = await response.json();
+                
+                // Create printable invoice
+                const invoiceHTML = `
+                    <html>
+                    <head>
+                        <title>Invoice ${invoice.invoiceNumber}</title>
+                        <style>
+                            body { font-family: Arial, sans-serif; padding: 40px; }
+                            .header { text-align: center; border-bottom: 2px solid #6366f1; padding-bottom: 20px; }
+                            .invoice-title { font-size: 24px; color: #6366f1; }
+                            .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 20px 0; }
+                            .items-table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+                            .items-table th, .items-table td { padding: 12px; border: 1px solid #e2e8f0; text-align: left; }
+                            .items-table th { background: #f8fafc; }
+                            .total-row { font-weight: bold; }
+                        </style>
+                    </head>
+                    <body>
+                        <div class="header">
+                            <h1 class="invoice-title">🛍️ Shoppies Invoice</h1>
+                            <p>${invoice.invoiceNumber}</p>
+                            <p>Date: ${new Date(invoice.date).toLocaleDateString()}</p>
+                        </div>
+                        
+                        <div class="info-grid">
+                            <div>
+                                <h3>Customer Details</h3>
+                                <p><strong>Name:</strong> ${invoice.customerName}</p>
+                                <p><strong>Email:</strong> ${invoice.customerEmail}</p>
+                                <p><strong>Phone:</strong> ${invoice.customerPhone}</p>
+                            </div>
+                            <div>
+                                <h3>Delivery Address</h3>
+                                <p>${invoice.deliveryAddress}</p>
+                                <p><strong>Tracking:</strong> ${invoice.trackingNumber}</p>
+                            </div>
+                        </div>
+                        
+                        <table class="items-table">
+                            <thead>
+                                <tr>
+                                    <th>Item</th>
+                                    <th>Quantity</th>
+                                    <th>Price</th>
+                                    <th>Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${invoice.items.map(item => `
+                                    <tr>
+                                        <td>${item.name}</td>
+                                        <td>${item.quantity}</td>
+                                        <td>Ksh ${item.price.toLocaleString()}</td>
+                                        <td>Ksh ${(item.price * item.quantity).toLocaleString()}</td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="3" style="text-align: right;"><strong>Total</strong></td>
+                                    <td><strong>Ksh ${invoice.total.toLocaleString()}</strong></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                        
+                        <div style="margin-top: 20px; text-align: center; color: #64748b; font-size: 14px;">
+                            <p>Payment Method: ${invoice.paymentMethod}</p>
+                            <p>Payment Status: ${invoice.paymentStatus}</p>
+                            <p>Thank you for shopping with Shoppies!</p>
+                        </div>
+                    </body>
+                    </html>
+                `;
+                
+                const win = window.open('', '_blank');
+                win.document.write(invoiceHTML);
+                win.document.close();
+                setTimeout(() => { win.print(); }, 500);
+                
+            } catch (error) {
+                console.error('Error downloading invoice:', error);
+                alert('Error generating invoice. Please try again.');
+            }
+        }
+        
+        // Enter key support
+        document.getElementById('trackingInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                trackOrder();
+            }
+        });
+    </script>
+</body>
+</html>

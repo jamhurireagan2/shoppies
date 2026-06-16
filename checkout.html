@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - Shoppies</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #f8fafc;
+            --bg-secondary: #ffffff;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --card-bg: #ffffff;
+            --navbar-bg: #ffffff;
+            --border-color: #e2e8f0;
+            --shadow: 0 2px 10px rgba(0,0,0,0.05);
+            --shadow-hover: 0 20px 30px rgba(0,0,0,0.1);
+            --gradient-start: #6366f1;
+            --gradient-end: #8b5cf6;
+        }
+
+        body.dark-mode {
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --card-bg: #1e293b;
+            --navbar-bg: #0f172a;
+            --border-color: #334155;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+        }
+
+        .navbar {
+            background: var(--navbar-bg);
+            box-shadow: var(--shadow);
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.5rem;
+            font-weight: bold;
+            cursor: pointer;
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .logo i {
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-secondary);
+            transition: color 0.3s;
+        }
+        .nav-links a:hover {
+            color: var(--gradient-start);
+        }
+        .nav-links a.active {
+            color: var(--gradient-start);
+        }
+
+        .cart-btn {
+            position: relative;
+            color: var(--text-secondary);
+        }
+        .cart-badge {
+            position: absolute;
+            top: -8px;
+            right: -12px;
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            color: white;
+            font-size: 0.7rem;
+            padding: 2px 6px;
+            border-radius: 50%;
+        }
+
+        .section-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+            color: var(--text-primary);
+        }
+
+        /* Checkout Grid */
+        .checkout-grid {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 2rem;
+            margin-top: 100px;
+            margin-bottom: 60px;
+        }
+
+        .glass-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+        }
+
+        .input-group {
+            position: relative;
+            margin-bottom: 1rem;
+        }
+        .input-group i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+        }
+        .input-group input {
+            width: 100%;
+            padding: 0.75rem 1rem 0.75rem 2.5rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            font-family: inherit;
+        }
+        .input-group input:focus {
+            outline: none;
+            border-color: var(--gradient-start);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        .payment-methods {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+        }
+        .payment-option {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+        }
+        .payment-option:hover {
+            border-color: var(--gradient-start);
+        }
+        .payment-option input {
+            margin: 0;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            width: 100%;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(99, 102, 241, 0.3);
+        }
+
+        .order-summary {
+            position: sticky;
+            top: 100px;
+        }
+        .order-summary h3 {
+            margin-bottom: 1rem;
+        }
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            color: var(--text-secondary);
+        }
+        .summary-row.total {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--text-primary);
+            border-top: 1px solid var(--border-color);
+            padding-top: 1rem;
+            margin-top: 1rem;
+        }
+        .summary-divider {
+            border-top: 1px solid var(--border-color);
+            margin: 1rem 0;
+        }
+        .checkout-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        /* M-Pesa Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(5px);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal.show {
+            display: flex;
+        }
+        .modal-content {
+            background: var(--card-bg);
+            border-radius: 20px;
+            max-width: 450px;
+            width: 90%;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .notification {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            background: var(--card-bg);
+            color: var(--text-primary);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            z-index: 3000;
+            transform: translateX(400px);
+            transition: transform 0.3s;
+            border-left: 4px solid #10b981;
+        }
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .footer {
+            background: var(--navbar-bg);
+            color: var(--text-secondary);
+            text-align: center;
+            padding: 2rem;
+            margin-top: 4rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        @media (max-width: 768px) {
+            .checkout-grid {
+                grid-template-columns: 1fr;
+            }
+            .container {
+                padding: 0 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-container">
+                <div class="logo" onclick="window.location.href='index.html'">
+                    <i class="fas fa-shopping-bag"></i>
+                    <span>shoppies</span>
+                </div>
+                <div class="nav-links">
+                    <a href="index.html">Home</a>
+                    <a href="products.html">Products</a>
+                    <a href="cart.html">Cart</a>
+                    <a href="checkout.html" class="active">Checkout</a>
+                </div>
+                <div class="nav-actions">
+                    <a href="cart.html" class="cart-btn">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="cart-badge" id="cartCount">0</span>
+                    </a>
+                    <div id="userMenu"></div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1 class="section-title">Checkout</h1>
+        
+        <div class="checkout-grid">
+            <div class="checkout-form">
+                <div class="glass-card" style="padding: 2rem;">
+                    <h3 style="margin-bottom: 1.5rem;">Delivery Information</h3>
+                    <form id="checkoutForm">
+                        <div class="input-group">
+                            <i class="fas fa-user"></i>
+                            <input type="text" id="fullName" placeholder="Full Name" required>
+                        </div>
+                        <div class="input-group">
+                            <i class="fas fa-phone"></i>
+                            <input type="tel" id="phone" placeholder="Phone Number" required>
+                        </div>
+                        <div class="input-group">
+                            <i class="fas fa-envelope"></i>
+                            <input type="email" id="email" placeholder="Email Address" required>
+                        </div>
+                        <div class="input-group">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <input type="text" id="address" placeholder="Delivery Address" required>
+                        </div>
+                        <div class="input-group">
+                            <i class="fas fa-map-pin"></i>
+                            <input type="text" id="city" placeholder="City / Estate" required>
+                        </div>
+                        
+                        <h3 style="margin-top: 2rem; margin-bottom: 1rem;">Payment Method</h3>
+                        <div class="payment-methods">
+                            <label class="payment-option">
+                                <input type="radio" name="payment" value="cash" checked>
+                                <i class="fas fa-money-bill-wave"></i>
+                                Cash on Delivery
+                            </label>
+                            <label class="payment-option">
+                                <input type="radio" name="payment" value="mpesa">
+                                <i class="fas fa-mobile-alt"></i>
+                                M-Pesa
+                            </label>
+                            <label class="payment-option">
+                                <input type="radio" name="payment" value="card">
+                                <i class="fas fa-credit-card"></i>
+                                Credit/Debit Card
+                            </label>
+                        </div>
+                        
+                        <button type="submit" class="btn-primary">Place Order</button>
+                    </form>
+                </div>
+            </div>
+            
+            <div class="order-summary">
+                <div class="glass-card" style="padding: 2rem;">
+                    <h3>Order Summary</h3>
+                    <div id="orderItems"></div>
+                    <div class="summary-divider"></div>
+                    <div class="summary-row">
+                        <span>Subtotal:</span>
+                        <span id="subtotal">Ksh 0</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Delivery Fee:</span>
+                        <span id="deliveryFee">Ksh 0</span>
+                    </div>
+                    <div class="summary-row total">
+                        <span>Total:</span>
+                        <span id="total">Ksh 0</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M-Pesa Payment Modal -->
+    <div id="mpesaModal" class="modal">
+        <div class="modal-content">
+            <div style="margin-bottom: 1.5rem;">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/02/M-PESA_LOGO-01.svg/800px-M-PESA_LOGO-01.svg.png" alt="M-Pesa" style="height: 60px;">
+            </div>
+            <h2 style="color: var(--text-primary); margin-bottom: 0.5rem;">M-Pesa STK Push</h2>
+            <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">You will receive a prompt on your phone to confirm payment</p>
+            
+            <div style="background: var(--bg-primary); border-radius: 12px; padding: 1rem; margin-bottom: 1.5rem;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                    <span style="color: var(--text-secondary);">Amount</span>
+                    <span style="font-weight: bold; color: var(--text-primary);">Ksh <span id="mpesaAmount">0</span></span>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                    <span style="color: var(--text-secondary);">Phone</span>
+                    <span style="font-weight: bold; color: var(--text-primary);" id="mpesaPhone">0712345678</span>
+                </div>
+            </div>
+            
+            <div id="mpesaStatus" style="margin-bottom: 1.5rem; padding: 1rem; border-radius: 12px; display: none;">
+                <i class="fas fa-spinner fa-spin" style="font-size: 1.5rem; color: #6366f1;"></i>
+                <p style="margin-top: 0.5rem; color: var(--text-secondary);">Processing payment...</p>
+            </div>
+            
+            <div style="display: flex; gap: 1rem;">
+                <button onclick="processMpesaPayment()" id="mpesaPayBtn" style="flex: 1; background: linear-gradient(135deg, #10b981, #059669); color: white; border: none; padding: 0.75rem; border-radius: 12px; font-weight: 600; cursor: pointer;">
+                    <i class="fas fa-check"></i> Confirm Payment
+                </button>
+                <button onclick="closeMpesaModal()" style="flex: 1; background: var(--bg-secondary); color: var(--text-primary); border: 1px solid var(--border-color); padding: 0.75rem; border-radius: 12px; cursor: pointer;">
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2026 Shoppies. All rights reserved. | <i class="fas fa-heart" style="color: #ec4899;"></i> Kenya's #1 Online Store</p>
+        </div>
+    </footer>
+
+    <div id="notification" class="notification"></div>
+
+    <script>
+        const API_URL = 'http://localhost:5000/api';
+        let mpesaOrderData = null;
+        let totalAmount = 0;
+
+        function showNotification(message, type = 'success') {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.style.borderLeft = type === 'success' ? '4px solid #10b981' : '4px solid #ef4444';
+            notification.classList.add('show');
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        function getCurrentUser() {
+            const user = localStorage.getItem('user');
+            return user ? JSON.parse(user) : null;
+        }
+
+        function updateUserMenu() {
+            const user = getCurrentUser();
+            const userMenu = document.getElementById('userMenu');
+            if (userMenu) {
+                if (user) {
+                    userMenu.innerHTML = `
+                        <div style="position: relative; display: inline-block;">
+                            <button style="background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end)); color: white; border: none; padding: 0.5rem 1rem; border-radius: 50px; cursor: pointer; display: flex; align-items: center; gap: 0.5rem;">
+                                <i class="fas fa-user-circle"></i> ${user.name.split(' ')[0]}
+                            </button>
+                        </div>
+                    `;
+                } else {
+                    userMenu.innerHTML = `<button onclick="window.location.href='index.html'" style="background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end)); color: white; border: none; padding: 0.5rem 1rem; border-radius: 50px; cursor: pointer;">Sign In</button>`;
+                }
+            }
+        }
+
+        function updateCartCount() {
+            const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+            const count = cart.reduce((sum, item) => sum + item.quantity, 0);
+            document.getElementById('cartCount').textContent = count;
+        }
+
+        function loadCheckoutSummary() {
+            const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+            const orderItems = document.getElementById('orderItems');
+            const subtotalSpan = document.getElementById('subtotal');
+            const deliveryFeeSpan = document.getElementById('deliveryFee');
+            const totalSpan = document.getElementById('total');
+            
+            if (!orderItems) return;
+            
+            let subtotal = 0;
+            let itemsHtml = '';
+            
+            for (const item of cart) {
+                const itemTotal = item.price * item.quantity;
+                subtotal += itemTotal;
+                itemsHtml += `
+                    <div class="checkout-item">
+                        <span>${item.name} x ${item.quantity}</span>
+                        <span>Ksh ${itemTotal.toLocaleString()}</span>
+                    </div>
+                `;
+            }
+            
+            const deliveryFee = subtotal > 5000 ? 0 : 200;
+            totalAmount = subtotal + deliveryFee;
+            
+            orderItems.innerHTML = itemsHtml || '<p style="color: var(--text-secondary);">No items in cart</p>';
+            subtotalSpan.textContent = `Ksh ${subtotal.toLocaleString()}`;
+            deliveryFeeSpan.textContent = `Ksh ${deliveryFee.toLocaleString()}`;
+            totalSpan.textContent = `Ksh ${totalAmount.toLocaleString()}`;
+        }
+
+        // M-Pesa Functions
+        function showMpesaModal(phone, orderData) {
+            const modal = document.getElementById('mpesaModal');
+            const amountDisplay = document.getElementById('mpesaAmount');
+            const phoneDisplay = document.getElementById('mpesaPhone');
+            
+            amountDisplay.textContent = totalAmount.toLocaleString();
+            phoneDisplay.textContent = phone || '0712345678';
+            mpesaOrderData = orderData;
+            
+            modal.style.display = 'flex';
+            document.getElementById('mpesaStatus').style.display = 'none';
+            document.getElementById('mpesaPayBtn').disabled = false;
+            document.getElementById('mpesaPayBtn').innerHTML = '<i class="fas fa-check"></i> Confirm Payment';
+        }
+
+        function closeMpesaModal() {
+            document.getElementById('mpesaModal').style.display = 'none';
+        }
+
+        async function processMpesaPayment() {
+            const statusDiv = document.getElementById('mpesaStatus');
+            const payBtn = document.getElementById('mpesaPayBtn');
+            
+            statusDiv.style.display = 'block';
+            statusDiv.innerHTML = `
+                <i class="fas fa-spinner fa-spin" style="font-size: 1.5rem; color: #6366f1;"></i>
+                <p style="margin-top: 0.5rem; color: var(--text-secondary);">Sending STK Push to your phone...</p>
+            `;
+            payBtn.disabled = true;
+            payBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+            
+            try {
+                const response = await fetch(`${API_URL}/orders/mpesa`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        phone: document.getElementById('phone').value,
+                        amount: totalAmount,
+                        orderData: mpesaOrderData
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    statusDiv.innerHTML = `
+                        <i class="fas fa-check-circle" style="font-size: 2rem; color: #10b981;"></i>
+                        <p style="margin-top: 0.5rem; color: var(--text-primary); font-weight: 600;">✅ Payment Successful!</p>
+                        <p style="color: var(--text-secondary); font-size: 0.875rem;">Transaction ID: ${result.transactionId}</p>
+                        <p style="color: var(--text-secondary); font-size: 0.875rem;">You will receive a confirmation SMS.</p>
+                    `;
+                    
+                    setTimeout(() => {
+                        closeMpesaModal();
+                        showNotification('Order placed successfully!', 'success');
+                        localStorage.removeItem('cart');
+                        updateCartCount();
+                        window.location.href = 'orders.html';
+                    }, 3000);
+                } else {
+                    statusDiv.innerHTML = `
+                        <i class="fas fa-times-circle" style="font-size: 2rem; color: #ef4444;"></i>
+                        <p style="margin-top: 0.5rem; color: var(--text-primary); font-weight: 600;">❌ Payment Failed</p>
+                        <p style="color: var(--text-secondary); font-size: 0.875rem;">${result.message || 'Please try again.'}</p>
+                    `;
+                    payBtn.disabled = false;
+                    payBtn.innerHTML = '<i class="fas fa-redo"></i> Retry';
+                }
+            } catch (error) {
+                console.error('M-Pesa payment error:', error);
+                statusDiv.innerHTML = `
+                    <i class="fas fa-exclamation-triangle" style="font-size: 2rem; color: #f59e0b;"></i>
+                    <p style="margin-top: 0.5rem; color: var(--text-primary); font-weight: 600;">Error Processing Payment</p>
+                    <p style="color: var(--text-secondary); font-size: 0.875rem;">${error.message}</p>
+                `;
+                payBtn.disabled = false;
+                payBtn.innerHTML = '<i class="fas fa-redo"></i> Retry';
+            }
+        }
+
+        // Place Order Function
+        async function placeOrder(event) {
+            event.preventDefault();
+            
+            const fullName = document.getElementById('fullName').value;
+            const phone = document.getElementById('phone').value;
+            const email = document.getElementById('email').value;
+            const address = document.getElementById('address').value;
+            const city = document.getElementById('city').value;
+            const paymentMethod = document.querySelector('input[name="payment"]:checked')?.value;
+            
+            if (!fullName || !phone || !email || !address || !city) {
+                showNotification('Please fill all fields', 'error');
+                return;
+            }
+            
+            const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+            if (cart.length === 0) {
+                showNotification('Your cart is empty', 'error');
+                return;
+            }
+            
+            let subtotal = 0;
+            const products = cart.map(item => {
+                subtotal += item.price * item.quantity;
+                return {
+                    product: item.productId,
+                    name: item.name,
+                    price: item.price,
+                    quantity: item.quantity
+                };
+            });
+            
+            const deliveryFee = subtotal > 5000 ? 0 : 200;
+            const totalAmountCalc = subtotal + deliveryFee;
+            
+            const orderData = {
+                products: products,
+                totalAmount: totalAmountCalc,
+                deliveryAddress: `${address}, ${city}`,
+                paymentMethod: paymentMethod,
+                customerName: fullName,
+                customerEmail: email,
+                customerPhone: phone
+            };
+            
+            // If payment is M-Pesa, show STK Push modal
+            if (paymentMethod === 'mpesa') {
+                showMpesaModal(phone, orderData);
+                return;
+            }
+            
+            // For Cash on Delivery or Card
+            try {
+                const response = await fetch(`${API_URL}/orders`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(orderData)
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    showNotification('Order placed successfully!', 'success');
+                    localStorage.removeItem('cart');
+                    updateCartCount();
+                    setTimeout(() => {
+                        window.location.href = 'orders.html';
+                    }, 1500);
+                } else {
+                    throw new Error(result.error || 'Failed to place order');
+                }
+            } catch (error) {
+                showNotification(error.message, 'error');
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            updateCartCount();
+            updateUserMenu();
+            loadCheckoutSummary();
+            
+            document.getElementById('checkoutForm').addEventListener('submit', placeOrder);
+        });
+    </script>
+</body>
+</html>

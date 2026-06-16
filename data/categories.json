@@ -1,0 +1,142 @@
+[
+  {
+    "id": 1,
+    "name": "Electronics",
+    "icon": "fa-laptop",
+    "active": true,
+    "createdAt": "2026-06-15T08:50:05.098Z"
+  },
+  {
+    "id": 2,
+    "name": "Clothing",
+    "icon": "fa-tshirt",
+    "active": true,
+    "createdAt": "2026-06-15T08:50:05.098Z"
+  },
+  {
+    "id": 3,
+    "name": "Groceries",
+    "icon": "fa-apple-alt",
+    "active": true,
+    "createdAt": "2026-06-15T08:50:05.098Z"
+  },
+  {
+    "id": 4,
+    "name": "Beauty",
+    "icon": "fa-spa",
+    "active": true,
+    "createdAt": "2026-06-15T08:50:05.098Z"
+  },
+  {
+    "id": 5,
+    "name": "Pharmacy",
+    "icon": "fa-pills",
+    "active": true,
+    "createdAt": "2026-06-15T08:50:05.098Z"
+  },
+  {
+    "id": 6,
+    "name": "Drinks",
+    "icon": "fa-mug-hot",
+    "active": true,
+    "createdAt": "2026-06-15T08:50:05.098Z"
+  },
+  {
+    "id": 7,
+    "name": "Fruits",
+    "icon": "fa-apple-alt",
+    "active": true,
+    "createdAt": "2026-06-15T09:04:19.341Z"
+  },
+  {
+    "id": 10,
+    "name": "Phones",
+    "icon": "fa-mobile-alt",
+    "active": true,
+    "createdAt": "2026-06-15T12:17:51.100Z"
+  },
+  {
+    "id": 12,
+    "name": "Books",
+    "icon": "fa-book",
+    "active": true,
+    "createdAt": "2026-06-15T12:17:51.100Z"
+  },
+  {
+    "id": 13,
+    "name": "Toys",
+    "icon": "fa-gamepad",
+    "active": true,
+    "createdAt": "2026-06-15T12:17:51.100Z"
+  },
+  {
+    "id": 14,
+    "name": "Sports",
+    "icon": "fa-futbol",
+    "active": true,
+    "createdAt": "2026-06-15T12:17:51.100Z"
+  },
+  {
+    "id": 15,
+    "name": "Baby Products",
+    "icon": "fa-baby-carriage",
+    "active": true,
+    "createdAt": "2026-06-15T12:17:51.100Z"
+  },
+  {
+    "id": 16,
+    "name": "Pet Supplies",
+    "icon": "fa-paw",
+    "active": true,
+    "createdAt": "2026-06-15T12:17:51.100Z"
+  },
+  {
+    "id": 17,
+    "name": "Office Supplies",
+    "icon": "fa-building",
+    "active": true,
+    "createdAt": "2026-06-15T12:17:51.100Z"
+  },
+  {
+    "id": 18,
+    "name": "Automotive",
+    "icon": "fa-car",
+    "active": true,
+    "createdAt": "2026-06-15T12:17:51.100Z"
+  },
+  {
+    "id": 19,
+    "name": "Furniture",
+    "icon": "fa-couch",
+    "active": true,
+    "createdAt": "2026-06-15T12:17:51.100Z"
+  },
+  {
+    "id": 20,
+    "name": "Jewelry",
+    "icon": "fa-gem",
+    "active": true,
+    "createdAt": "2026-06-15T12:17:51.100Z"
+  },
+  {
+    "id": 21,
+    "name": "Shoes",
+    "icon": "fa-shoe-prints",
+    "active": true,
+    "createdAt": "2026-06-15T12:17:51.100Z"
+  },
+  {
+    "id": 22,
+    "name": "Watches",
+    "icon": "fa-clock",
+    "active": true,
+    "createdAt": "2026-06-15T12:17:51.100Z"
+  },
+  {
+    "id": 23,
+    "name": "Cameras",
+    "icon": "fa-camera",
+    "active": true,
+    "createdAt": "2026-06-15T12:17:51.100Z"
+  }
+]

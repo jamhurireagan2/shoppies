@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Shoppies Admin - Test</title>
+    <style>
+        body { font-family: Arial; padding: 20px; }
+        .sidebar { width: 200px; float: left; }
+        .content { margin-left: 220px; }
+        .menu-item { padding: 10px; margin: 5px; background: #f0f0f0; cursor: pointer; }
+        .menu-item:hover { background: #ddd; }
+        .active { background: #6366f1; color: white; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 10px; border: 1px solid #ddd; text-align: left; }
+        th { background: #f5f5f5; }
+        button { padding: 8px 15px; margin: 5px; cursor: pointer; background: #6366f1; color: white; border: none; border-radius: 5px; }
+        .btn-danger { background: #ef4444; }
+        .btn-edit { background: #10b981; }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+        }
+        .modal-content {
+            background: white;
+            width: 400px;
+            margin: 100px auto;
+            padding: 20px;
+            border-radius: 10px;
+        }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; }
+        .form-group input, .form-group select { width: 100%; padding: 8px; }
+    </style>
+</head>
+<body>
+    <h1>Shoppies Admin Panel</h1>
+    
+    <div class="sidebar">
+        <div class="menu-item active" data-tab="dashboard">Dashboard</div>
+        <div class="menu-item" data-tab="products">Products</div>
+        <div class="menu-item" data-tab="categories">Categories</div>
+        <div class="menu-item" data-tab="orders">Orders</div>
+        <div class="menu-item" data-tab="users">Users</div>
+    </div>
+    
+    <div class="content">
+        <div id="dashboardTab" class="tab-content active">
+            <h2>Dashboard</h2>
+            <div id="stats"></div>
+        </div>
+        
+        <div id="productsTab" class="tab-content">
+            <h2>Products</h2>
+            <button onclick="showAddProductModal()">Add Product</button>
+            <div id="productsList"></div>
+        </div>
+        
+        <div id="categoriesTab" class="tab-content">
+            <h2>Categories</h2>
+            <button onclick="showAddCategoryModal()">Add Category</button>
+            <div id="categoriesList"></div>
+        </div>
+        
+        <div id="ordersTab" class="tab-content">
+            <h2>Orders</h2>
+            <div id="ordersList"></div>
+        </div>
+        
+        <div id="usersTab" class="tab-content">
+            <h2>Users</h2>
+            <div id="usersList"></div>
+        </div>
+    </div>
+    
+    <!-- Product Modal -->
+    <div id="productModal" class="modal">
+        <div class="modal-content">
+            <h3 id="productModalTitle">Add Product</h3>
+            <div class="form-group"><label>Name</label><input type="text" id="prodName"></div>
+            <div class="form-group"><label>Price</label><input type="number" id="prodPrice"></div>
+            <div class="form-group"><label>Category</label><select id="prodCategory"></select></div>
+            <div class="form-group"><label>Stock</label><input type="number" id="prodStock"></div>
+            <button onclick="saveProduct()">Save</button>
+            <button onclick="closeProductModal()">Cancel</button>
+        </div>
+    </div>
+    
+    <!-- Category Modal -->
+    <div id="categoryModal" class="modal">
+        <div class="modal-content">
+            <h3 id="categoryModalTitle">Add Category</h3>
+            <div class="form-group"><label>Category Name</label><input type="text" id="catName"></div>
+            <div class="form-group"><label>Icon</label><input type="text" id="catIcon" value="fa-tag"></div>
+            <button onclick="saveCategory()">Save</button>
+            <button onclick="closeCategoryModal()">Cancel</button>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:5000/api';
+        let currentProductId = null;
+        let currentCategoryId = null;
+        
+        // Tab switching
+        document.querySelectorAll('.menu-item').forEach(item => {
+            item.addEventListener('click', () => {
+                const tab = item.dataset.tab;
+                document.querySelectorAll('.menu-item').forEach(i => i.classList.remove('active'));
+                item.classList.add('active');
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                document.getElementById(`${tab}Tab`).classList.add('active');
+                
+                if (tab === 'dashboard') loadStats();
+                else if (tab === 'products') loadProducts();
+                else if (tab === 'categories') loadCategories();
+                else if (tab === 'orders') loadOrders();
+                else if (tab === 'users') loadUsers();
+            });
+        });
+        
+        async function loadStats() {
+            const res = await fetch(`${API_URL}/admin/stats`);
+            const stats = await res.json();
+            document.getElementById('stats').innerHTML = `
+                <p>Total Users: ${stats.totalUsers}</p>
+                <p>Total Products: ${stats.totalProducts}</p>
+                <p>Total Orders: ${stats.totalOrders}</p>
+                <p>Revenue: Ksh ${stats.totalRevenue}</p>
+            `;
+        }
+        
+        async function loadCategories() {
+            const res = await fetch(`${API_URL}/categories`);
+            const categories = await res.json();
+            
+            // Update dropdown
+            const select = document.getElementById('prodCategory');
+            if (select) {
+                select.innerHTML = categories.map(c => `<option value="${c.name.toLowerCase()}">${c.name}</option>`).join('');
+            }
+            
+            // Display list
+            document.getElementById('categoriesList').innerHTML = `
+                <table>
+                    <tr><th>ID</th><th>Name</th><th>Icon</th><th>Actions</th></tr>
+                    ${categories.map(c => `
+                        <tr>
+                            <td>${c.id}</td>
+                            <td><i class="fas ${c.icon}"></i> ${c.name}</td>
+                            <td>${c.icon}</td>
+                            <td>
+                                <button class="btn-edit" onclick="editCategory(${c.id})">Edit</button>
+                                <button class="btn-danger" onclick="deleteCategory(${c.id})">Delete</button>
+                            </td>
+                        </tr>
+                    `).join('')}
+                </table>
+            `;
+        }
+        
+        async function loadProducts() {
+            const res = await fetch(`${API_URL}/products`);
+            const products = await res.json();
+            document.getElementById('productsList').innerHTML = `
+                <table>
+                    <tr><th>Name</th><th>Price</th><th>Category</th><th>Stock</th><th>Actions</th></tr>
+                    ${products.map(p => `
+                        <tr>
+                            <td>${p.name}</td>
+                            <td>Ksh ${p.price}</td>
+                            <td>${p.category}</td>
+                            <td>${p.stock}</td>
+                            <td>
+                                <button class="btn-edit" onclick="editProduct(${p.id})">Edit</button>
+                                <button class="btn-danger" onclick="deleteProduct(${p.id})">Delete</button>
+                            </td>
+                        </tr>
+                    `).join('')}
+                </table>
+            `;
+        }
+        
+        async function loadOrders() {
+            const res = await fetch(`${API_URL}/admin/orders`);
+            const orders = await res.json();
+            document.getElementById('ordersList').innerHTML = `
+                <table>
+                    <tr><th>ID</th><th>Address</th><th>Total</th><th>Status</th></tr>
+                    ${orders.map(o => `
+                        <tr>
+                            <td>#${o.id}</td>
+                            <td>${o.deliveryAddress || 'N/A'}</td>
+                            <td>Ksh ${o.totalAmount}</td>
+                            <td>${o.orderStatus}</td>
+                        </tr>
+                    `).join('')}
+                </table>
+            `;
+        }
+        
+        async function loadUsers() {
+            const res = await fetch(`${API_URL}/admin/users`);
+            const users = await res.json();
+            document.getElementById('usersList').innerHTML = `
+                <table>
+                    <tr><th>Name</th><th>Email</th><th>Role</th><th>Actions</th></tr>
+                    ${users.map(u => `
+                        <tr>
+                            <td>${u.name}</td>
+                            <td>${u.email}</td>
+                            <td>${u.isAdmin ? 'Admin' : 'Customer'}</td>
+                            <td>${!u.isAdmin ? `<button class="btn-danger" onclick="deleteUser(${u.id})">Delete</button>` : 'Protected'}</td>
+                        </tr>
+                    `).join('')}
+                </table>
+            `;
+        }
+        
+        function showAddProductModal() {
+            currentProductId = null;
+            document.getElementById('productModalTitle').textContent = 'Add Product';
+            document.getElementById('prodName').value = '';
+            document.getElementById('prodPrice').value = '';
+            document.getElementById('prodStock').value = '';
+            document.getElementById('productModal').style.display = 'block';
+        }
+        
+        function closeProductModal() {
+            document.getElementById('productModal').style.display = 'none';
+        }
+        
+        async function saveProduct() {
+            const product = {
+                name: document.getElementById('prodName').value,
+                price: parseInt(document.getElementById('prodPrice').value),
+                category: document.getElementById('prodCategory').value,
+                stock: parseInt(document.getElementById('prodStock').value)
+            };
+            
+            let response;
+            if (currentProductId) {
+                response = await fetch(`${API_URL}/products/${currentProductId}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(product)
+                });
+            } else {
+                response = await fetch(`${API_URL}/products`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(product)
+                });
+            }
+            
+            if (response.ok) {
+                alert('Product saved!');
+                closeProductModal();
+                loadProducts();
+                loadStats();
+            }
+        }
+        
+        async function editProduct(id) {
+            const res = await fetch(`${API_URL}/products`);
+            const products = await res.json();
+            const product = products.find(p => p.id === id);
+            if (product) {
+                currentProductId = id;
+                document.getElementById('productModalTitle').textContent = 'Edit Product';
+                document.getElementById('prodName').value = product.name;
+                document.getElementById('prodPrice').value = product.price;
+                document.getElementById('prodCategory').value = product.category;
+                document.getElementById('prodStock').value = product.stock;
+                document.getElementById('productModal').style.display = 'block';
+            }
+        }
+        
+        async function deleteProduct(id) {
+            if (confirm('Delete this product?')) {
+                await fetch(`${API_URL}/products/${id}`, { method: 'DELETE' });
+                loadProducts();
+                loadStats();
+            }
+        }
+        
+        function showAddCategoryModal() {
+            currentCategoryId = null;
+            document.getElementById('categoryModalTitle').textContent = 'Add Category';
+            document.getElementById('catName').value = '';
+            document.getElementById('catIcon').value = 'fa-tag';
+            document.getElementById('categoryModal').style.display = 'block';
+        }
+        
+        function closeCategoryModal() {
+            document.getElementById('categoryModal').style.display = 'none';
+        }
+        
+        async function saveCategory() {
+            const category = {
+                name: document.getElementById('catName').value,
+                icon: document.getElementById('catIcon').value
+            };
+            
+            let response;
+            if (currentCategoryId) {
+                response = await fetch(`${API_URL}/categories/${currentCategoryId}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(category)
+                });
+            } else {
+                response = await fetch(`${API_URL}/categories`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(category)
+                });
+            }
+            
+            if (response.ok) {
+                alert('Category saved!');
+                closeCategoryModal();
+                loadCategories();
+            }
+        }
+        
+        async function editCategory(id) {
+            const res = await fetch(`${API_URL}/categories`);
+            const categories = await res.json();
+            const category = categories.find(c => c.id === id);
+            if (category) {
+                currentCategoryId = id;
+                document.getElementById('categoryModalTitle').textContent = 'Edit Category';
+                document.getElementById('catName').value = category.name;
+                document.getElementById('catIcon').value = category.icon;
+                document.getElementById('categoryModal').style.display = 'block';
+            }
+        }
+        
+        async function deleteCategory(id) {
+            if (confirm('Delete this category?')) {
+                await fetch(`${API_URL}/categories/${id}`, { method: 'DELETE' });
+                loadCategories();
+            }
+        }
+        
+        async function deleteUser(id) {
+            if (confirm('Delete this user?')) {
+                await fetch(`${API_URL}/admin/users/${id}`, { method: 'DELETE' });
+                loadUsers();
+                loadStats();
+            }
+        }
+        
+        // Initial load
+        loadStats();
+        loadCategories();
+    </script>
+</body>
+</html>

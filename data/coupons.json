@@ -1,0 +1,10 @@
+[
+  {
+    "id": 1,
+    "code": "SAVE 20",
+    "discount": 1,
+    "validUntil": "2026-06-20T00:00:00.000Z",
+    "active": true,
+    "createdAt": "2026-06-16T06:30:36.517Z"
+  }
+]

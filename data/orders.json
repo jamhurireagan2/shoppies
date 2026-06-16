@@ -1,0 +1,211 @@
+[
+  {
+    "id": 1,
+    "_id": "order_1781527821998",
+    "products": [
+      {
+        "product": "11",
+        "name": "Denim Jeans",
+        "price": 3000,
+        "quantity": 5
+      },
+      {
+        "product": "15",
+        "name": "charger",
+        "price": 800,
+        "quantity": 5
+      },
+      {
+        "product": "41",
+        "name": "Barbie Doll",
+        "price": 1800,
+        "quantity": 5
+      },
+      {
+        "product": "42",
+        "name": "Teddy Bear",
+        "price": 1200,
+        "quantity": 5
+      },
+      {
+        "product": "45",
+        "name": "Baby Diapers (Pack)",
+        "price": 800,
+        "quantity": 5
+      },
+      {
+        "product": "46",
+        "name": "Baby Wipes",
+        "price": 200,
+        "quantity": 5
+      }
+    ],
+    "totalAmount": 39000,
+    "deliveryAddress": "GACHIE , ALL SAINTS CHURCH",
+    "paymentMethod": "mpesa",
+    "orderStatus": "approved",
+    "paymentStatus": "pending",
+    "createdAt": "2026-06-15T12:50:21.998Z"
+  },
+  {
+    "id": 2,
+    "_id": "order_1781592615383",
+    "products": [
+      {
+        "product": "21",
+        "name": "Fresh Grapes",
+        "price": 450,
+        "quantity": 1
+      },
+      {
+        "product": "20",
+        "name": "Fresh Strawberries",
+        "price": 800,
+        "quantity": 1
+      },
+      {
+        "product": "12",
+        "name": "iphone17 pro max",
+        "price": 250000,
+        "quantity": 1
+      },
+      {
+        "product": "8",
+        "name": "Cabbage",
+        "price": 200,
+        "quantity": 1
+      }
+    ],
+    "totalAmount": 251450,
+    "deliveryAddress": "9299i2, jjom",
+    "paymentMethod": "mpesa",
+    "orderStatus": "delivered",
+    "paymentStatus": "paid",
+    "trackingNumber": "TRK-615383-2",
+    "createdAt": "2026-06-16T06:50:15.383Z",
+    "invoice": {
+      "invoiceNumber": "INV-212687-2",
+      "orderId": 2,
+      "date": "2026-06-16T07:00:12.687Z",
+      "customerName": "Customer",
+      "customerEmail": "customer@example.com",
+      "customerPhone": "N/A",
+      "deliveryAddress": "9299i2, jjom",
+      "items": [
+        {
+          "product": "21",
+          "name": "Fresh Grapes",
+          "price": 450,
+          "quantity": 1
+        },
+        {
+          "product": "20",
+          "name": "Fresh Strawberries",
+          "price": 800,
+          "quantity": 1
+        },
+        {
+          "product": "12",
+          "name": "iphone17 pro max",
+          "price": 250000,
+          "quantity": 1
+        },
+        {
+          "product": "8",
+          "name": "Cabbage",
+          "price": 200,
+          "quantity": 1
+        }
+      ],
+      "subtotal": 251450,
+      "discount": 0,
+      "total": 251450,
+      "paymentMethod": "mpesa",
+      "paymentStatus": "paid",
+      "orderStatus": "delivered",
+      "trackingNumber": "TRK-615383-2"
+    },
+    "mpesaTransactionId": "MP92618395",
+    "deliveredAt": "2026-06-16T07:00:12.687Z"
+  },
+  {
+    "id": 3,
+    "_id": "order_1781592618230",
+    "products": [
+      {
+        "product": "21",
+        "name": "Fresh Grapes",
+        "price": 450,
+        "quantity": 1
+      },
+      {
+        "product": "20",
+        "name": "Fresh Strawberries",
+        "price": 800,
+        "quantity": 1
+      },
+      {
+        "product": "12",
+        "name": "iphone17 pro max",
+        "price": 250000,
+        "quantity": 1
+      },
+      {
+        "product": "8",
+        "name": "Cabbage",
+        "price": 200,
+        "quantity": 1
+      }
+    ],
+    "totalAmount": 251450,
+    "deliveryAddress": "9299i2, jjom",
+    "paymentMethod": "mpesa",
+    "orderStatus": "pending",
+    "paymentStatus": "paid",
+    "trackingNumber": "TRK-618230-2",
+    "createdAt": "2026-06-16T06:50:18.230Z",
+    "invoice": {
+      "invoiceNumber": "INV-244542-3",
+      "orderId": 3,
+      "date": "2026-06-16T07:00:44.542Z",
+      "customerName": "Customer",
+      "customerEmail": "customer@example.com",
+      "customerPhone": "N/A",
+      "deliveryAddress": "9299i2, jjom",
+      "items": [
+        {
+          "product": "21",
+          "name": "Fresh Grapes",
+          "price": 450,
+          "quantity": 1
+        },
+        {
+          "product": "20",
+          "name": "Fresh Strawberries",
+          "price": 800,
+          "quantity": 1
+        },
+        {
+          "product": "12",
+          "name": "iphone17 pro max",
+          "price": 250000,
+          "quantity": 1
+        },
+        {
+          "product": "8",
+          "name": "Cabbage",
+          "price": 200,
+          "quantity": 1
+        }
+      ],
+      "subtotal": 251450,
+      "discount": 0,
+      "total": 251450,
+      "paymentMethod": "mpesa",
+      "paymentStatus": "paid",
+      "orderStatus": "pending",
+      "trackingNumber": "TRK-618230-2"
+    },
+    "mpesaTransactionId": "MP92621235"
+  }
+]

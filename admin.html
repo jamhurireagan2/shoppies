@@ -1,0 +1,1940 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shoppies Admin Dashboard - Complete</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f5f5f5;
+            overflow-x: hidden;
+        }
+
+        :root {
+            --bg-primary: #f5f5f5;
+            --bg-secondary: #ffffff;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --card-bg: #ffffff;
+            --navbar-bg: #ffffff;
+            --border-color: #e2e8f0;
+            --shadow: 0 2px 10px rgba(0,0,0,0.05);
+            --shadow-hover: 0 20px 30px rgba(0,0,0,0.1);
+            --gradient-start: #6366f1;
+            --gradient-end: #8b5cf6;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+        }
+
+        body.dark-mode {
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --card-bg: #1e293b;
+            --navbar-bg: #0f172a;
+            --border-color: #334155;
+        }
+
+        .admin-navbar {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            color: white;
+            padding: 1rem 2rem;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        .admin-navbar .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .logo i {
+            font-size: 1.8rem;
+            color: #6366f1;
+        }
+
+        .admin-info {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .admin-name {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .admin-name i {
+            font-size: 1.2rem;
+            color: #6366f1;
+        }
+
+        .logout-btn {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .logout-btn:hover {
+            background: #ef4444;
+            color: white;
+        }
+
+        .admin-sidebar {
+            position: fixed;
+            left: 0;
+            top: 70px;
+            width: 260px;
+            height: calc(100vh - 70px);
+            background: white;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.05);
+            overflow-y: auto;
+        }
+
+        .sidebar-menu {
+            padding: 2rem 1rem;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.875rem 1rem;
+            margin-bottom: 0.5rem;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: #64748b;
+        }
+
+        .menu-item i {
+            width: 24px;
+            font-size: 1.2rem;
+        }
+
+        .menu-item:hover {
+            background: #f1f5f9;
+            color: #6366f1;
+        }
+
+        .menu-item.active {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            color: white;
+        }
+
+        .admin-main {
+            margin-left: 260px;
+            margin-top: 70px;
+            padding: 2rem;
+            min-height: calc(100vh - 70px);
+        }
+
+        /* ============ TAB CONTENT FIX ============ */
+        .tab-content {
+            display: none !important;
+        }
+
+        .tab-content.active {
+            display: block !important;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .stat-info h3 {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--text-primary);
+        }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .stat-icon i {
+            font-size: 1.8rem;
+            color: white;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .section-header h2 {
+            font-size: 1.5rem;
+            color: var(--text-primary);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(99, 102, 241, 0.3);
+        }
+
+        .btn-danger {
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .btn-edit {
+            background: #10b981;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .products-grid,
+        .orders-container,
+        .users-container,
+        .categories-container,
+        .coupons-container {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        th {
+            background: var(--bg-primary);
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        tr:hover {
+            background: var(--bg-primary);
+        }
+
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .status-pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        .status-approved {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+        .status-shipped {
+            background: #e0e7ff;
+            color: #3730a3;
+        }
+        .status-delivered {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        .status-active {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        .status-inactive {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: var(--card-bg);
+            border-radius: 20px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        .modal-footer {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-family: inherit;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+        }
+
+        .image-preview {
+            margin-top: 0.5rem;
+            text-align: center;
+        }
+
+        .image-preview img {
+            max-width: 100px;
+            max-height: 100px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        .fetch-image-btn {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        .fetch-image-btn:hover {
+            background: #2563eb;
+        }
+
+        .product-image-cell {
+            width: 60px;
+        }
+
+        .product-image-cell img {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        .notification {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            background: var(--card-bg);
+            color: var(--text-primary);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            z-index: 3000;
+            transform: translateX(400px);
+            transition: transform 0.3s;
+            border-left: 4px solid #10b981;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.success {
+            border-left: 4px solid #10b981;
+        }
+
+        .notification.error {
+            border-left: 4px solid #ef4444;
+        }
+
+        /* Order Details Modal */
+        .order-details-modal {
+            max-width: 800px;
+            width: 90%;
+        }
+
+        .order-details-header {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 16px 16px 0 0;
+        }
+
+        .order-info-section {
+            margin-bottom: 2rem;
+            padding: 1rem;
+            background: var(--bg-primary);
+            border-radius: 12px;
+        }
+
+        .order-info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .info-label {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .info-value {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-top: 0.25rem;
+        }
+
+        .products-list {
+            margin: 1rem 0;
+        }
+
+        .product-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.75rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .map-container {
+            margin-top: 1rem;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+        }
+
+        .map-container iframe {
+            width: 100%;
+            height: 300px;
+            border: none;
+        }
+
+        .directions-btn {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 1rem;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .directions-btn:hover {
+            background: #2563eb;
+        }
+
+        /* ============ SETTINGS STYLES ============ */
+        .settings-content {
+            padding: 0;
+        }
+
+        .settings-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .settings-header h2 {
+            font-size: 1.5rem;
+        }
+
+        .settings-header .subtitle {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        .back-btn {
+            background: var(--bg-primary);
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            color: var(--text-secondary);
+            transition: all 0.3s;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .back-btn:hover {
+            background: var(--border-color);
+        }
+
+        .setting-section {
+            margin-bottom: 2rem;
+        }
+
+        .setting-section h3 {
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .setting-section p {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            margin-bottom: 1rem;
+        }
+
+        .setting-card {
+            background: var(--bg-primary);
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid var(--border-color);
+        }
+
+        .setting-card-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .setting-card-left i {
+            font-size: 1.25rem;
+            color: var(--gradient-start);
+        }
+
+        .setting-card-left .title {
+            font-weight: 500;
+        }
+
+        .setting-card-left .desc {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        .toggle {
+            position: relative;
+            width: 48px;
+            height: 28px;
+            background: #cbd5e1;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: background 0.3s;
+            flex-shrink: 0;
+        }
+
+        .toggle.active {
+            background: var(--gradient-start);
+        }
+
+        .toggle::after {
+            content: '';
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 22px;
+            height: 22px;
+            background: white;
+            border-radius: 50%;
+            transition: transform 0.3s;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .toggle.active::after {
+            transform: translateX(20px);
+        }
+
+        .select-input {
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            font-family: inherit;
+            min-width: 200px;
+        }
+
+        .exchange-rate {
+            background: var(--bg-primary);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            display: inline-block;
+        }
+
+        .exchange-rate small {
+            color: var(--text-secondary);
+        }
+
+        .session-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .session-item:last-child {
+            border-bottom: none;
+        }
+
+        .session-device {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .session-device i {
+            font-size: 1.5rem;
+            color: var(--gradient-start);
+        }
+
+        .session-info .device-name {
+            font-weight: 500;
+            font-size: 0.875rem;
+        }
+
+        .session-info .device-details {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        .session-status {
+            font-size: 0.75rem;
+            color: var(--success);
+            font-weight: 600;
+        }
+
+        .danger-zone {
+            border: 2px solid #ef4444;
+            border-radius: 12px;
+            padding: 1.5rem;
+            background: #fef2f2;
+        }
+
+        .danger-zone h4 {
+            color: #ef4444;
+            margin-bottom: 0.5rem;
+        }
+
+        .danger-zone p {
+            color: #991b1b;
+            font-size: 0.875rem;
+        }
+
+        .danger-zone .btn-danger {
+            margin-top: 1rem;
+        }
+
+        .wallet-balance {
+            text-align: center;
+            padding: 1.5rem;
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            border-radius: 16px;
+            color: white;
+            margin-bottom: 1.5rem;
+        }
+
+        .wallet-balance .amount {
+            font-size: 2.5rem;
+            font-weight: bold;
+        }
+
+        .wallet-balance .label {
+            font-size: 0.875rem;
+            opacity: 0.8;
+        }
+
+        .wallet-actions {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .wallet-action {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .wallet-action:hover {
+            border-color: var(--gradient-start);
+            transform: translateY(-2px);
+        }
+
+        .wallet-action i {
+            font-size: 1.5rem;
+            color: var(--gradient-start);
+            margin-bottom: 0.5rem;
+        }
+
+        .wallet-action .action-label {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        @media (max-width: 768px) {
+            .admin-sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s;
+            }
+            .admin-sidebar.show {
+                transform: translateX(0);
+            }
+            .admin-main {
+                margin-left: 0;
+            }
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            table {
+                font-size: 0.875rem;
+            }
+            th,
+            td {
+                padding: 0.5rem;
+            }
+            .wallet-actions {
+                grid-template-columns: 1fr;
+            }
+            .setting-card {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="admin-navbar">
+        <div class="container">
+            <div class="logo">
+                <i class="fas fa-crown"></i>
+                <span>Shoppies Admin</span>
+            </div>
+            <div class="admin-info">
+                <div class="admin-name" id="adminName">
+                    <i class="fas fa-user-circle"></i>
+                    <span>Admin User</span>
+                </div>
+                <button class="logout-btn" onclick="handleAdminLogout()">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <aside class="admin-sidebar" id="sidebar">
+        <div class="sidebar-menu">
+            <div class="menu-item active" data-tab="dashboard">
+                <i class="fas fa-chart-line"></i>
+                <span>Dashboard</span>
+            </div>
+            <div class="menu-item" data-tab="products">
+                <i class="fas fa-box"></i>
+                <span>Products</span>
+            </div>
+            <div class="menu-item" data-tab="categories">
+                <i class="fas fa-tags"></i>
+                <span>Categories</span>
+            </div>
+            <div class="menu-item" data-tab="coupons">
+                <i class="fas fa-ticket-alt"></i>
+                <span>Coupons</span>
+            </div>
+            <div class="menu-item" data-tab="orders">
+                <i class="fas fa-shopping-cart"></i>
+                <span>Orders</span>
+            </div>
+            <div class="menu-item" data-tab="users">
+                <i class="fas fa-users"></i>
+                <span>Users</span>
+            </div>
+            <div class="menu-item" data-tab="settings">
+                <i class="fas fa-cog"></i>
+                <span>Settings</span>
+            </div>
+        </div>
+    </aside>
+
+    <main class="admin-main">
+        <!-- Dashboard Tab -->
+        <div id="dashboardTab" class="tab-content active">
+            <div class="stats-grid" id="statsContainer"></div>
+        </div>
+
+        <!-- Products Tab -->
+        <div id="productsTab" class="tab-content">
+            <div class="section-header">
+                <h2><i class="fas fa-box"></i> Manage Products</h2>
+                <button class="btn-primary" onclick="showAddProductModal()">
+                    <i class="fas fa-plus"></i> Add Product
+                </button>
+            </div>
+            <div class="products-grid" id="productsContainer"></div>
+        </div>
+
+        <!-- Categories Tab -->
+        <div id="categoriesTab" class="tab-content">
+            <div class="section-header">
+                <h2><i class="fas fa-tags"></i> Manage Categories</h2>
+                <button class="btn-primary" onclick="showAddCategoryModal()">
+                    <i class="fas fa-plus"></i> Add Category
+                </button>
+            </div>
+            <div class="categories-container" id="categoriesContainer"></div>
+        </div>
+
+        <!-- Coupons Tab -->
+        <div id="couponsTab" class="tab-content">
+            <div class="section-header">
+                <h2><i class="fas fa-ticket-alt"></i> Manage Coupons & Promo Codes</h2>
+                <button class="btn-primary" onclick="showAddCouponModal()">
+                    <i class="fas fa-plus"></i> Create Coupon
+                </button>
+            </div>
+            <div class="coupons-container" id="couponsContainer"></div>
+        </div>
+
+        <!-- Orders Tab -->
+        <div id="ordersTab" class="tab-content">
+            <div class="section-header">
+                <h2><i class="fas fa-shopping-cart"></i> Manage Orders</h2>
+            </div>
+            <div class="orders-container" id="ordersContainer"></div>
+        </div>
+
+        <!-- Users Tab -->
+        <div id="usersTab" class="tab-content">
+            <div class="section-header">
+                <h2><i class="fas fa-users"></i> Manage Users</h2>
+            </div>
+            <div class="users-container" id="usersContainer"></div>
+        </div>
+
+        <!-- Settings Tab -->
+        <div id="settingsTab" class="tab-content">
+            <div class="settings-content">
+                <div class="settings-header">
+                    <div>
+                        <h2>⚙️ Account Settings</h2>
+                        <div class="subtitle">Manage your preferences and account security</div>
+                    </div>
+                    <button class="back-btn" onclick="switchTab('dashboard')">
+                        <i class="fas fa-arrow-left"></i> Back to Dashboard
+                    </button>
+                </div>
+
+                <!-- Wallet Section -->
+                <div class="setting-section">
+                    <h3>💰 Online Wallet System</h3>
+                    <p>Manage your wallet balance and transactions</p>
+                    
+                    <div class="wallet-balance">
+                        <div class="label">Available Balance</div>
+                        <div class="amount">Ksh 0.00</div>
+                        <div class="label" style="margin-top: 0.5rem;">Total Deposits: Ksh 0.00</div>
+                    </div>
+                    
+                    <div class="wallet-actions">
+                        <div class="wallet-action" onclick="showNotification('Send Money feature coming soon!', 'success')">
+                            <i class="fas fa-paper-plane"></i>
+                            <div class="action-label">Send Money</div>
+                        </div>
+                        <div class="wallet-action" onclick="showNotification('Deposit feature coming soon!', 'success')">
+                            <i class="fas fa-plus-circle"></i>
+                            <div class="action-label">Deposit Funds</div>
+                        </div>
+                        <div class="wallet-action" onclick="showNotification('Transaction history coming soon!', 'success')">
+                            <i class="fas fa-history"></i>
+                            <div class="action-label">Transaction History</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Appearance -->
+                <div class="setting-section">
+                    <h3>🎨 Appearance</h3>
+                    <p>Choose your preferred theme</p>
+                    
+                    <div class="setting-card">
+                        <div class="setting-card-left">
+                            <i class="fas fa-sun"></i>
+                            <div>
+                                <div class="title">Light Mode</div>
+                                <div class="desc">Default light theme</div>
+                            </div>
+                        </div>
+                        <div class="toggle active" onclick="setTheme('light')"></div>
+                    </div>
+                    
+                    <div class="setting-card">
+                        <div class="setting-card-left">
+                            <i class="fas fa-moon"></i>
+                            <div>
+                                <div class="title">Dark Mode</div>
+                                <div class="desc">Dark theme for low light</div>
+                            </div>
+                        </div>
+                        <div class="toggle" onclick="setTheme('dark')"></div>
+                    </div>
+                </div>
+
+                <!-- Currency Preferences -->
+                <div class="setting-section">
+                    <h3>💰 Currency Preferences</h3>
+                    <p>Choose your preferred display currency</p>
+                    
+                    <div class="setting-card">
+                        <div class="setting-card-left">
+                            <i class="fas fa-dollar-sign"></i>
+                            <div>
+                                <div class="title">Display Currency</div>
+                                <div class="desc">KES - Kenyan Shilling (Ksh)</div>
+                            </div>
+                        </div>
+                        <select class="select-input">
+                            <option>KES - Kenyan Shilling (Ksh)</option>
+                            <option>USD - US Dollar ($)</option>
+                            <option>EUR - Euro (€)</option>
+                            <option>GBP - British Pound (£)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="exchange-rate">
+                        <strong>Exchange Rate (USD to KES)</strong>
+                        <div>1 USD = 130 KES</div>
+                        <small>Rates are updated daily by administrator</small>
+                    </div>
+                </div>
+
+                <!-- Notification Settings -->
+                <div class="setting-section">
+                    <h3>🔔 Notification Settings</h3>
+                    <p>Control how and when you receive notifications</p>
+                    
+                    <div class="setting-card">
+                        <div class="setting-card-left">
+                            <i class="fas fa-envelope"></i>
+                            <div>
+                                <div class="title">Email Notifications</div>
+                                <div class="desc">Receive account updates via email</div>
+                            </div>
+                        </div>
+                        <div class="toggle active" onclick="this.classList.toggle('active')"></div>
+                    </div>
+                    
+                    <div class="setting-card">
+                        <div class="setting-card-left">
+                            <i class="fas fa-sms"></i>
+                            <div>
+                                <div class="title">SMS Notifications</div>
+                                <div class="desc">Receive SMS alerts for transactions</div>
+                            </div>
+                        </div>
+                        <div class="toggle" onclick="this.classList.toggle('active')"></div>
+                    </div>
+                    
+                    <div class="setting-card">
+                        <div class="setting-card-left">
+                            <i class="fas fa-bell"></i>
+                            <div>
+                                <div class="title">Transaction Alerts</div>
+                                <div class="desc">Get notified for every transaction</div>
+                            </div>
+                        </div>
+                        <div class="toggle active" onclick="this.classList.toggle('active')"></div>
+                    </div>
+                    
+                    <div class="setting-card">
+                        <div class="setting-card-left">
+                            <i class="fas fa-bullhorn"></i>
+                            <div>
+                                <div class="title">Marketing Emails</div>
+                                <div class="desc">Receive promotions and offers</div>
+                            </div>
+                        </div>
+                        <div class="toggle" onclick="this.classList.toggle('active')"></div>
+                    </div>
+                </div>
+
+                <!-- Language & Region -->
+                <div class="setting-section">
+                    <h3>🌍 Language & Region</h3>
+                    <p>Customize your regional preferences</p>
+                    
+                    <div class="setting-card">
+                        <div class="setting-card-left">
+                            <i class="fas fa-language"></i>
+                            <div>
+                                <div class="title">Language</div>
+                                <div class="desc">More languages coming soon</div>
+                            </div>
+                        </div>
+                        <select class="select-input">
+                            <option>English</option>
+                            <option>Swahili</option>
+                            <option>French</option>
+                        </select>
+                    </div>
+                    
+                    <div class="setting-card">
+                        <div class="setting-card-left">
+                            <i class="fas fa-calendar"></i>
+                            <div>
+                                <div class="title">Date Format</div>
+                                <div class="desc">DD/MM/YYYY</div>
+                            </div>
+                        </div>
+                        <select class="select-input">
+                            <option>DD/MM/YYYY</option>
+                            <option>MM/DD/YYYY</option>
+                            <option>YYYY/MM/DD</option>
+                        </select>
+                    </div>
+                    
+                    <div class="setting-card">
+                        <div class="setting-card-left">
+                            <i class="fas fa-clock"></i>
+                            <div>
+                                <div class="title">Time Zone</div>
+                                <div class="desc">East Africa Time (EAT)</div>
+                            </div>
+                        </div>
+                        <select class="select-input">
+                            <option>East Africa Time (EAT)</option>
+                            <option>UTC</option>
+                            <option>Central Africa Time (CAT)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Security Settings -->
+                <div class="setting-section">
+                    <h3>🔒 Security Settings</h3>
+                    <p>Enhance your account security</p>
+                    
+                    <div class="setting-card">
+                        <div class="setting-card-left">
+                            <i class="fas fa-shield-alt"></i>
+                            <div>
+                                <div class="title">Two-Factor Authentication (2FA)</div>
+                                <div class="desc">Add an extra layer of security to your account</div>
+                            </div>
+                        </div>
+                        <button class="btn-primary" onclick="showNotification('2FA setup coming soon!', 'success')">Enable</button>
+                    </div>
+                    
+                    <div style="margin-top: 1rem;">
+                        <h4 style="margin-bottom: 0.5rem;">Active Sessions</h4>
+                        <div class="session-item">
+                            <div class="session-device">
+                                <i class="fas fa-desktop"></i>
+                                <div class="session-info">
+                                    <div class="device-name">Windows PC - Chrome</div>
+                                    <div class="device-details">Nairobi, Kenya • IP: 192.168.1.100</div>
+                                </div>
+                            </div>
+                            <div class="session-status">● Current</div>
+                        </div>
+                        <div class="session-item">
+                            <div class="session-device">
+                                <i class="fas fa-mobile-alt"></i>
+                                <div class="session-info">
+                                    <div class="device-name">iPhone 14 - Safari</div>
+                                    <div class="device-details">Nairobi, Kenya • IP: 192.168.1.101</div>
+                                </div>
+                            </div>
+                            <div style="color: var(--text-secondary); font-size: 0.75rem;">2 hours ago</div>
+                        </div>
+                        <div class="session-item">
+                            <div class="session-device">
+                                <i class="fas fa-tablet-alt"></i>
+                                <div class="session-info">
+                                    <div class="device-name">Android - Chrome</div>
+                                    <div class="device-details">Mombasa, Kenya • IP: 192.168.1.102</div>
+                                </div>
+                            </div>
+                            <div style="color: var(--text-secondary); font-size: 0.75rem;">2 days ago</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Danger Zone -->
+                <div class="setting-section">
+                    <h3 style="color: #ef4444;">⚠️ Danger Zone</h3>
+                    <p style="color: #991b1b;">Irreversible account actions</p>
+                    
+                    <div class="danger-zone">
+                        <h4>🗑️ Deactivate Account</h4>
+                        <p>Once you deactivate your account, you will not be able to login until an admin reactivates it.</p>
+                        <div style="margin-top: 0.75rem; display: flex; gap: 0.5rem; align-items: center;">
+                            <input type="password" placeholder="Enter your password to confirm" style="padding: 0.5rem 1rem; border: 1px solid var(--border-color); border-radius: 8px; background: var(--bg-secondary); color: var(--text-primary); flex: 1;">
+                            <button class="btn-danger" onclick="showNotification('Account deactivation disabled. Contact support.', 'error')">Deactivate</button>
+                        </div>
+                    </div>
+                    
+                    <div class="danger-zone" style="margin-top: 1rem;">
+                        <h4>🗑️ Delete Account</h4>
+                        <p>Permanently delete your account and all data. This action cannot be undone.</p>
+                        <button class="btn-danger" style="margin-top: 0.75rem;" onclick="showNotification('Account deletion is disabled. Please contact administrator for assistance.', 'error')">
+                            <i class="fas fa-exclamation-triangle"></i> Delete Account
+                        </button>
+                        <p style="margin-top: 0.5rem; font-size: 0.75rem; color: #991b1b;">
+                            Account deletion is disabled. Please contact administrator for assistance.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Data & Privacy -->
+                <div class="setting-section">
+                    <h3>🔐 Data & Privacy</h3>
+                    <p>Manage your data and privacy settings</p>
+                    
+                    <div class="setting-card">
+                        <div class="setting-card-left">
+                            <i class="fas fa-download"></i>
+                            <div>
+                                <div class="title">Download My Data</div>
+                                <div class="desc">Export all your account data</div>
+                            </div>
+                        </div>
+                        <button class="btn-primary" onclick="showNotification('Data export coming soon!', 'success')">Download</button>
+                    </div>
+                    
+                    <div class="setting-card">
+                        <div class="setting-card-left">
+                            <i class="fas fa-user-secret"></i>
+                            <div>
+                                <div class="title">Privacy Settings</div>
+                                <div class="desc">Control your privacy preferences</div>
+                            </div>
+                        </div>
+                        <button class="btn-primary" onclick="showNotification('Privacy settings coming soon!', 'success')">Manage</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Product Modal -->
+    <div id="productModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Add New Product</h3>
+                <span style="cursor: pointer; font-size: 1.5rem;" onclick="closeProductModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="productForm">
+                    <div class="form-group">
+                        <label>Product Name</label>
+                        <input type="text" id="productName" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Price (Ksh)</label>
+                        <input type="number" id="productPrice" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Category</label>
+                        <select id="productCategory" required>
+                            <option value="">Select Category</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Stock Quantity</label>
+                        <input type="number" id="productStock" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Product Image URL</label>
+                        <div style="display: flex; gap: 10px; align-items: flex-start;">
+                            <div class="image-preview" id="imagePreview" style="width: 100px; height: 100px; background: #f1f5f9; border-radius: 12px; overflow: hidden;">
+                                <img id="previewImg" src="https://via.placeholder.com/100x100?text=Image" style="width: 100%; height: 100%; object-fit: cover;">
+                            </div>
+                            <div style="flex: 1;">
+                                <input type="text" id="productImage" placeholder="https://images.unsplash.com/..." style="width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 8px; background: var(--bg-secondary); color: var(--text-primary);">
+                                <button type="button" class="fetch-image-btn" onclick="autoFetchImage()">
+                                    <i class="fas fa-search"></i> Auto Fetch Image
+                                </button>
+                                <small style="color: var(--text-secondary); display: block; margin-top: 5px;">Use Unsplash, Pexels, or any image URL</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Description</label>
+                        <textarea id="productDescription" rows="3"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-primary" onclick="saveProduct()">Save Product</button>
+                <button style="background: #64748b;" class="btn-primary" onclick="closeProductModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Category Modal -->
+    <div id="categoryModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="categoryModalTitle">Add New Category</h3>
+                <span style="cursor: pointer; font-size: 1.5rem;" onclick="closeCategoryModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="categoryForm">
+                    <div class="form-group">
+                        <label>Category Name</label>
+                        <input type="text" id="categoryName" required placeholder="e.g., Electronics">
+                    </div>
+                    <div class="form-group">
+                        <label>Font Awesome Icon</label>
+                        <div style="display: flex; gap: 10px; align-items: center;">
+                            <div id="iconPreview" style="width: 50px; height: 50px; background: var(--bg-primary); border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+                                <i id="previewIcon" class="fas fa-tag" style="font-size: 1.5rem; color: var(--gradient-start);"></i>
+                            </div>
+                            <input type="text" id="categoryIcon" placeholder="fa-tag" value="fa-tag" style="flex: 1; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 8px; background: var(--bg-secondary); color: var(--text-primary);">
+                        </div>
+                        <small style="color: var(--text-secondary); display: block; margin-top: 5px;">
+                            Popular icons: fa-laptop, fa-tshirt, fa-apple-alt, fa-spa, fa-pills, fa-mobile-alt
+                        </small>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-primary" onclick="saveCategory()">Save Category</button>
+                <button style="background: #64748b;" class="btn-primary" onclick="closeCategoryModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Coupon Modal -->
+    <div id="couponModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="couponModalTitle">Create New Coupon</h3>
+                <span style="cursor: pointer; font-size: 1.5rem;" onclick="closeCouponModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="couponForm">
+                    <div class="form-group">
+                        <label>Coupon Code</label>
+                        <input type="text" id="couponCode" required placeholder="e.g., SAVE20" style="text-transform: uppercase;">
+                        <small style="color: var(--text-secondary);">Use uppercase letters and numbers only</small>
+                    </div>
+                    <div class="form-group">
+                        <label>Discount Amount</label>
+                        <input type="number" id="couponDiscount" required placeholder="e.g., 20">
+                        <small style="color: var(--text-secondary);">Enter percentage (e.g., 20 for 20% off)</small>
+                    </div>
+                    <div class="form-group">
+                        <label>Valid Until</label>
+                        <input type="date" id="couponValidUntil" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Status</label>
+                        <select id="couponStatus">
+                            <option value="active">Active</option>
+                            <option value="inactive">Inactive</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-primary" onclick="saveCoupon()">Create Coupon</button>
+                <button style="background: #64748b;" class="btn-primary" onclick="closeCouponModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Order Details Modal -->
+    <div id="orderDetailsModal" class="modal">
+        <div class="modal-content order-details-modal">
+            <div class="order-details-header">
+                <h3 style="color: white; margin: 0;">📦 Order Details</h3>
+                <span style="cursor: pointer; font-size: 1.5rem; float: right; color: white;" onclick="closeOrderDetailsModal()">&times;</span>
+            </div>
+            <div class="modal-body" id="orderDetailsContent">
+                <!-- Order details will be loaded here -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn-primary" onclick="closeOrderDetailsModal()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="notification" class="notification"></div>
+
+    <script>
+        const API_URL = 'http://localhost:5000/api';
+        let currentProductId = null;
+        let currentCategoryId = null;
+        let currentCouponId = null;
+
+        // ============ NOTIFICATION ============
+        function showNotification(message, type = 'success') {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.className = `notification ${type}`;
+            notification.classList.add('show');
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        // ============ AUTH ============
+        function checkAdminAuth() {
+            const user = localStorage.getItem('user');
+            if (!user) {
+                window.location.href = 'index.html';
+                return false;
+            }
+            const userData = JSON.parse(user);
+            if (!userData.isAdmin) {
+                window.location.href = 'index.html';
+                return false;
+            }
+            document.querySelector('#adminName span').textContent = userData.name;
+            return true;
+        }
+
+        function handleAdminLogout() {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            window.location.href = 'index.html';
+        }
+
+        // ============ THEME ============
+        function setTheme(theme) {
+            const toggles = document.querySelectorAll('.toggle');
+            if (theme === 'dark') {
+                document.body.classList.add('dark-mode');
+                toggles.forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.toggle')[1].classList.add('active');
+                localStorage.setItem('adminTheme', 'dark');
+            } else {
+                document.body.classList.remove('dark-mode');
+                toggles.forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.toggle')[0].classList.add('active');
+                localStorage.setItem('adminTheme', 'light');
+            }
+        }
+
+        function loadTheme() {
+            const savedTheme = localStorage.getItem('adminTheme');
+            if (savedTheme === 'dark') {
+                setTheme('dark');
+            } else {
+                setTheme('light');
+            }
+        }
+
+        // ============ TAB SWITCHING ============
+        function switchTab(tabName) {
+            // Update sidebar menu items
+            document.querySelectorAll('.menu-item').forEach(item => {
+                item.classList.remove('active');
+                if (item.dataset.tab === tabName) {
+                    item.classList.add('active');
+                }
+            });
+            
+            // Update tab contents
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            const targetTab = document.getElementById(tabName + 'Tab');
+            if (targetTab) {
+                targetTab.classList.add('active');
+            }
+            
+            // Load data for the selected tab
+            if (tabName === 'dashboard') loadStats();
+            else if (tabName === 'products') loadProducts();
+            else if (tabName === 'categories') loadCategories();
+            else if (tabName === 'coupons') loadCoupons();
+            else if (tabName === 'orders') loadOrders();
+            else if (tabName === 'users') loadUsers();
+        }
+
+        // Sidebar click handlers
+        document.querySelectorAll('.menu-item').forEach(item => {
+            item.addEventListener('click', () => {
+                switchTab(item.dataset.tab);
+            });
+        });
+
+        // ============ DASHBOARD STATS ============
+        async function loadStats() {
+            try {
+                const response = await fetch(`${API_URL}/admin/stats`);
+                const stats = await response.json();
+                const statsContainer = document.getElementById('statsContainer');
+                statsContainer.innerHTML = `
+                    <div class="stat-card"><div class="stat-info"><h3>Total Users</h3><div class="stat-number">${stats.totalUsers || 0}</div></div><div class="stat-icon"><i class="fas fa-users"></i></div></div>
+                    <div class="stat-card"><div class="stat-info"><h3>Total Products</h3><div class="stat-number">${stats.totalProducts || 0}</div></div><div class="stat-icon"><i class="fas fa-box"></i></div></div>
+                    <div class="stat-card"><div class="stat-info"><h3>Total Orders</h3><div class="stat-number">${stats.totalOrders || 0}</div></div><div class="stat-icon"><i class="fas fa-shopping-cart"></i></div></div>
+                    <div class="stat-card"><div class="stat-info"><h3>Pending Orders</h3><div class="stat-number">${stats.pendingOrders || 0}</div></div><div class="stat-icon"><i class="fas fa-clock"></i></div></div>
+                    <div class="stat-card"><div class="stat-info"><h3>Total Revenue</h3><div class="stat-number">Ksh ${(stats.totalRevenue || 0).toLocaleString()}</div></div><div class="stat-icon"><i class="fas fa-chart-line"></i></div></div>
+                `;
+            } catch (error) {
+                console.error('Failed to load stats:', error);
+            }
+        }
+
+        // ============ PRODUCTS ============
+        async function loadProducts() {
+            try {
+                const response = await fetch(`${API_URL}/products`);
+                const products = await response.json();
+                const container = document.getElementById('productsContainer');
+                if (!products || products.length === 0) {
+                    container.innerHTML = '<p style="text-align: center; padding: 2rem;">No products yet. Click "Add Product" to get started.</p>';
+                    return;
+                }
+                container.innerHTML = `
+                    <table><thead><tr><th>Image</th><th>Name</th><th>Price</th><th>Category</th><th>Stock</th><th>Actions</th></tr></thead>
+                    <tbody>${products.map(product => `
+                        <tr><td class="product-image-cell"><img src="${product.image || 'https://via.placeholder.com/50x50?text=Product'}" alt="${product.name}"></td>
+                        <td>${product.name}</td><td>Ksh ${product.price.toLocaleString()}</td>
+                        <td><span class="status-badge">${product.category}</span></td><td>${product.stock}</td>
+                        <td><button class="btn-edit" onclick="editProduct(${product.id})">Edit</button>
+                        <button class="btn-danger" onclick="deleteProduct(${product.id})">Delete</button></td></tr>
+                    `).join('')}</tbody></table>
+                `;
+            } catch (error) { console.error('Failed to load products:', error); }
+        }
+
+        async function autoFetchImage() {
+            const productName = document.getElementById('productName').value;
+            if (!productName) {
+                showNotification('Please enter product name first', 'error');
+                return;
+            }
+            showNotification('Fetching product image...', 'success');
+            const searchQuery = encodeURIComponent(productName);
+            const imageUrl = `https://source.unsplash.com/200x200/?${searchQuery}`;
+            document.getElementById('productImage').value = imageUrl;
+            document.getElementById('previewImg').src = imageUrl;
+        }
+
+        document.getElementById('productImage')?.addEventListener('input', (e) => {
+            if (e.target.value) {
+                document.getElementById('previewImg').src = e.target.value;
+            }
+        });
+
+        function showAddProductModal() {
+            currentProductId = null;
+            document.getElementById('modalTitle').textContent = 'Add New Product';
+            document.getElementById('productForm').reset();
+            document.getElementById('previewImg').src = 'https://via.placeholder.com/100x100?text=Preview';
+            document.getElementById('productModal').style.display = 'flex';
+            refreshCategoryDropdown();
+        }
+
+        function closeProductModal() {
+            document.getElementById('productModal').style.display = 'none';
+        }
+
+        async function refreshCategoryDropdown() {
+            const categorySelect = document.getElementById('productCategory');
+            if (!categorySelect) return;
+            try {
+                const response = await fetch(`${API_URL}/categories`);
+                const categories = await response.json();
+                const currentValue = categorySelect.value;
+                categorySelect.innerHTML = '<option value="">Select Category</option>' + 
+                    categories.map(cat => `<option value="${cat.name.toLowerCase()}">${cat.name}</option>`).join('');
+                if (currentValue && categories.some(cat => cat.name.toLowerCase() === currentValue)) {
+                    categorySelect.value = currentValue;
+                }
+            } catch (error) { console.error('Failed to refresh categories:', error); }
+        }
+
+        async function saveProduct() {
+            const product = {
+                name: document.getElementById('productName').value,
+                price: parseInt(document.getElementById('productPrice').value),
+                category: document.getElementById('productCategory').value,
+                stock: parseInt(document.getElementById('productStock').value),
+                image: document.getElementById('productImage').value || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=200',
+                description: document.getElementById('productDescription').value
+            };
+            if (!product.name || !product.price || !product.category) {
+                showNotification('Please fill all required fields', 'error');
+                return;
+            }
+            try {
+                let response;
+                if (currentProductId) {
+                    response = await fetch(`${API_URL}/products/${currentProductId}`, {
+                        method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(product)
+                    });
+                } else {
+                    response = await fetch(`${API_URL}/products`, {
+                        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(product)
+                    });
+                }
+                if (response.ok) {
+                    showNotification(currentProductId ? 'Product updated!' : 'Product added!');
+                    closeProductModal();
+                    loadProducts();
+                    loadStats();
+                }
+            } catch (error) { showNotification('Error saving product', 'error'); }
+        }
+
+        async function editProduct(id) {
+            try {
+                const response = await fetch(`${API_URL}/products`);
+                const products = await response.json();
+                const product = products.find(p => p.id === id);
+                if (product) {
+                    currentProductId = id;
+                    document.getElementById('modalTitle').textContent = 'Edit Product';
+                    document.getElementById('productName').value = product.name;
+                    document.getElementById('productPrice').value = product.price;
+                    document.getElementById('productCategory').value = product.category;
+                    document.getElementById('productStock').value = product.stock;
+                    document.getElementById('productImage').value = product.image || '';
+                    document.getElementById('productDescription').value = product.description || '';
+                    document.getElementById('previewImg').src = product.image || 'https://via.placeholder.com/100x100?text=Product';
+                    document.getElementById('productModal').style.display = 'flex';
+                    refreshCategoryDropdown();
+                }
+            } catch (error) { showNotification('Error loading product', 'error'); }
+        }
+
+        async function deleteProduct(id) {
+            if (confirm('Delete this product?')) {
+                try {
+                    await fetch(`${API_URL}/products/${id}`, { method: 'DELETE' });
+                    showNotification('Product deleted');
+                    loadProducts();
+                    loadStats();
+                } catch (error) { showNotification('Error deleting product', 'error'); }
+            }
+        }
+
+        // ============ CATEGORIES ============
+        async function loadCategories() {
+            try {
+                const response = await fetch(`${API_URL}/categories`);
+                const categories = await response.json();
+                const container = document.getElementById('categoriesContainer');
+                if (!categories || categories.length === 0) {
+                    container.innerHTML = '<p style="text-align: center; padding: 2rem;">No categories yet.</p>';
+                    return;
+                }
+                container.innerHTML = `
+                    <table><thead><tr><th>Icon</th><th>ID</th><th>Name</th><th>Icon Class</th><th>Created</th><th>Actions</th></tr></thead>
+                    <tbody>${categories.map(cat => `
+                        <tr><td><i class="fas ${cat.icon}" style="font-size: 1.5rem; color: var(--gradient-start);"></i></td>
+                        <td>${cat.id}</td><td><strong>${cat.name}</strong></td>
+                        <td><code>${cat.icon}</code></td>
+                        <td>${new Date(cat.createdAt).toLocaleDateString()}</td>
+                        <td><button class="btn-edit" onclick="editCategory(${cat.id})">Edit</button>
+                        <button class="btn-danger" onclick="deleteCategory(${cat.id})">Delete</button></td></tr>
+                    `).join('')}</tbody></table>
+                `;
+            } catch (error) { console.error('Failed to load categories:', error); }
+        }
+
+        function showAddCategoryModal() {
+            currentCategoryId = null;
+            document.getElementById('categoryModalTitle').textContent = 'Add New Category';
+            document.getElementById('categoryForm').reset();
+            document.getElementById('categoryModal').style.display = 'flex';
+        }
+
+        function closeCategoryModal() {
+            document.getElementById('categoryModal').style.display = 'none';
+        }
+
+        async function saveCategory() {
+            const categoryName = document.getElementById('categoryName').value;
+            let categoryIcon = document.getElementById('categoryIcon').value;
+            if (!categoryName) { showNotification('Please enter category name', 'error'); return; }
+            if (categoryIcon && !categoryIcon.startsWith('fa-')) categoryIcon = 'fa-' + categoryIcon;
+            if (!categoryIcon) categoryIcon = 'fa-tag';
+            try {
+                let response;
+                if (currentCategoryId) {
+                    response = await fetch(`${API_URL}/categories/${currentCategoryId}`, {
+                        method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: categoryName, icon: categoryIcon })
+                    });
+                } else {
+                    response = await fetch(`${API_URL}/categories`, {
+                        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: categoryName, icon: categoryIcon })
+                    });
+                }
+                if (response.ok) {
+                    showNotification(currentCategoryId ? 'Category updated!' : 'Category added!');
+                    closeCategoryModal();
+                    loadCategories();
+                    refreshCategoryDropdown();
+                }
+            } catch (error) { showNotification('Error saving category', 'error'); }
+        }
+
+        async function editCategory(id) {
+            try {
+                const response = await fetch(`${API_URL}/categories`);
+                const categories = await response.json();
+                const category = categories.find(c => c.id === id);
+                if (category) {
+                    currentCategoryId = id;
+                    document.getElementById('categoryModalTitle').textContent = 'Edit Category';
+                    document.getElementById('categoryName').value = category.name;
+                    document.getElementById('categoryIcon').value = category.icon;
+                    document.getElementById('categoryModal').style.display = 'flex';
+                }
+            } catch (error) { showNotification('Error loading category', 'error'); }
+        }
+
+        async function deleteCategory(id) {
+            if (confirm('Delete this category?')) {
+                try {
+                    await fetch(`${API_URL}/categories/${id}`, { method: 'DELETE' });
+                    showNotification('Category deleted');
+                    loadCategories();
+                    refreshCategoryDropdown();
+                } catch (error) { showNotification('Error deleting category', 'error'); }
+            }
+        }
+
+        // ============ COUPONS ============
+        async function loadCoupons() {
+            try {
+                const response = await fetch(`${API_URL}/coupons`);
+                const coupons = await response.json();
+                const container = document.getElementById('couponsContainer');
+                if (!coupons || coupons.length === 0) {
+                    container.innerHTML = '<p style="text-align: center; padding: 2rem;">No coupons created yet.</p>';
+                    return;
+                }
+                container.innerHTML = `
+                    <table><thead><tr><th>Code</th><th>Discount</th><th>Valid Until</th><th>Status</th><th>Created</th><th>Actions</th></tr></thead>
+                    <tbody>${coupons.map(coupon => `
+                        <tr><td><strong>${coupon.code}</strong></td>
+                        <td>${coupon.discount}%</td>
+                        <td>${new Date(coupon.validUntil).toLocaleDateString()}</td>
+                        <td><span class="status-badge status-${coupon.active ? 'active' : 'inactive'}">${coupon.active ? 'Active' : 'Inactive'}</span></td>
+                        <td>${new Date(coupon.createdAt).toLocaleDateString()}</td>
+                        <td><button class="btn-edit" onclick="editCoupon(${coupon.id})">Edit</button>
+                        <button class="btn-danger" onclick="deleteCoupon(${coupon.id})">Delete</button></td></tr>
+                    `).join('')}</tbody></table>
+                `;
+            } catch (error) { console.error('Failed to load coupons:', error); }
+        }
+
+        function showAddCouponModal() {
+            currentCouponId = null;
+            document.getElementById('couponModalTitle').textContent = 'Create New Coupon';
+            document.getElementById('couponForm').reset();
+            document.getElementById('couponModal').style.display = 'flex';
+        }
+
+        function closeCouponModal() {
+            document.getElementById('couponModal').style.display = 'none';
+        }
+
+        async function saveCoupon() {
+            const code = document.getElementById('couponCode').value.toUpperCase().trim();
+            const discount = document.getElementById('couponDiscount').value;
+            const validUntil = document.getElementById('couponValidUntil').value;
+            const status = document.getElementById('couponStatus').value;
+            if (!code || !discount || !validUntil) { showNotification('Please fill all required fields', 'error'); return; }
+            if (parseInt(discount) <= 0 || parseInt(discount) > 100) { showNotification('Discount must be between 1 and 100', 'error'); return; }
+            try {
+                let response;
+                if (currentCouponId) {
+                    response = await fetch(`${API_URL}/coupons/${currentCouponId}`, {
+                        method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ code, discount: parseInt(discount), validUntil: new Date(validUntil).toISOString(), active: status === 'active' })
+                    });
+                } else {
+                    response = await fetch(`${API_URL}/coupons`, {
+                        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ code, discount: parseInt(discount), validUntil: new Date(validUntil).toISOString(), active: status === 'active' })
+                    });
+                }
+                if (response.ok) {
+                    showNotification(currentCouponId ? 'Coupon updated!' : 'Coupon created!');
+                    closeCouponModal();
+                    loadCoupons();
+                }
+            } catch (error) { showNotification('Error saving coupon', 'error'); }
+        }
+
+        async function editCoupon(id) {
+            try {
+                const response = await fetch(`${API_URL}/coupons`);
+                const coupons = await response.json();
+                const coupon = coupons.find(c => c.id === id);
+                if (coupon) {
+                    currentCouponId = id;
+                    document.getElementById('couponModalTitle').textContent = 'Edit Coupon';
+                    document.getElementById('couponCode').value = coupon.code;
+                    document.getElementById('couponDiscount').value = coupon.discount;
+                    document.getElementById('couponValidUntil').value = new Date(coupon.validUntil).toISOString().split('T')[0];
+                    document.getElementById('couponStatus').value = coupon.active ? 'active' : 'inactive';
+                    document.getElementById('couponModal').style.display = 'flex';
+                }
+            } catch (error) { showNotification('Error loading coupon', 'error'); }
+        }
+
+        async function deleteCoupon(id) {
+            if (confirm('Delete this coupon?')) {
+                try {
+                    await fetch(`${API_URL}/coupons/${id}`, { method: 'DELETE' });
+                    showNotification('Coupon deleted');
+                    loadCoupons();
+                } catch (error) { showNotification('Error deleting coupon', 'error'); }
+            }
+        }
+
+        // ============ ORDERS ============
+        async function loadOrders() {
+            try {
+                const response = await fetch(`${API_URL}/admin/orders`);
+                const ordersData = await response.json();
+                const container = document.getElementById('ordersContainer');
+                if (ordersData.length === 0) {
+                    container.innerHTML = '<p style="text-align: center; padding: 2rem;">No orders yet</p>';
+                    return;
+                }
+                window.ordersList = ordersData;
+                container.innerHTML = `
+                    <table><thead><tr><th>Order ID</th><th>Customer</th><th>Total</th><th>Status</th><th>Date</th><th>Actions</th></tr></thead>
+                    <tbody>${ordersData.map(order => `
+                        <tr><td>#${order.id}</td><td>${order.deliveryAddress || 'N/A'}</td>
+                        <td>Ksh ${(order.totalAmount || 0).toLocaleString()}</td>
+                        <td><select onchange="updateOrderStatus(${order.id}, this.value)" class="status-badge status-${order.orderStatus}">
+                            <option value="pending" ${order.orderStatus === 'pending' ? 'selected' : ''}>Pending</option>
+                            <option value="approved" ${order.orderStatus === 'approved' ? 'selected' : ''}>Approved</option>
+                            <option value="shipped" ${order.orderStatus === 'shipped' ? 'selected' : ''}>Shipped</option>
+                            <option value="delivered" ${order.orderStatus === 'delivered' ? 'selected' : ''}>Delivered</option>
+                        </select></td>
+                        <td>${new Date(order.createdAt).toLocaleDateString()}</td>
+                        <td><button class="btn-edit" onclick="viewOrderDetails(${order.id})">View Details</button></td></tr>
+                    `).join('')}</tbody></table>
+                `;
+            } catch (error) { console.error('Failed to load orders:', error); }
+        }
+
+        async function updateOrderStatus(orderId, status) {
+            try {
+                await fetch(`${API_URL}/admin/orders/${orderId}/status`, {
+                    method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ orderStatus: status })
+                });
+                showNotification('Order status updated');
+                loadOrders();
+            } catch (error) { showNotification('Error updating status', 'error'); }
+        }
+
+        function viewOrderDetails(orderId) {
+            const order = window.ordersList?.find(o => o.id === orderId);
+            if (!order) { showNotification('Order not found', 'error'); return; }
+            const detailsHtml = `
+                <div class="order-info-section"><h4>Customer Information</h4><div class="order-info-grid">
+                    <div class="info-item"><span class="info-label">Full Name</span><span class="info-value">${order.customerName || 'Customer'}</span></div>
+                    <div class="info-item"><span class="info-label">Email</span><span class="info-value">${order.customerEmail || 'Not provided'}</span></div>
+                    <div class="info-item"><span class="info-label">Phone</span><span class="info-value">${order.customerPhone || 'Not provided'}</span></div>
+                    <div class="info-item"><span class="info-label">Order Date</span><span class="info-value">${new Date(order.createdAt).toLocaleString()}</span></div>
+                </div></div>
+                <div class="order-info-section"><h4>Delivery Address</h4>
+                    <div class="info-value"><i class="fas fa-location-dot"></i> ${order.deliveryAddress || 'Nairobi, Kenya'}</div>
+                    <div class="map-container"><iframe src="https://maps.google.com/maps?q=${encodeURIComponent(order.deliveryAddress || 'Nairobi, Kenya')}&output=embed" allowfullscreen></iframe></div>
+                    <button class="directions-btn" onclick="openDirections('${order.deliveryAddress || 'Nairobi, Kenya'}')"><i class="fas fa-directions"></i> Get Directions</button>
+                </div>
+                <div class="order-info-section"><h4>Order Items</h4><div class="products-list">${order.products?.map(item => `<div class="product-item"><div><strong>${item.name}</strong><div>Quantity: ${item.quantity}</div></div><div>Ksh ${(item.price * item.quantity).toLocaleString()}</div></div>`).join('') || '<p>No items</p>'}</div></div>
+                <div class="order-info-section"><h4>Payment Summary</h4><div class="order-info-grid">
+                    <div class="info-item"><span class="info-label">Payment Method</span><span class="info-value">${order.paymentMethod || 'Cash on Delivery'}</span></div>
+                    <div class="info-item"><span class="info-label">Total Amount</span><span class="info-value" style="color: var(--gradient-start); font-size: 1.25rem;">Ksh ${(order.totalAmount || 0).toLocaleString()}</span></div>
+                </div></div>
+            `;
+            document.getElementById('orderDetailsContent').innerHTML = detailsHtml;
+            document.getElementById('orderDetailsModal').style.display = 'flex';
+        }
+
+        function closeOrderDetailsModal() {
+            document.getElementById('orderDetailsModal').style.display = 'none';
+        }
+
+        function openDirections(address) {
+            window.open(`https://www.google.com/maps/dir/Nairobi, Kenya/${encodeURIComponent(address)}`, '_blank');
+        }
+
+        // ============ USERS ============
+        async function loadUsers() {
+            try {
+                const response = await fetch(`${API_URL}/admin/users`);
+                const users = await response.json();
+                const container = document.getElementById('usersContainer');
+                container.innerHTML = `
+                    <table><thead><tr><th>Name</th><th>Email</th><th>Phone</th><th>Role</th><th>Joined</th><th>Actions</th></tr></thead>
+                    <tbody>${users.map(user => `
+                        <tr><td><i class="fas fa-user-circle" style="color: var(--gradient-start);"></i> ${user.name}</td>
+                        <td>${user.email}</td><td>${user.phone || 'Not provided'}</td>
+                        <td>${user.isAdmin ? '<span class="status-badge" style="background: var(--gradient-start); color:white;">Admin</span>' : '<span class="status-badge" style="background: #10b981; color:white;">Customer</span>'}</td>
+                        <td>${new Date(user.createdAt || Date.now()).toLocaleDateString()}</td>
+                        <td>${!user.isAdmin ? `<button class="btn-danger" onclick="deleteUser(${user.id})">Delete</button>` : 'Protected'}</td></tr>
+                    `).join('')}</tbody></table>
+                `;
+            } catch (error) { console.error('Failed to load users:', error); }
+        }
+
+        async function deleteUser(userId) {
+            if (confirm('Delete this user?')) {
+                try {
+                    await fetch(`${API_URL}/admin/users/${userId}`, { method: 'DELETE' });
+                    showNotification('User deleted');
+                    loadUsers();
+                    loadStats();
+                } catch (error) { showNotification('Error deleting user', 'error'); }
+            }
+        }
+
+        // ============ INITIALIZE ============
+        if (checkAdminAuth()) {
+            loadTheme();
+            loadStats();
+        }
+    </script>
+</body>
+</html>

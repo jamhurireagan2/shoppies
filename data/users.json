@@ -1,0 +1,31 @@
+[
+  {
+    "id": 1,
+    "email": "admin@shoppies.com",
+    "password": "admin123",
+    "name": "Admin User",
+    "phone": "0712345678",
+    "isAdmin": true,
+    "createdAt": "2026-06-15T08:50:05.099Z"
+  },
+  {
+    "id": 2,
+    "email": "jamhurireagan@zetech.ac.ke",
+    "password": "@reaganmadola254",
+    "name": "JAMHURI REAGAN",
+    "phone": "0113166257",
+    "isAdmin": false,
+    "createdAt": "2026-06-15T08:53:46.666Z"
+  },
+  {
+    "id": 3,
+    "email": "jamhurireagan@zetech.ac.ke",
+    "password": "@reaganmadola254",
+    "name": "REGO",
+    "phone": "254113166257",
+    "isAdmin": false,
+    "isActive": true,
+    "accountNumber": "ACC-000003",
+    "createdAt": "2026-06-16T08:04:35.964Z"
+  }
+]
