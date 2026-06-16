@@ -9,22 +9,27 @@ dotenv.config();
 
 const app = express();
 
-// Middleware
+// Middleware - Updated CORS to allow your frontend domains
 app.use(cors({
-  origin: '*',
+  origin: ['https://shoppies-sigma.vercel.app', 'https://shoppies.vercel.app', 'http://localhost:3000', 'http://localhost:8080'],
   credentials: true
 }));
 app.use(express.json());
 
-// MongoDB Connection
-const MONGODB_URI = 'mongodb+srv://shoppies_admin:Reaganmadola254@shoppiescluster.ynf1ybt.mongodb.net/?appName=shoppiesCluster';
+// MongoDB Connection with better error handling
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb+srv://shoppies_admin:Reaganmadola254@shoppiescluster.ynf1ybt.mongodb.net/?appName=shoppiesCluster';
 
-mongoose.connect(MONGODB_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-})
-.then(() => console.log('✅ Connected to MongoDB Atlas!'))
-.catch(err => console.error('❌ MongoDB error:', err.message));
+console.log('🔐 Connecting to MongoDB...');
+
+mongoose.connect(MONGODB_URI)
+  .then(() => {
+    console.log('✅ Connected to MongoDB Atlas!');
+    console.log('📊 Database:', mongoose.connection.db.databaseName);
+  })
+  .catch(err => {
+    console.error('❌ MongoDB connection error:', err.message);
+    console.error('💡 Tip: Check your MONGODB_URI environment variable');
+  });
 
 // ============ MODELS ============
 const userSchema = new mongoose.Schema({
@@ -186,6 +191,7 @@ app.get('/api/products', async (req, res) => {
     const products = await Product.find(filter).sort({ createdAt: -1 });
     res.json(products);
   } catch (error) {
+    console.error('Error fetching products:', error);
     res.status(500).json({ error: error.message });
   }
 });
@@ -391,10 +397,21 @@ app.delete('/api/admin/users/:id', authMiddleware, adminMiddleware, async (req, 
   }
 });
 
+// ============ HEALTH CHECK ============
+app.get('/api/health', (req, res) => {
+  res.json({ 
+    status: 'OK', 
+    timestamp: new Date().toISOString(),
+    database: mongoose.connection.readyState === 1 ? 'Connected' : 'Disconnected',
+    uptime: process.uptime()
+  });
+});
+
 // ============ START SERVER ============
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
   console.log(`🚀 Backend running on port ${PORT}`);
   console.log(`📡 API URL: http://localhost:${PORT}`);
   console.log('🔐 Admin Login: admin@shoppies.com / admin123');
+  console.log('📊 MongoDB Status:', mongoose.connection.readyState === 1 ? '✅ Connected' : '❌ Disconnected');
 });
