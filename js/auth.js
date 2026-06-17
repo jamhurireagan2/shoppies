@@ -1,9 +1,11 @@
-
 async function handleLogin(event) {
     event.preventDefault();
     
     const email = document.getElementById('loginEmail').value;
     const password = document.getElementById('loginPassword').value;
+    
+    // Debug - check if API_URL exists
+    console.log('API_URL:', API_URL);
     
     try {
         const response = await fetch(`${API_URL}/auth/login`, {
@@ -105,6 +107,10 @@ function switchTab(tab) {
         tabs[0].classList.remove('active');
     }
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+    console.log('Auth.js loaded, API_URL:', API_URL);
+});
 
 document.addEventListener('click', (e) => {
     const modal = document.getElementById('authModal');

@@ -1,5 +1,5 @@
 // API Configuration - Production
-
+const API_URL = 'https://shoppies-backend.onrender.com/api';
 
 // Helper function for API calls
 async function apiCall(endpoint, method = 'GET', data = null) {
@@ -79,17 +79,3 @@ function logout() {
         window.location.href = 'index.html';
     }, 1000);
 }
-
-document.addEventListener('DOMContentLoaded', () => {
-    updateCartCount();
-    
-    const menuToggle = document.getElementById('menuToggle');
-    if (menuToggle) {
-        menuToggle.addEventListener('click', () => {
-            const navLinks = document.querySelector('.nav-links');
-            if (navLinks) {
-                navLinks.classList.toggle('show');
-            }
-        });
-    }
-});
