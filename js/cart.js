@@ -1,3 +1,6 @@
+// API Configuration
+const API_URL = 'https://shoppies-backend.onrender.com/api';
+
 // Add to cart
 async function addToCart(productId, name, price) {
     if (!isLoggedIn()) {
@@ -112,13 +115,73 @@ async function loadCart() {
                 <span>Total:</span>
                 <span>Ksh ${total.toLocaleString()}</span>
             </div>
-            <button class="btn-primary btn-full" onclick="window.location.href='checkout.html'">
+            <button class="btn-primary btn-full" onclick="proceedToCheckout()">
                 Proceed to Checkout
             </button>
         </div>
     `;
     
     cartContainer.innerHTML = cartHtml;
+}
+
+// Proceed to checkout with token validation
+function proceedToCheckout() {
+    const token = localStorage.getItem('token');
+    console.log('Token for checkout:', token ? 'Present' : 'Missing');
+    
+    if (!token) {
+        showNotification('Please login first', 'error');
+        window.location.href = 'index.html';
+        return;
+    }
+    
+    // Verify token is valid by checking user
+    const user = getCurrentUser();
+    if (!user) {
+        showNotification('Session expired. Please login again.', 'error');
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        window.location.href = 'index.html';
+        return;
+    }
+    
+    window.location.href = 'checkout.html';
+}
+
+// Place order function (to be called from checkout page)
+async function placeOrder(orderData) {
+    const token = localStorage.getItem('token');
+    console.log('Token for order:', token ? 'Present' : 'Missing');
+    
+    if (!token) {
+        showNotification('Please login to place order', 'error');
+        window.location.href = 'index.html';
+        return { success: false, error: 'Not logged in' };
+    }
+    
+    try {
+        const response = await fetch(`${API_URL}/orders`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(orderData)
+        });
+        
+        const result = await response.json();
+        console.log('Order response:', result);
+        
+        if (!response.ok) {
+            throw new Error(result.error || 'Failed to place order');
+        }
+        
+        return { success: true, data: result };
+    } catch (error) {
+        console.error('Order error:', error);
+        showNotification(error.message, 'error');
+        return { success: false, error: error.message };
+    }
 }
 
 // Initialize cart page
