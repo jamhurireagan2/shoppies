@@ -1,4 +1,4 @@
-// API Configuration
+// API Configuration - Production
 const API_URL = 'https://shoppies-backend.onrender.com/api';
 
 // Helper function for API calls
@@ -34,20 +34,21 @@ async function apiCall(endpoint, method = 'GET', data = null) {
     }
 }
 
-// Show notification
 function showNotification(message, type = 'success') {
-    const notification = document.getElementById('notification');
-    if (!notification) return;
-    
+    let notification = document.getElementById('notification');
+    if (!notification) {
+        notification = document.createElement('div');
+        notification.id = 'notification';
+        notification.className = 'notification';
+        document.body.appendChild(notification);
+    }
     notification.textContent = message;
     notification.className = `notification ${type} show`;
-    
     setTimeout(() => {
         notification.classList.remove('show');
     }, 3000);
 }
 
-// Update cart count
 function updateCartCount() {
     const cart = JSON.parse(localStorage.getItem('cart') || '[]');
     const count = cart.reduce((sum, item) => sum + item.quantity, 0);
@@ -57,23 +58,19 @@ function updateCartCount() {
     });
 }
 
-// Get current user
 function getCurrentUser() {
     const user = localStorage.getItem('user');
     return user ? JSON.parse(user) : null;
 }
 
-// Check if logged in
 function isLoggedIn() {
     return !!localStorage.getItem('token');
 }
 
-// Go to category
 function goToCategory(category) {
     window.location.href = `products.html?category=${category}`;
 }
 
-// Logout
 function logout() {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
@@ -83,32 +80,9 @@ function logout() {
     }, 1000);
 }
 
-// AOS initialization (simple scroll animations)
-function initAnimations() {
-    const elements = document.querySelectorAll('[data-aos]');
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.style.opacity = '1';
-                entry.target.style.transform = 'translateY(0)';
-            }
-        });
-    });
-    
-    elements.forEach(el => {
-        el.style.opacity = '0';
-        el.style.transform = 'translateY(20px)';
-        el.style.transition = 'all 0.6s ease';
-        observer.observe(el);
-    });
-}
-
-// Initialize on page load
 document.addEventListener('DOMContentLoaded', () => {
     updateCartCount();
-    initAnimations();
     
-    // Mobile menu toggle
     const menuToggle = document.getElementById('menuToggle');
     if (menuToggle) {
         menuToggle.addEventListener('click', () => {

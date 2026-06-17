@@ -1,3 +1,5 @@
+const API_URL = 'https://shoppies-backend.onrender.com/api';
+
 // Load products
 async function loadProducts(category = 'all') {
     const container = document.getElementById('productsContainer');
@@ -11,25 +13,28 @@ async function loadProducts(category = 'all') {
             url += `?category=${category}`;
         }
         
+        console.log('Fetching from:', url);
         const response = await fetch(url);
         const products = await response.json();
         
-        if (products.length === 0) {
-            container.innerHTML = '<div class="empty-state"><i class="fas fa-box-open"></i><h3>No products found</h3></div>';
+        console.log('Products loaded:', products.length);
+        
+        if (!products || products.length === 0) {
+            container.innerHTML = '<div class="empty-state"><i class="fas fa-box-open"></i><h3>No products found</h3><p>Check back later for new items!</p></div>';
             return;
         }
         
         container.innerHTML = products.map(product => `
             <div class="product-card glass-card">
                 <div class="product-image">
-                    <i class="fas ${getCategoryIcon(product.category)}"></i>
+                    <img src="${product.image || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=200'}" alt="${product.name}" onerror="this.src='https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=200'">
                     ${product.stock < 10 ? '<span class="product-badge">Low Stock</span>' : ''}
                 </div>
                 <div class="product-info">
                     <h3>${product.name}</h3>
                     <p class="product-price">Ksh ${product.price.toLocaleString()}</p>
                     <div class="product-actions">
-                        <button class="btn-primary" onclick="addToCart('${product._id}', '${product.name}', ${product.price})">
+                        <button class="btn-primary" onclick="addToCart('${product.id || product._id}', '${product.name}', ${product.price})">
                             Add to Cart
                         </button>
                     </div>
@@ -38,8 +43,8 @@ async function loadProducts(category = 'all') {
         `).join('');
         
     } catch (error) {
-        container.innerHTML = '<div class="error-state"><i class="fas fa-exclamation-triangle"></i><h3>Failed to load products</h3></div>';
-        showNotification('Failed to load products', 'error');
+        console.error('Error:', error);
+        container.innerHTML = '<div class="error-state"><i class="fas fa-exclamation-triangle"></i><h3>Cannot connect to backend</h3><p>Make sure backend is running</p></div>';
     }
 }
 
@@ -54,7 +59,6 @@ function getCategoryIcon(category) {
     return icons[category] || 'fa-box';
 }
 
-// Filter products
 function filterProducts(category) {
     const filters = document.querySelectorAll('.filter-btn');
     filters.forEach(btn => {
@@ -67,14 +71,12 @@ function filterProducts(category) {
     loadProducts(category);
 }
 
-// Initialize products page
 if (document.getElementById('productsContainer')) {
     document.addEventListener('DOMContentLoaded', () => {
         const urlParams = new URLSearchParams(window.location.search);
         const category = urlParams.get('category') || 'all';
         loadProducts(category);
         
-        // Add filter event listeners
         const filters = document.querySelectorAll('.filter-btn');
         filters.forEach(btn => {
             btn.addEventListener('click', () => {

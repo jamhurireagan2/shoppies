@@ -1,4 +1,5 @@
-// Handle login
+const API_URL = 'https://shoppies-backend.onrender.com/api';
+
 async function handleLogin(event) {
     event.preventDefault();
     
@@ -6,26 +7,37 @@ async function handleLogin(event) {
     const password = document.getElementById('loginPassword').value;
     
     try {
-        const data = await apiCall('/auth/login', 'POST', { email, password });
+        const response = await fetch(`${API_URL}/auth/login`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password })
+        });
+        
+        const data = await response.json();
+        console.log('Login response:', data);
+        
+        if (!response.ok) {
+            throw new Error(data.error || 'Login failed');
+        }
         
         localStorage.setItem('token', data.token);
         localStorage.setItem('user', JSON.stringify(data.user));
         
-        showNotification('Login successful! Redirecting...', 'success');
+        showNotification('Login successful!', 'success');
         
         setTimeout(() => {
             if (data.user.isAdmin) {
                 window.location.href = 'admin.html';
             } else {
-                window.location.href = 'products.html';
+                window.location.href = 'dashboard.html';
             }
-        }, 1500);
+        }, 1000);
     } catch (error) {
+        console.error('Login error:', error);
         showNotification(error.message, 'error');
     }
 }
 
-// Handle signup
 async function handleSignup(event) {
     event.preventDefault();
     
@@ -35,22 +47,33 @@ async function handleSignup(event) {
     const password = document.getElementById('signupPassword').value;
     
     try {
-        const data = await apiCall('/auth/register', 'POST', { name, phone, email, password });
+        const response = await fetch(`${API_URL}/auth/register`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name, phone, email, password })
+        });
+        
+        const data = await response.json();
+        console.log('Signup response:', data);
+        
+        if (!response.ok) {
+            throw new Error(data.error || 'Signup failed');
+        }
         
         localStorage.setItem('token', data.token);
         localStorage.setItem('user', JSON.stringify(data.user));
         
-        showNotification('Account created successfully! Redirecting...', 'success');
+        showNotification('Account created!', 'success');
         
         setTimeout(() => {
-            window.location.href = 'products.html';
+            window.location.href = 'dashboard.html';
         }, 1500);
     } catch (error) {
+        console.error('Signup error:', error);
         showNotification(error.message, 'error');
     }
 }
 
-// Open modal
 function openModal(type) {
     const modal = document.getElementById('authModal');
     if (modal) {
@@ -59,7 +82,6 @@ function openModal(type) {
     }
 }
 
-// Close modal
 function closeModal() {
     const modal = document.getElementById('authModal');
     if (modal) {
@@ -67,7 +89,6 @@ function closeModal() {
     }
 }
 
-// Switch modal tab
 function switchTab(tab) {
     const loginForm = document.getElementById('loginForm');
     const signupForm = document.getElementById('signupForm');
@@ -85,44 +106,7 @@ function switchTab(tab) {
         tabs[0].classList.remove('active');
     }
 }
-// Update the handleLogin function
-async function handleLogin(event) {
-    event.preventDefault();
-    
-    const email = document.getElementById('loginEmail').value;
-    const password = document.getElementById('loginPassword').value;
-    
-    try {
-        const response = await fetch('http://localhost:5000/api/auth/login', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email, password })
-        });
-        
-        const data = await response.json();
-        
-        if (!response.ok) {
-            throw new Error(data.error || 'Login failed');
-        }
-        
-        localStorage.setItem('token', data.token);
-        localStorage.setItem('user', JSON.stringify(data.user));
-        
-        showNotification('Login successful!', 'success');
-        
-        setTimeout(() => {
-            if (data.user.isAdmin) {
-                window.location.href = 'admin.html';
-            } else {
-                window.location.href = 'dashboard.html';  // Changed from products.html
-            }
-        }, 1000);
-    } catch (error) {
-        showNotification(error.message, 'error');
-    }
-}
 
-// Close modal on outside click
 document.addEventListener('click', (e) => {
     const modal = document.getElementById('authModal');
     if (e.target === modal) {
