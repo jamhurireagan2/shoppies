@@ -1,4 +1,3 @@
-const API_URL = 'https://shoppies-backend.onrender.com/api';
 
 // Load products
 async function loadProducts(category = 'all') {

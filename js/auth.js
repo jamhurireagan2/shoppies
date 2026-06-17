@@ -1,4 +1,3 @@
-const API_URL = 'https://shoppies-backend.onrender.com/api';
 
 async function handleLogin(event) {
     event.preventDefault();
