@@ -9,15 +9,15 @@ dotenv.config();
 
 const app = express();
 
-// Middleware - Updated CORS to allow your frontend domains
+// Middleware
 app.use(cors({
   origin: ['https://shoppies-sigma.vercel.app', 'https://shoppies.vercel.app', 'http://localhost:3000', 'http://localhost:8080'],
   credentials: true
 }));
 app.use(express.json());
 
-// MongoDB Connection with better error handling
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb+srv://shoppies_admin:Reaganmadola254@shoppiescluster.ynf1ybt.mongodb.net/?appName=shoppiesCluster';
+// MongoDB Connection - FIXED: Using 'shoppies' database
+const MONGODB_URI = 'mongodb+srv://shoppies_admin:Reaganmadola254@shoppiescluster.ynf1ybt.mongodb.net/shoppies?retryWrites=true&w=majority&appName=shoppiesCluster';
 
 console.log('🔐 Connecting to MongoDB...');
 
@@ -28,7 +28,6 @@ mongoose.connect(MONGODB_URI)
   })
   .catch(err => {
     console.error('❌ MongoDB connection error:', err.message);
-    console.error('💡 Tip: Check your MONGODB_URI environment variable');
   });
 
 // ============ MODELS ============
@@ -403,7 +402,7 @@ app.get('/api/health', (req, res) => {
     status: 'OK', 
     timestamp: new Date().toISOString(),
     database: mongoose.connection.readyState === 1 ? 'Connected' : 'Disconnected',
-    uptime: process.uptime()
+    databaseName: mongoose.connection.db?.databaseName || 'Unknown'
   });
 });
 
@@ -414,4 +413,5 @@ app.listen(PORT, '0.0.0.0', () => {
   console.log(`📡 API URL: http://localhost:${PORT}`);
   console.log('🔐 Admin Login: admin@shoppies.com / admin123');
   console.log('📊 MongoDB Status:', mongoose.connection.readyState === 1 ? '✅ Connected' : '❌ Disconnected');
+  console.log('📊 Database:', mongoose.connection.db?.databaseName || 'Unknown');
 });
