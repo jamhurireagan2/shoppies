@@ -1,6 +1,3 @@
-// Remove this line:
-// const API_URL = 'https://shoppies-backend.onrender.com/api';
-
 // Add to cart
 async function addToCart(productId, name, price) {
     if (!isLoggedIn()) {
