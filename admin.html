@@ -458,183 +458,341 @@
             <div class="users-container" id="usersContainer"></div>
         </div>
 
-        <!-- Settings -->
-        <div id="settingsTab" class="tab-content">
-            <div class="settings-content">
-                <div class="settings-header">
-                    <div>
-                        <h2>⚙️ Account Settings</h2>
-                        <div class="subtitle">Manage your preferences and account security</div>
-                    </div>
-                    <button class="back-btn" onclick="switchTab('dashboard')">
-                        <i class="fas fa-arrow-left"></i> Back to Dashboard
-                    </button>
-                </div>
+        <!-- Settings Tab -->
+<div id="settingsTab" class="tab-content">
+    <div class="settings-content">
+        <div class="settings-header">
+            <div>
+                <h2>⚙️ Store Settings</h2>
+                <div class="subtitle">Manage your store preferences and configurations</div>
+            </div>
+            <button class="back-btn" onclick="switchTab('dashboard')">
+                <i class="fas fa-arrow-left"></i> Back to Dashboard
+            </button>
+        </div>
 
-                <!-- Wallet -->
-                <div class="setting-section">
-                    <h3>💰 Online Wallet System</h3>
-                    <p>Manage your wallet balance and transactions</p>
-                    <div class="wallet-balance">
-                        <div class="label">Available Balance</div>
-                        <div class="amount">Ksh 0.00</div>
-                        <div class="label" style="margin-top: 0.5rem;">Total Deposits: Ksh 0.00</div>
-                    </div>
-                    <div class="wallet-actions">
-                        <div class="wallet-action" onclick="showNotification('Send Money feature coming soon!', 'success')">
-                            <i class="fas fa-paper-plane"></i>
-                            <div class="action-label">Send Money</div>
-                        </div>
-                        <div class="wallet-action" onclick="showNotification('Deposit feature coming soon!', 'success')">
-                            <i class="fas fa-plus-circle"></i>
-                            <div class="action-label">Deposit Funds</div>
-                        </div>
-                        <div class="wallet-action" onclick="showNotification('Transaction history coming soon!', 'success')">
-                            <i class="fas fa-history"></i>
-                            <div class="action-label">Transaction History</div>
-                        </div>
+        <!-- Admin Profile -->
+        <div class="setting-section">
+            <h3>👤 Admin Profile</h3>
+            <p>Manage your profile information and avatar</p>
+            
+            <div class="setting-card" style="display: flex; gap: 2rem; align-items: center; padding: 1.5rem;">
+                <div style="text-align: center;">
+                    <img id="adminProfileAvatar" src="https://ui-avatars.com/api/?background=6366f1&color=fff&bold=true&name=Admin" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 3px solid var(--gradient-start);">
+                    <div style="margin-top: 0.5rem;">
+                        <label for="adminAvatarUpload" style="background: var(--gradient-start); color: white; padding: 0.25rem 1rem; border-radius: 50px; cursor: pointer; font-size: 0.75rem;">
+                            <i class="fas fa-camera"></i> Change Photo
+                        </label>
+                        <input type="file" id="adminAvatarUpload" accept="image/*" style="display: none;" onchange="uploadAdminAvatar(event)">
                     </div>
                 </div>
-
-                <!-- Appearance -->
-                <div class="setting-section">
-                    <h3>🎨 Appearance</h3>
-                    <p>Choose your preferred theme</p>
-                    <div class="setting-card">
-                        <div class="setting-card-left">
-                            <i class="fas fa-sun"></i>
-                            <div>
-                                <div class="title">Light Mode</div>
-                                <div class="desc">Default light theme</div>
-                            </div>
+                <div style="flex: 1;">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div>
+                            <label style="font-size: 0.75rem; color: var(--text-secondary);">Full Name</label>
+                            <input type="text" id="adminFullName" value="Admin User" style="width: 100%; padding: 0.5rem; border: 1px solid var(--border-color); border-radius: 8px; background: var(--bg-secondary); color: var(--text-primary);">
                         </div>
-                        <div class="toggle active" onclick="setTheme('light')"></div>
-                    </div>
-                    <div class="setting-card">
-                        <div class="setting-card-left">
-                            <i class="fas fa-moon"></i>
-                            <div>
-                                <div class="title">Dark Mode</div>
-                                <div class="desc">Dark theme for low light</div>
-                            </div>
+                        <div>
+                            <label style="font-size: 0.75rem; color: var(--text-secondary);">Email Address</label>
+                            <input type="email" id="adminEmail" value="admin@shoppies.com" style="width: 100%; padding: 0.5rem; border: 1px solid var(--border-color); border-radius: 8px; background: var(--bg-secondary); color: var(--text-primary);">
                         </div>
-                        <div class="toggle" onclick="setTheme('dark')"></div>
-                    </div>
-                </div>
-
-                <!-- Currency -->
-                <div class="setting-section">
-                    <h3>💰 Currency Preferences</h3>
-                    <p>Choose your preferred display currency</p>
-                    <div class="setting-card">
-                        <div class="setting-card-left">
-                            <i class="fas fa-dollar-sign"></i>
-                            <div>
-                                <div class="title">Display Currency</div>
-                                <div class="desc">KES - Kenyan Shilling (Ksh)</div>
-                            </div>
+                        <div>
+                            <label style="font-size: 0.75rem; color: var(--text-secondary);">Phone Number</label>
+                            <input type="tel" id="adminPhone" value="0712345678" style="width: 100%; padding: 0.5rem; border: 1px solid var(--border-color); border-radius: 8px; background: var(--bg-secondary); color: var(--text-primary);">
                         </div>
-                        <select class="select-input">
-                            <option>KES - Kenyan Shilling (Ksh)</option>
-                            <option>USD - US Dollar ($)</option>
-                            <option>EUR - Euro (€)</option>
-                            <option>GBP - British Pound (£)</option>
-                        </select>
-                    </div>
-                </div>
-
-                <!-- Notifications -->
-                <div class="setting-section">
-                    <h3>🔔 Notification Settings</h3>
-                    <p>Control how and when you receive notifications</p>
-                    <div class="setting-card">
-                        <div class="setting-card-left">
-                            <i class="fas fa-envelope"></i>
-                            <div><div class="title">Email Notifications</div><div class="desc">Receive account updates via email</div></div>
+                        <div style="display: flex; align-items: flex-end;">
+                            <button class="btn-primary" onclick="saveAdminProfile()" style="padding: 0.5rem 1.5rem;">Save Profile</button>
                         </div>
-                        <div class="toggle active" onclick="this.classList.toggle('active')"></div>
-                    </div>
-                    <div class="setting-card">
-                        <div class="setting-card-left">
-                            <i class="fas fa-sms"></i>
-                            <div><div class="title">SMS Notifications</div><div class="desc">Receive SMS alerts for transactions</div></div>
-                        </div>
-                        <div class="toggle" onclick="this.classList.toggle('active')"></div>
-                    </div>
-                    <div class="setting-card">
-                        <div class="setting-card-left">
-                            <i class="fas fa-bell"></i>
-                            <div><div class="title">Transaction Alerts</div><div class="desc">Get notified for every transaction</div></div>
-                        </div>
-                        <div class="toggle active" onclick="this.classList.toggle('active')"></div>
-                    </div>
-                    <div class="setting-card">
-                        <div class="setting-card-left">
-                            <i class="fas fa-bullhorn"></i>
-                            <div><div class="title">Marketing Emails</div><div class="desc">Receive promotions and offers</div></div>
-                        </div>
-                        <div class="toggle" onclick="this.classList.toggle('active')"></div>
-                    </div>
-                </div>
-
-                <!-- Security -->
-                <div class="setting-section">
-                    <h3>🔒 Security Settings</h3>
-                    <p>Enhance your account security</p>
-                    <div class="setting-card">
-                        <div class="setting-card-left">
-                            <i class="fas fa-shield-alt"></i>
-                            <div><div class="title">Two-Factor Authentication (2FA)</div><div class="desc">Add an extra layer of security to your account</div></div>
-                        </div>
-                        <button class="btn-primary" onclick="showNotification('2FA setup coming soon!', 'success')">Enable</button>
-                    </div>
-                </div>
-
-                <!-- Danger Zone -->
-                <div class="setting-section">
-                    <h3 style="color: #ef4444;">⚠️ Danger Zone</h3>
-                    <p style="color: #991b1b;">Irreversible account actions</p>
-                    <div class="danger-zone">
-                        <h4>🗑️ Deactivate Account</h4>
-                        <p>Once you deactivate your account, you will not be able to login until an admin reactivates it.</p>
-                        <div style="margin-top: 0.75rem; display: flex; gap: 0.5rem; align-items: center;">
-                            <input type="password" placeholder="Enter your password to confirm" style="padding: 0.5rem 1rem; border: 1px solid var(--border-color); border-radius: 8px; background: var(--bg-secondary); color: var(--text-primary); flex: 1;">
-                            <button class="btn-danger" onclick="showNotification('Account deactivation disabled. Contact support.', 'error')">Deactivate</button>
-                        </div>
-                    </div>
-                    <div class="danger-zone" style="margin-top: 1rem;">
-                        <h4>🗑️ Delete Account</h4>
-                        <p>Permanently delete your account and all data. This action cannot be undone.</p>
-                        <button class="btn-danger" style="margin-top: 0.75rem;" onclick="showNotification('Account deletion is disabled. Please contact administrator for assistance.', 'error')">
-                            <i class="fas fa-exclamation-triangle"></i> Delete Account
-                        </button>
-                        <p style="margin-top: 0.5rem; font-size: 0.75rem; color: #991b1b;">
-                            Account deletion is disabled. Please contact administrator for assistance.
-                        </p>
-                    </div>
-                </div>
-
-                <!-- Data & Privacy -->
-                <div class="setting-section">
-                    <h3>🔐 Data & Privacy</h3>
-                    <p>Manage your data and privacy settings</p>
-                    <div class="setting-card">
-                        <div class="setting-card-left">
-                            <i class="fas fa-download"></i>
-                            <div><div class="title">Download My Data</div><div class="desc">Export all your account data</div></div>
-                        </div>
-                        <button class="btn-primary" onclick="showNotification('Data export coming soon!', 'success')">Download</button>
-                    </div>
-                    <div class="setting-card">
-                        <div class="setting-card-left">
-                            <i class="fas fa-user-secret"></i>
-                            <div><div class="title">Privacy Settings</div><div class="desc">Control your privacy preferences</div></div>
-                        </div>
-                        <button class="btn-primary" onclick="showNotification('Privacy settings coming soon!', 'success')">Manage</button>
                     </div>
                 </div>
             </div>
         </div>
+
+        <!-- Appearance -->
+        <div class="setting-section">
+            <h3>🎨 Appearance</h3>
+            <p>Customize your admin panel appearance</p>
+            
+            <div class="setting-card">
+                <div class="setting-card-left">
+                    <i class="fas fa-sun"></i>
+                    <div>
+                        <div class="title">Light Mode</div>
+                        <div class="desc">Default light theme for the admin panel</div>
+                    </div>
+                </div>
+                <div class="toggle active" onclick="setTheme('light')"></div>
+            </div>
+            
+            <div class="setting-card">
+                <div class="setting-card-left">
+                    <i class="fas fa-moon"></i>
+                    <div>
+                        <div class="title">Dark Mode</div>
+                        <div class="desc">Dark theme for low light environments</div>
+                    </div>
+                </div>
+                <div class="toggle" onclick="setTheme('dark')"></div>
+            </div>
+            
+            <div class="setting-card">
+                <div class="setting-card-left">
+                    <i class="fas fa-palette"></i>
+                    <div>
+                        <div class="title">Accent Color</div>
+                        <div class="desc">Choose your preferred accent color</div>
+                    </div>
+                </div>
+                <select class="select-input" onchange="changeAccentColor(this.value)" style="width: auto;">
+                    <option value="#6366f1">💜 Purple (Default)</option>
+                    <option value="#3b82f6">💙 Blue</option>
+                    <option value="#10b981">💚 Green</option>
+                    <option value="#ef4444">❤️ Red</option>
+                    <option value="#f59e0b">🧡 Orange</option>
+                    <option value="#ec4899">💗 Pink</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Store Information -->
+        <div class="setting-section">
+            <h3>🏪 Store Information</h3>
+            <p>Configure your store details</p>
+            
+            <div class="setting-card">
+                <div class="setting-card-left">
+                    <i class="fas fa-store"></i>
+                    <div>
+                        <div class="title">Store Name</div>
+                        <div class="desc">Your store name displayed throughout the platform</div>
+                    </div>
+                </div>
+                <input type="text" value="Shoppies" style="padding: 0.5rem 1rem; border: 1px solid var(--border-color); border-radius: 8px; background: var(--bg-secondary); color: var(--text-primary); width: 200px;">
+            </div>
+            
+            <div class="setting-card">
+                <div class="setting-card-left">
+                    <i class="fas fa-tag"></i>
+                    <div>
+                        <div class="title">Store Tagline</div>
+                        <div class="desc">Your store's tagline or slogan</div>
+                    </div>
+                </div>
+                <input type="text" value="Kenya's #1 Online Store" style="padding: 0.5rem 1rem; border: 1px solid var(--border-color); border-radius: 8px; background: var(--bg-secondary); color: var(--text-primary); width: 200px;">
+            </div>
+            
+            <div class="setting-card">
+                <div class="setting-card-left">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <div>
+                        <div class="title">Store Location</div>
+                        <div class="desc">Your store's physical location</div>
+                    </div>
+                </div>
+                <input type="text" value="Nairobi, Kenya" style="padding: 0.5rem 1rem; border: 1px solid var(--border-color); border-radius: 8px; background: var(--bg-secondary); color: var(--text-primary); width: 200px;">
+            </div>
+        </div>
+
+        <!-- Currency & Pricing -->
+        <div class="setting-section">
+            <h3>💰 Currency & Pricing</h3>
+            <p>Manage your store currency and pricing settings</p>
+            
+            <div class="setting-card">
+                <div class="setting-card-left">
+                    <i class="fas fa-dollar-sign"></i>
+                    <div>
+                        <div class="title">Default Currency</div>
+                        <div class="desc">Set your store's default currency</div>
+                    </div>
+                </div>
+                <select class="select-input" style="width: auto;">
+                    <option>KES - Kenyan Shilling (Ksh)</option>
+                    <option>USD - US Dollar ($)</option>
+                    <option>EUR - Euro (€)</option>
+                    <option>GBP - British Pound (£)</option>
+                </select>
+            </div>
+            
+            <div class="setting-card">
+                <div class="setting-card-left">
+                    <i class="fas fa-percent"></i>
+                    <div>
+                        <div class="title">Tax Rate</div>
+                        <div class="desc">Default tax rate applied to all products</div>
+                    </div>
+                </div>
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <input type="number" value="16" style="padding: 0.5rem 1rem; border: 1px solid var(--border-color); border-radius: 8px; background: var(--bg-secondary); color: var(--text-primary); width: 80px;">
+                    <span style="color: var(--text-secondary);">%</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Shipping -->
+        <div class="setting-section">
+            <h3>🚚 Shipping Settings</h3>
+            <p>Configure delivery options and fees</p>
+            
+            <div class="setting-card">
+                <div class="setting-card-left">
+                    <i class="fas fa-truck"></i>
+                    <div>
+                        <div class="title">Free Delivery Threshold</div>
+                        <div class="desc">Orders above this amount get free delivery</div>
+                    </div>
+                </div>
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <span style="color: var(--text-secondary);">Ksh</span>
+                    <input type="number" value="5000" style="padding: 0.5rem 1rem; border: 1px solid var(--border-color); border-radius: 8px; background: var(--bg-secondary); color: var(--text-primary); width: 120px;">
+                </div>
+            </div>
+            
+            <div class="setting-card">
+                <div class="setting-card-left">
+                    <i class="fas fa-clock"></i>
+                    <div>
+                        <div class="title">Delivery Time</div>
+                        <div class="desc">Estimated delivery time in days</div>
+                    </div>
+                </div>
+                <input type="text" value="1-3 business days" style="padding: 0.5rem 1rem; border: 1px solid var(--border-color); border-radius: 8px; background: var(--bg-secondary); color: var(--text-primary); width: 200px;">
+            </div>
+        </div>
+
+        <!-- Notification Settings -->
+        <div class="setting-section">
+            <h3>🔔 Notification Settings</h3>
+            <p>Control how and when you receive notifications</p>
+            
+            <div class="setting-card">
+                <div class="setting-card-left">
+                    <i class="fas fa-envelope"></i>
+                    <div>
+                        <div class="title">Email Notifications</div>
+                        <div class="desc">Receive store updates via email</div>
+                    </div>
+                </div>
+                <div class="toggle active" onclick="this.classList.toggle('active')"></div>
+            </div>
+            
+            <div class="setting-card">
+                <div class="setting-card-left">
+                    <i class="fas fa-bell"></i>
+                    <div>
+                        <div class="title">Order Alerts</div>
+                        <div class="desc">Get notified when a new order is placed</div>
+                    </div>
+                </div>
+                <div class="toggle active" onclick="this.classList.toggle('active')"></div>
+            </div>
+            
+            <div class="setting-card">
+                <div class="setting-card-left">
+                    <i class="fas fa-box"></i>
+                    <div>
+                        <div class="title">Low Stock Alerts</div>
+                        <div class="desc">Get notified when products are low in stock</div>
+                    </div>
+                </div>
+                <div class="toggle active" onclick="this.classList.toggle('active')"></div>
+            </div>
+            
+            <div class="setting-card">
+                <div class="setting-card-left">
+                    <i class="fas fa-bullhorn"></i>
+                    <div>
+                        <div class="title">Marketing Emails</div>
+                        <div class="desc">Receive promotions and offers</div>
+                    </div>
+                </div>
+                <div class="toggle" onclick="this.classList.toggle('active')"></div>
+            </div>
+        </div>
+
+        <!-- Security -->
+        <div class="setting-section">
+            <h3>🔒 Security Settings</h3>
+            <p>Enhance your account security</p>
+            
+            <div class="setting-card">
+                <div class="setting-card-left">
+                    <i class="fas fa-shield-alt"></i>
+                    <div>
+                        <div class="title">Two-Factor Authentication (2FA)</div>
+                        <div class="desc">Add an extra layer of security to your account</div>
+                    </div>
+                </div>
+                <button class="btn-primary" onclick="showNotification('2FA setup coming soon!', 'success')" style="padding: 0.5rem 1rem;">Enable</button>
+            </div>
+            
+            <div class="setting-card">
+                <div class="setting-card-left">
+                    <i class="fas fa-lock"></i>
+                    <div>
+                        <div class="title">Change Password</div>
+                        <div class="desc">Update your account password</div>
+                    </div>
+                </div>
+                <button class="btn-primary" onclick="showNotification('Password change coming soon!', 'success')" style="padding: 0.5rem 1rem;">Change</button>
+            </div>
+        </div>
+
+        <!-- Danger Zone -->
+        <div class="setting-section">
+            <h3 style="color: #ef4444;">⚠️ Danger Zone</h3>
+            <p style="color: #991b1b;">Irreversible account actions</p>
+            
+            <div class="danger-zone">
+                <h4>🗑️ Deactivate Account</h4>
+                <p>Once you deactivate your account, you will not be able to login until an admin reactivates it.</p>
+                <div style="margin-top: 0.75rem; display: flex; gap: 0.5rem; align-items: center;">
+                    <input type="password" placeholder="Enter your password to confirm" style="padding: 0.5rem 1rem; border: 1px solid var(--border-color); border-radius: 8px; background: var(--bg-secondary); color: var(--text-primary); flex: 1;">
+                    <button class="btn-danger" onclick="showNotification('Account deactivation disabled. Contact support.', 'error')">Deactivate</button>
+                </div>
+            </div>
+            
+            <div class="danger-zone" style="margin-top: 1rem;">
+                <h4>🗑️ Delete Account</h4>
+                <p>Permanently delete your account and all data. This action cannot be undone.</p>
+                <button class="btn-danger" style="margin-top: 0.75rem;" onclick="showNotification('Account deletion is disabled. Please contact administrator for assistance.', 'error')">
+                    <i class="fas fa-exclamation-triangle"></i> Delete Account
+                </button>
+                <p style="margin-top: 0.5rem; font-size: 0.75rem; color: #991b1b;">
+                    Account deletion is disabled. Please contact administrator for assistance.
+                </p>
+            </div>
+        </div>
+
+        <!-- Data & Privacy -->
+        <div class="setting-section">
+            <h3>🔐 Data & Privacy</h3>
+            <p>Manage your data and privacy settings</p>
+            
+            <div class="setting-card">
+                <div class="setting-card-left">
+                    <i class="fas fa-download"></i>
+                    <div>
+                        <div class="title">Download My Data</div>
+                        <div class="desc">Export all your account data</div>
+                    </div>
+                </div>
+                <button class="btn-primary" onclick="showNotification('Data export coming soon!', 'success')">Download</button>
+            </div>
+            
+            <div class="setting-card">
+                <div class="setting-card-left">
+                    <i class="fas fa-user-secret"></i>
+                    <div>
+                        <div class="title">Privacy Settings</div>
+                        <div class="desc">Control your privacy preferences</div>
+                    </div>
+                </div>
+                <button class="btn-primary" onclick="showNotification('Privacy settings coming soon!', 'success')">Manage</button>
+            </div>
+        </div>
+    </div>
+</div>
     </main>
 
     <!-- Product Modal -->
@@ -746,6 +904,76 @@
         let currentCategoryId = null;
         let currentCouponId = null;
         let ordersList = [];
+
+        // ============ ADMIN PROFILE ============
+function uploadAdminAvatar(event) {
+    const file = event.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const avatarUrl = e.target.result;
+            document.getElementById('adminProfileAvatar').src = avatarUrl;
+            localStorage.setItem('adminAvatar', avatarUrl);
+            showNotification('Profile picture updated!', 'success');
+        };
+        reader.readAsDataURL(file);
+    }
+}
+
+function saveAdminProfile() {
+    const name = document.getElementById('adminFullName').value;
+    const email = document.getElementById('adminEmail').value;
+    const phone = document.getElementById('adminPhone').value;
+    
+    if (!name || !email) {
+        showNotification('Please fill in all required fields', 'error');
+        return;
+    }
+    
+    // Update localStorage
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (user) {
+        user.name = name;
+        user.email = email;
+        user.phone = phone;
+        localStorage.setItem('user', JSON.stringify(user));
+    }
+    
+    // Update display
+    document.querySelector('#adminName span').textContent = name;
+    showNotification('Profile updated successfully!', 'success');
+}
+
+function changeAccentColor(color) {
+    document.documentElement.style.setProperty('--gradient-start', color);
+    document.documentElement.style.setProperty('--gradient-end', color);
+    localStorage.setItem('adminAccentColor', color);
+    showNotification('Accent color updated!', 'success');
+}
+
+function loadAdminProfile() {
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (user) {
+        document.getElementById('adminFullName').value = user.name || 'Admin User';
+        document.getElementById('adminEmail').value = user.email || 'admin@shoppies.com';
+        document.getElementById('adminPhone').value = user.phone || '0712345678';
+    }
+    
+    const savedAvatar = localStorage.getItem('adminAvatar');
+    if (savedAvatar) {
+        document.getElementById('adminProfileAvatar').src = savedAvatar;
+    }
+    
+    const savedAccent = localStorage.getItem('adminAccentColor');
+    if (savedAccent) {
+        document.documentElement.style.setProperty('--gradient-start', savedAccent);
+        document.documentElement.style.setProperty('--gradient-end', savedAccent);
+    }
+}
+
+// Call loadAdminProfile in the initialize section
+// Add this to your initialize block:
+loadAdminProfile();
 
         // ============ NOTIFICATION ============
         function showNotification(message, type = 'success') {
