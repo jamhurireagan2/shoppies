@@ -1054,7 +1054,7 @@
         let currentCouponId = null;
         let ordersList = [];
 
-        // ============ USER MANAGEMENT FUNCTIONS ============
+        // ============ USER MANAGEMENT ============
 let allUsers = [];
 let filteredUsers = [];
 
@@ -1066,14 +1066,27 @@ async function loadUsers() {
             return;
         }
         
+        console.log('Loading users...');
         const response = await fetch(`${API_URL}/admin/users`, {
             headers: { 'Authorization': `Bearer ${token}` }
         });
         
-        if (!response.ok) throw new Error('Failed to load users');
+        if (!response.ok) {
+            if (response.status === 401) {
+                document.getElementById('usersContainer').innerHTML = '<p style="text-align:center;padding:2rem;color:red;">Session expired. Please login again.</p>';
+                return;
+            }
+            if (response.status === 403) {
+                document.getElementById('usersContainer').innerHTML = '<p style="text-align:center;padding:2rem;color:red;">Admin access required.</p>';
+                return;
+            }
+            throw new Error('Failed to load users');
+        }
         
         allUsers = await response.json();
         filteredUsers = [...allUsers];
+        
+        console.log('Users loaded:', allUsers.length);
         
         updateUserStats();
         renderUsers();
@@ -1086,9 +1099,10 @@ async function loadUsers() {
 
 function updateUserStats() {
     const total = allUsers.length;
-    const admins = allUsers.filter(u => u.isAdmin).length;
-    const customers = allUsers.filter(u => !u.isAdmin).length;
+    const admins = allUsers.filter(u => u.isAdmin === true).length;
+    const customers = allUsers.filter(u => u.isAdmin !== true).length;
     const newUsers = allUsers.filter(u => {
+        if (!u.createdAt) return false;
         const date = new Date(u.createdAt);
         const daysAgo = (Date.now() - date.getTime()) / (1000 * 60 * 60 * 24);
         return daysAgo <= 30;
@@ -1104,7 +1118,7 @@ function renderUsers() {
     const container = document.getElementById('usersContainer');
     
     if (filteredUsers.length === 0) {
-        container.innerHTML = '<p style="text-align:center;padding:2rem;">No users found</p>';
+        container.innerHTML = '<p style="text-align:center;padding:2rem;color:var(--text-secondary);">No users found</p>';
         return;
     }
     
@@ -1125,39 +1139,39 @@ function renderUsers() {
                     <tr>
                         <td>
                             <div style="display: flex; align-items: center; gap: 0.75rem;">
-                                <div style="width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end)); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 1rem;">
+                                <div style="width: 35px; height: 35px; border-radius: 50%; background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end)); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 0.875rem;">
                                     ${user.name ? user.name.charAt(0).toUpperCase() : 'U'}
                                 </div>
                                 <div>
-                                    <div style="font-weight: 600;">${user.name || 'Unknown'}</div>
-                                    <div style="font-size: 0.75rem; color: var(--text-secondary);">${user.id ? user.id.slice(0, 8) : ''}</div>
+                                    <div style="font-weight: 600; color: var(--text-primary);">${user.name || 'Unknown'}</div>
+                                    <div style="font-size: 0.65rem; color: var(--text-secondary);">ID: ${user.id ? user.id.slice(0, 8) : 'N/A'}</div>
                                 </div>
                             </div>
                         </td>
-                        <td>${user.email}</td>
-                        <td>${user.phone || 'Not provided'}</td>
+                        <td style="color: var(--text-primary);">${user.email}</td>
+                        <td style="color: var(--text-primary);">${user.phone || 'Not provided'}</td>
                         <td>
-                            <span class="status-badge ${user.isAdmin ? 'status-approved' : 'status-pending'}" style="${user.isAdmin ? 'background:#6366f1;color:white;' : ''}">
+                            <span class="status-badge ${user.isAdmin ? 'status-approved' : 'status-pending'}" style="${user.isAdmin ? 'background:#6366f1;color:white;' : 'background:#fef3c7;color:#92400e;'}">
                                 ${user.isAdmin ? '👑 Admin' : 'Customer'}
                             </span>
                         </td>
-                        <td>${user.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'N/A'}</td>
+                        <td style="color: var(--text-primary);">${user.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'N/A'}</td>
                         <td>
                             <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
                                 ${!user.isAdmin ? `
-                                    <button class="btn-edit" onclick="promoteToAdmin(${user.id})" style="padding: 0.25rem 0.75rem; font-size: 0.75rem;">
+                                    <button class="btn-edit" onclick="promoteToAdmin('${user.id}')" style="padding: 0.25rem 0.75rem; font-size: 0.75rem;">
                                         <i class="fas fa-arrow-up"></i> Promote
                                     </button>
                                 ` : `
-                                    <button class="btn-edit" onclick="demoteFromAdmin(${user.id})" style="padding: 0.25rem 0.75rem; font-size: 0.75rem; background: #f59e0b;">
+                                    <button class="btn-edit" onclick="demoteFromAdmin('${user.id}')" style="padding: 0.25rem 0.75rem; font-size: 0.75rem; background: #f59e0b; color: white;">
                                         <i class="fas fa-arrow-down"></i> Demote
                                     </button>
                                 `}
-                                <button class="btn-edit" onclick="editUser(${user.id})" style="padding: 0.25rem 0.75rem; font-size: 0.75rem; background: #3b82f6;">
+                                <button class="btn-edit" onclick="editUser('${user.id}')" style="padding: 0.25rem 0.75rem; font-size: 0.75rem; background: #3b82f6; color: white;">
                                     <i class="fas fa-edit"></i>
                                 </button>
                                 ${!user.isAdmin ? `
-                                    <button class="btn-danger" onclick="deleteUser(${user.id})" style="padding: 0.25rem 0.75rem; font-size: 0.75rem;">
+                                    <button class="btn-danger" onclick="deleteUser('${user.id}')" style="padding: 0.25rem 0.75rem; font-size: 0.75rem;">
                                         <i class="fas fa-trash"></i>
                                     </button>
                                 ` : `
@@ -1194,8 +1208,8 @@ function filterUsers() {
 }
 
 function refreshUsers() {
+    showNotification('Refreshing users...', 'success');
     loadUsers();
-    showNotification('Users refreshed!', 'success');
 }
 
 // Promote to Admin
@@ -1215,13 +1229,16 @@ async function promoteToAdmin(userId) {
                 body: JSON.stringify({ ...user, isAdmin: true })
             });
             
-            if (!response.ok) throw new Error('Failed to promote user');
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(error.error || 'Failed to promote user');
+            }
             
             showNotification('User promoted to Admin successfully!', 'success');
             loadUsers();
         } catch (error) {
             console.error('Promote error:', error);
-            showNotification('Failed to promote user', 'error');
+            showNotification(error.message || 'Failed to promote user', 'error');
         }
     }
 }
@@ -1235,7 +1252,7 @@ async function demoteFromAdmin(userId) {
             if (!user) throw new Error('User not found');
             
             // Check if this is the last admin
-            const admins = allUsers.filter(u => u.isAdmin);
+            const admins = allUsers.filter(u => u.isAdmin === true);
             if (admins.length <= 1) {
                 showNotification('Cannot demote the last admin!', 'error');
                 return;
@@ -1250,13 +1267,16 @@ async function demoteFromAdmin(userId) {
                 body: JSON.stringify({ ...user, isAdmin: false })
             });
             
-            if (!response.ok) throw new Error('Failed to demote user');
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(error.error || 'Failed to demote user');
+            }
             
             showNotification('Admin demoted to Customer successfully!', 'success');
             loadUsers();
         } catch (error) {
             console.error('Demote error:', error);
-            showNotification('Failed to demote user', 'error');
+            showNotification(error.message || 'Failed to demote user', 'error');
         }
     }
 }
@@ -1312,14 +1332,17 @@ async function addNewUser() {
             
             const loginData = await loginRes.json();
             if (loginData.token) {
-                await fetch(`${API_URL}/admin/users/${loginData.user.id}`, {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${loginData.token}`
-                    },
-                    body: JSON.stringify({ ...loginData.user, isAdmin: true })
-                });
+                const user = allUsers.find(u => u.email === email);
+                if (user) {
+                    await fetch(`${API_URL}/admin/users/${user.id}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${loginData.token}`
+                        },
+                        body: JSON.stringify({ ...user, isAdmin: true })
+                    });
+                }
             }
         }
         
@@ -1335,7 +1358,10 @@ async function addNewUser() {
 // Edit User
 function editUser(userId) {
     const user = allUsers.find(u => u.id === userId);
-    if (!user) return;
+    if (!user) {
+        showNotification('User not found', 'error');
+        return;
+    }
     
     document.getElementById('editUserId').value = userId;
     document.getElementById('editUserName').value = user.name || '';
@@ -1351,7 +1377,7 @@ function closeEditUserModal() {
 }
 
 async function saveEditUser() {
-    const userId = parseInt(document.getElementById('editUserId').value);
+    const userId = document.getElementById('editUserId').value;
     const name = document.getElementById('editUserName').value;
     const email = document.getElementById('editUserEmail').value;
     const phone = document.getElementById('editUserPhone').value;
@@ -1384,14 +1410,17 @@ async function saveEditUser() {
             body: JSON.stringify(updatedUser)
         });
         
-        if (!response.ok) throw new Error('Failed to update user');
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.error || 'Failed to update user');
+        }
         
         closeEditUserModal();
         showNotification('User updated successfully!', 'success');
         loadUsers();
     } catch (error) {
         console.error('Update user error:', error);
-        showNotification('Failed to update user', 'error');
+        showNotification(error.message, 'error');
     }
 }
 
@@ -1405,26 +1434,19 @@ async function deleteUser(userId) {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             
-            if (!response.ok) throw new Error('Failed to delete user');
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(error.error || 'Failed to delete user');
+            }
             
             showNotification('User deleted successfully!', 'success');
             loadUsers();
         } catch (error) {
             console.error('Delete user error:', error);
-            showNotification('Failed to delete user', 'error');
+            showNotification(error.message, 'error');
         }
     }
 }
-
-// Initialize users on tab switch
-// Make sure to call loadUsers() when users tab is selected
-const originalSwitchTab = switchTab;
-switchTab = function(tabName) {
-    originalSwitchTab(tabName);
-    if (tabName === 'users') {
-        loadUsers();
-    }
-};
 
         // ============ SETTINGS FUNCTIONS ============
 
@@ -2215,48 +2237,7 @@ loadAdminProfile();
             window.open(`https://www.google.com/maps/dir/Nairobi, Kenya/${encodeURIComponent(address)}`, '_blank');
         }
 
-        // ============ USERS ============
-        async function loadUsers() {
-            try {
-                const token = localStorage.getItem('token');
-                const response = await fetch(`${API_URL}/admin/users`, {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                const users = await response.json();
-                const container = document.getElementById('usersContainer');
-                container.innerHTML = `
-                    <table><thead><tr><th>Name</th><th>Email</th><th>Phone</th><th>Role</th><th>Joined</th><th>Actions</th></tr></thead>
-                    <tbody>${users.map(u => `
-                        <tr><td><i class="fas fa-user-circle" style="color:var(--gradient-start);"></i> ${u.name}</td>
-                        <td>${u.email}</td><td>${u.phone || 'Not provided'}</td>
-                        <td>${u.isAdmin ? '<span class="status-badge" style="background:var(--gradient-start);color:white;">Admin</span>' : '<span class="status-badge" style="background:#10b981;color:white;">Customer</span>'}</td>
-                        <td>${new Date(u.createdAt || Date.now()).toLocaleDateString()}</td>
-                        <td>${!u.isAdmin ? `<button class="btn-danger" onclick="deleteUser(${u.id})">Delete</button>` : 'Protected'}</td></tr>
-                    `).join('')}</tbody></table>
-                `;
-            } catch (error) { console.error('Users error:', error); }
-        }
-
-        async function deleteUser(userId) {
-            if (confirm('Delete this user?')) {
-                try {
-                    const token = localStorage.getItem('token');
-                    await fetch(`${API_URL}/admin/users/${userId}`, { 
-                        method: 'DELETE',
-                        headers: { 'Authorization': `Bearer ${token}` }
-                    });
-                    showNotification('User deleted');
-                    loadUsers();
-                    loadStats();
-                } catch (error) { showNotification('Error deleting user', 'error'); }
-            }
-        }
-
-        // ============ INITIALIZE ============
-        if (checkAdminAuth()) {
-            loadTheme();
-            loadStats();
-        }
+       
     </script>
 </body>
 </html>
