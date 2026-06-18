@@ -450,13 +450,138 @@
             <div class="orders-container" id="ordersContainer"></div>
         </div>
 
-        <!-- Users -->
-        <div id="usersTab" class="tab-content">
-            <div class="section-header">
-                <h2><i class="fas fa-users"></i> Manage Users</h2>
-            </div>
-            <div class="users-container" id="usersContainer"></div>
+        <!-- Users Tab -->
+<div id="usersTab" class="tab-content">
+    <div class="section-header">
+        <h2><i class="fas fa-users"></i> Manage Users</h2>
+        <div style="display: flex; gap: 1rem;">
+            <button class="btn-primary" onclick="refreshUsers()">
+                <i class="fas fa-sync"></i> Refresh
+            </button>
+            <button class="btn-primary" onclick="showAddUserModal()">
+                <i class="fas fa-user-plus"></i> Add User
+            </button>
         </div>
+    </div>
+    
+    <!-- User Stats -->
+    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 1.5rem;">
+        <div class="stat-card" style="padding: 1rem; text-align: center;">
+            <div style="font-size: 1.5rem; font-weight: bold; color: var(--gradient-start);" id="totalUsersCount">0</div>
+            <div style="font-size: 0.75rem; color: var(--text-secondary);">Total Users</div>
+        </div>
+        <div class="stat-card" style="padding: 1rem; text-align: center;">
+            <div style="font-size: 1.5rem; font-weight: bold; color: #10b981;" id="adminUsersCount">0</div>
+            <div style="font-size: 0.75rem; color: var(--text-secondary);">Admins</div>
+        </div>
+        <div class="stat-card" style="padding: 1rem; text-align: center;">
+            <div style="font-size: 1.5rem; font-weight: bold; color: #3b82f6;" id="customerUsersCount">0</div>
+            <div style="font-size: 0.75rem; color: var(--text-secondary);">Customers</div>
+        </div>
+        <div class="stat-card" style="padding: 1rem; text-align: center;">
+            <div style="font-size: 1.5rem; font-weight: bold; color: #f59e0b;" id="newUsersCount">0</div>
+            <div style="font-size: 0.75rem; color: var(--text-secondary);">New Users (30 days)</div>
+        </div>
+    </div>
+
+    <!-- Search & Filter -->
+    <div style="display: flex; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
+        <div style="flex: 1; min-width: 200px; position: relative;">
+            <i class="fas fa-search" style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--text-secondary);"></i>
+            <input type="text" id="userSearchInput" placeholder="Search users by name, email, or phone..." 
+                   style="width: 100%; padding: 0.75rem 1rem 0.75rem 2.5rem; border: 1px solid var(--border-color); border-radius: 12px; background: var(--bg-secondary); color: var(--text-primary);" 
+                   onkeyup="filterUsers()">
+        </div>
+        <select id="userRoleFilter" onchange="filterUsers()" style="padding: 0.75rem 1rem; border: 1px solid var(--border-color); border-radius: 12px; background: var(--bg-secondary); color: var(--text-primary); min-width: 150px;">
+            <option value="all">All Roles</option>
+            <option value="admin">Admins</option>
+            <option value="customer">Customers</option>
+        </select>
+    </div>
+
+    <div class="users-container" id="usersContainer">
+        <!-- Users loaded via JS -->
+    </div>
+</div>
+
+<!-- Add User Modal -->
+<div id="addUserModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>👤 Add New User</h3>
+            <span style="cursor: pointer; font-size: 1.5rem;" onclick="closeAddUserModal()">&times;</span>
+        </div>
+        <div class="modal-body">
+            <form id="addUserForm">
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" id="addUserName" required placeholder="e.g., John Doe">
+                </div>
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <input type="email" id="addUserEmail" required placeholder="john@example.com">
+                </div>
+                <div class="form-group">
+                    <label>Phone Number</label>
+                    <input type="tel" id="addUserPhone" required placeholder="0712345678">
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="addUserPassword" required placeholder="Min 6 characters">
+                </div>
+                <div class="form-group">
+                    <label>Role</label>
+                    <select id="addUserRole">
+                        <option value="customer">Customer</option>
+                        <option value="admin">Admin</option>
+                    </select>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button class="btn-primary" onclick="addNewUser()">Create User</button>
+            <button style="background: #64748b;" class="btn-primary" onclick="closeAddUserModal()">Cancel</button>
+        </div>
+    </div>
+</div>
+
+<!-- Edit User Modal -->
+<div id="editUserModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>✏️ Edit User</h3>
+            <span style="cursor: pointer; font-size: 1.5rem;" onclick="closeEditUserModal()">&times;</span>
+        </div>
+        <div class="modal-body">
+            <form id="editUserForm">
+                <input type="hidden" id="editUserId">
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" id="editUserName" required>
+                </div>
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <input type="email" id="editUserEmail" required>
+                </div>
+                <div class="form-group">
+                    <label>Phone Number</label>
+                    <input type="tel" id="editUserPhone" required>
+                </div>
+                <div class="form-group">
+                    <label>Role</label>
+                    <select id="editUserRole">
+                        <option value="customer">Customer</option>
+                        <option value="admin">Admin</option>
+                    </select>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button class="btn-primary" onclick="saveEditUser()">Save Changes</button>
+            <button style="background: #64748b;" class="btn-primary" onclick="closeEditUserModal()">Cancel</button>
+        </div>
+    </div>
+</div>
 
         <!-- Settings Tab -->
 <div id="settingsTab" class="tab-content">
@@ -928,6 +1053,378 @@
         let currentCategoryId = null;
         let currentCouponId = null;
         let ordersList = [];
+
+        // ============ USER MANAGEMENT FUNCTIONS ============
+let allUsers = [];
+let filteredUsers = [];
+
+async function loadUsers() {
+    try {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            document.getElementById('usersContainer').innerHTML = '<p style="text-align:center;padding:2rem;color:red;">Please login first</p>';
+            return;
+        }
+        
+        const response = await fetch(`${API_URL}/admin/users`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        
+        if (!response.ok) throw new Error('Failed to load users');
+        
+        allUsers = await response.json();
+        filteredUsers = [...allUsers];
+        
+        updateUserStats();
+        renderUsers();
+        
+    } catch (error) {
+        console.error('Users error:', error);
+        document.getElementById('usersContainer').innerHTML = '<p style="text-align:center;padding:2rem;color:red;">Failed to load users</p>';
+    }
+}
+
+function updateUserStats() {
+    const total = allUsers.length;
+    const admins = allUsers.filter(u => u.isAdmin).length;
+    const customers = allUsers.filter(u => !u.isAdmin).length;
+    const newUsers = allUsers.filter(u => {
+        const date = new Date(u.createdAt);
+        const daysAgo = (Date.now() - date.getTime()) / (1000 * 60 * 60 * 24);
+        return daysAgo <= 30;
+    }).length;
+    
+    document.getElementById('totalUsersCount').textContent = total;
+    document.getElementById('adminUsersCount').textContent = admins;
+    document.getElementById('customerUsersCount').textContent = customers;
+    document.getElementById('newUsersCount').textContent = newUsers;
+}
+
+function renderUsers() {
+    const container = document.getElementById('usersContainer');
+    
+    if (filteredUsers.length === 0) {
+        container.innerHTML = '<p style="text-align:center;padding:2rem;">No users found</p>';
+        return;
+    }
+    
+    container.innerHTML = `
+        <table>
+            <thead>
+                <tr>
+                    <th>User</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Role</th>
+                    <th>Joined</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${filteredUsers.map(user => `
+                    <tr>
+                        <td>
+                            <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                <div style="width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end)); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 1rem;">
+                                    ${user.name ? user.name.charAt(0).toUpperCase() : 'U'}
+                                </div>
+                                <div>
+                                    <div style="font-weight: 600;">${user.name || 'Unknown'}</div>
+                                    <div style="font-size: 0.75rem; color: var(--text-secondary);">${user.id ? user.id.slice(0, 8) : ''}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>${user.email}</td>
+                        <td>${user.phone || 'Not provided'}</td>
+                        <td>
+                            <span class="status-badge ${user.isAdmin ? 'status-approved' : 'status-pending'}" style="${user.isAdmin ? 'background:#6366f1;color:white;' : ''}">
+                                ${user.isAdmin ? '👑 Admin' : 'Customer'}
+                            </span>
+                        </td>
+                        <td>${user.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'N/A'}</td>
+                        <td>
+                            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                                ${!user.isAdmin ? `
+                                    <button class="btn-edit" onclick="promoteToAdmin(${user.id})" style="padding: 0.25rem 0.75rem; font-size: 0.75rem;">
+                                        <i class="fas fa-arrow-up"></i> Promote
+                                    </button>
+                                ` : `
+                                    <button class="btn-edit" onclick="demoteFromAdmin(${user.id})" style="padding: 0.25rem 0.75rem; font-size: 0.75rem; background: #f59e0b;">
+                                        <i class="fas fa-arrow-down"></i> Demote
+                                    </button>
+                                `}
+                                <button class="btn-edit" onclick="editUser(${user.id})" style="padding: 0.25rem 0.75rem; font-size: 0.75rem; background: #3b82f6;">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                ${!user.isAdmin ? `
+                                    <button class="btn-danger" onclick="deleteUser(${user.id})" style="padding: 0.25rem 0.75rem; font-size: 0.75rem;">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                ` : `
+                                    <span style="color: var(--text-secondary); font-size: 0.75rem; padding: 0.25rem 0.75rem; background: var(--bg-primary); border-radius: 4px;">Protected</span>
+                                `}
+                            </div>
+                        </td>
+                    </tr>
+                `).join('')}
+            </tbody>
+        </table>
+    `;
+}
+
+function filterUsers() {
+    const searchTerm = document.getElementById('userSearchInput').value.toLowerCase();
+    const roleFilter = document.getElementById('userRoleFilter').value;
+    
+    filteredUsers = allUsers.filter(user => {
+        const matchesSearch = 
+            (user.name && user.name.toLowerCase().includes(searchTerm)) ||
+            (user.email && user.email.toLowerCase().includes(searchTerm)) ||
+            (user.phone && user.phone.includes(searchTerm));
+        
+        const matchesRole = 
+            roleFilter === 'all' ||
+            (roleFilter === 'admin' && user.isAdmin) ||
+            (roleFilter === 'customer' && !user.isAdmin);
+        
+        return matchesSearch && matchesRole;
+    });
+    
+    renderUsers();
+}
+
+function refreshUsers() {
+    loadUsers();
+    showNotification('Users refreshed!', 'success');
+}
+
+// Promote to Admin
+async function promoteToAdmin(userId) {
+    if (confirm('Are you sure you want to promote this user to Admin?')) {
+        try {
+            const token = localStorage.getItem('token');
+            const user = allUsers.find(u => u.id === userId);
+            if (!user) throw new Error('User not found');
+            
+            const response = await fetch(`${API_URL}/admin/users/${userId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ ...user, isAdmin: true })
+            });
+            
+            if (!response.ok) throw new Error('Failed to promote user');
+            
+            showNotification('User promoted to Admin successfully!', 'success');
+            loadUsers();
+        } catch (error) {
+            console.error('Promote error:', error);
+            showNotification('Failed to promote user', 'error');
+        }
+    }
+}
+
+// Demote from Admin
+async function demoteFromAdmin(userId) {
+    if (confirm('Are you sure you want to demote this Admin to Customer?')) {
+        try {
+            const token = localStorage.getItem('token');
+            const user = allUsers.find(u => u.id === userId);
+            if (!user) throw new Error('User not found');
+            
+            // Check if this is the last admin
+            const admins = allUsers.filter(u => u.isAdmin);
+            if (admins.length <= 1) {
+                showNotification('Cannot demote the last admin!', 'error');
+                return;
+            }
+            
+            const response = await fetch(`${API_URL}/admin/users/${userId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ ...user, isAdmin: false })
+            });
+            
+            if (!response.ok) throw new Error('Failed to demote user');
+            
+            showNotification('Admin demoted to Customer successfully!', 'success');
+            loadUsers();
+        } catch (error) {
+            console.error('Demote error:', error);
+            showNotification('Failed to demote user', 'error');
+        }
+    }
+}
+
+// Add User
+function showAddUserModal() {
+    document.getElementById('addUserModal').style.display = 'flex';
+    document.getElementById('addUserForm').reset();
+}
+
+function closeAddUserModal() {
+    document.getElementById('addUserModal').style.display = 'none';
+}
+
+async function addNewUser() {
+    const name = document.getElementById('addUserName').value;
+    const email = document.getElementById('addUserEmail').value;
+    const phone = document.getElementById('addUserPhone').value;
+    const password = document.getElementById('addUserPassword').value;
+    const role = document.getElementById('addUserRole').value;
+    
+    if (!name || !email || !password) {
+        showNotification('Please fill in all required fields', 'error');
+        return;
+    }
+    
+    if (password.length < 6) {
+        showNotification('Password must be at least 6 characters', 'error');
+        return;
+    }
+    
+    try {
+        const token = localStorage.getItem('token');
+        const response = await fetch(`${API_URL}/auth/register`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name, email, phone, password })
+        });
+        
+        const result = await response.json();
+        
+        if (!response.ok) {
+            throw new Error(result.error || 'Failed to create user');
+        }
+        
+        // If role is admin, promote the new user
+        if (role === 'admin') {
+            const loginRes = await fetch(`${API_URL}/auth/login`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password })
+            });
+            
+            const loginData = await loginRes.json();
+            if (loginData.token) {
+                await fetch(`${API_URL}/admin/users/${loginData.user.id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${loginData.token}`
+                    },
+                    body: JSON.stringify({ ...loginData.user, isAdmin: true })
+                });
+            }
+        }
+        
+        closeAddUserModal();
+        showNotification('User created successfully!', 'success');
+        loadUsers();
+    } catch (error) {
+        console.error('Create user error:', error);
+        showNotification(error.message, 'error');
+    }
+}
+
+// Edit User
+function editUser(userId) {
+    const user = allUsers.find(u => u.id === userId);
+    if (!user) return;
+    
+    document.getElementById('editUserId').value = userId;
+    document.getElementById('editUserName').value = user.name || '';
+    document.getElementById('editUserEmail').value = user.email || '';
+    document.getElementById('editUserPhone').value = user.phone || '';
+    document.getElementById('editUserRole').value = user.isAdmin ? 'admin' : 'customer';
+    
+    document.getElementById('editUserModal').style.display = 'flex';
+}
+
+function closeEditUserModal() {
+    document.getElementById('editUserModal').style.display = 'none';
+}
+
+async function saveEditUser() {
+    const userId = parseInt(document.getElementById('editUserId').value);
+    const name = document.getElementById('editUserName').value;
+    const email = document.getElementById('editUserEmail').value;
+    const phone = document.getElementById('editUserPhone').value;
+    const role = document.getElementById('editUserRole').value;
+    
+    if (!name || !email) {
+        showNotification('Please fill in all required fields', 'error');
+        return;
+    }
+    
+    try {
+        const token = localStorage.getItem('token');
+        const user = allUsers.find(u => u.id === userId);
+        if (!user) throw new Error('User not found');
+        
+        const updatedUser = {
+            ...user,
+            name,
+            email,
+            phone,
+            isAdmin: role === 'admin'
+        };
+        
+        const response = await fetch(`${API_URL}/admin/users/${userId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(updatedUser)
+        });
+        
+        if (!response.ok) throw new Error('Failed to update user');
+        
+        closeEditUserModal();
+        showNotification('User updated successfully!', 'success');
+        loadUsers();
+    } catch (error) {
+        console.error('Update user error:', error);
+        showNotification('Failed to update user', 'error');
+    }
+}
+
+// Delete User
+async function deleteUser(userId) {
+    if (confirm('Are you sure you want to permanently delete this user? This action cannot be undone.')) {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await fetch(`${API_URL}/admin/users/${userId}`, {
+                method: 'DELETE',
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            
+            if (!response.ok) throw new Error('Failed to delete user');
+            
+            showNotification('User deleted successfully!', 'success');
+            loadUsers();
+        } catch (error) {
+            console.error('Delete user error:', error);
+            showNotification('Failed to delete user', 'error');
+        }
+    }
+}
+
+// Initialize users on tab switch
+// Make sure to call loadUsers() when users tab is selected
+const originalSwitchTab = switchTab;
+switchTab = function(tabName) {
+    originalSwitchTab(tabName);
+    if (tabName === 'users') {
+        loadUsers();
+    }
+};
 
         // ============ SETTINGS FUNCTIONS ============
 
