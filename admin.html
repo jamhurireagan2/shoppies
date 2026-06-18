@@ -2237,7 +2237,48 @@ loadAdminProfile();
             window.open(`https://www.google.com/maps/dir/Nairobi, Kenya/${encodeURIComponent(address)}`, '_blank');
         }
 
-       
+        // ============ USERS ============
+        async function loadUsers() {
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch(`${API_URL}/admin/users`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const users = await response.json();
+                const container = document.getElementById('usersContainer');
+                container.innerHTML = `
+                    <table><thead><tr><th>Name</th><th>Email</th><th>Phone</th><th>Role</th><th>Joined</th><th>Actions</th></tr></thead>
+                    <tbody>${users.map(u => `
+                        <tr><td><i class="fas fa-user-circle" style="color:var(--gradient-start);"></i> ${u.name}</td>
+                        <td>${u.email}</td><td>${u.phone || 'Not provided'}</td>
+                        <td>${u.isAdmin ? '<span class="status-badge" style="background:var(--gradient-start);color:white;">Admin</span>' : '<span class="status-badge" style="background:#10b981;color:white;">Customer</span>'}</td>
+                        <td>${new Date(u.createdAt || Date.now()).toLocaleDateString()}</td>
+                        <td>${!u.isAdmin ? `<button class="btn-danger" onclick="deleteUser(${u.id})">Delete</button>` : 'Protected'}</td></tr>
+                    `).join('')}</tbody></table>
+                `;
+            } catch (error) { console.error('Users error:', error); }
+        }
+
+        async function deleteUser(userId) {
+            if (confirm('Delete this user?')) {
+                try {
+                    const token = localStorage.getItem('token');
+                    await fetch(`${API_URL}/admin/users/${userId}`, { 
+                        method: 'DELETE',
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                    showNotification('User deleted');
+                    loadUsers();
+                    loadStats();
+                } catch (error) { showNotification('Error deleting user', 'error'); }
+            }
+        }
+
+        // ============ INITIALIZE ============
+        if (checkAdminAuth()) {
+            loadTheme();
+            loadStats();
+        }
     </script>
 </body>
 </html>
