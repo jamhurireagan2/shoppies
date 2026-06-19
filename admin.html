@@ -1222,26 +1222,20 @@ async function demoteFromAdmin(userId) {
 
         // Edit User
         function editUser(userId) {
-    if (!userId) {
-        showNotification('User ID is required', 'error');
-        return;
-    }
-    
-    const id = typeof userId === 'string' ? parseInt(userId) : userId;
-    const user = allUsers.find(u => u.id === id);
-    if (!user) {
-        showNotification('User not found', 'error');
-        return;
-    }
-    
-    document.getElementById('editUserId').value = id;
-    document.getElementById('editUserName').value = user.name || '';
-    document.getElementById('editUserEmail').value = user.email || '';
-    document.getElementById('editUserPhone').value = user.phone || '';
-    document.getElementById('editUserRole').value = user.isAdmin ? 'admin' : 'customer';
-    
-    document.getElementById('editUserModal').style.display = 'flex';
-}
+            const user = allUsers.find(u => u.id === userId);
+            if (!user) {
+                showNotification('User not found', 'error');
+                return;
+            }
+            
+            document.getElementById('editUserId').value = userId;
+            document.getElementById('editUserName').value = user.name || '';
+            document.getElementById('editUserEmail').value = user.email || '';
+            document.getElementById('editUserPhone').value = user.phone || '';
+            document.getElementById('editUserRole').value = user.isAdmin ? 'admin' : 'customer';
+            
+            document.getElementById('editUserModal').style.display = 'flex';
+        }
 
         function closeEditUserModal() {
             document.getElementById('editUserModal').style.display = 'none';
