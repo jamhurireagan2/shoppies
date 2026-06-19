@@ -535,768 +535,667 @@
     <div id="notification" class="notification"></div>
 
     <script>
-        const API_URL = 'https://shoppies-backend.onrender.com/api';
-        let currentProductId = null;
-        let currentCategoryId = null;
-        let currentCouponId = null;
-        let ordersList = [];
-        let allUsers = [];
-        let filteredUsers = [];
+    const API_URL = 'https://shoppies-backend.onrender.com/api';
+    let currentProductId = null;
+    let currentCategoryId = null;
+    let currentCouponId = null;
+    let ordersList = [];
+    let allUsers = [];
+    let filteredUsers = [];
 
-        // ============ NOTIFICATION ============
-        function showNotification(message, type = 'success') {
-            const notification = document.getElementById('notification');
-            notification.textContent = message;
-            notification.className = `notification ${type}`;
-            notification.classList.add('show');
-            setTimeout(() => notification.classList.remove('show'), 3000);
+    // ============ NOTIFICATION ============
+    function showNotification(message, type = 'success') {
+        const notification = document.getElementById('notification');
+        notification.textContent = message;
+        notification.className = `notification ${type}`;
+        notification.classList.add('show');
+        setTimeout(() => notification.classList.remove('show'), 3000);
+    }
+
+    // ============ AUTH & THEME ============
+    function checkAdminAuth() {
+        const user = localStorage.getItem('user');
+        if (!user) { window.location.href = 'index.html'; return false; }
+        const userData = JSON.parse(user);
+        if (!userData.isAdmin) { window.location.href = 'index.html'; return false; }
+        document.querySelector('#adminName span').textContent = userData.name;
+        return true;
+    }
+
+    function handleAdminLogout() {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        window.location.href = 'index.html';
+    }
+
+    function setTheme(theme) {
+        const toggles = document.querySelectorAll('.toggle');
+        if (theme === 'dark') {
+            document.body.classList.add('dark-mode');
+            toggles.forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.toggle')[1].classList.add('active');
+            localStorage.setItem('adminTheme', 'dark');
+        } else {
+            document.body.classList.remove('dark-mode');
+            toggles.forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.toggle')[0].classList.add('active');
+            localStorage.setItem('adminTheme', 'light');
         }
+    }
 
-        // ============ AUTH & THEME ============
-        function checkAdminAuth() {
-            const user = localStorage.getItem('user');
-            if (!user) { window.location.href = 'index.html'; return false; }
-            const userData = JSON.parse(user);
-            if (!userData.isAdmin) { window.location.href = 'index.html'; return false; }
-            document.querySelector('#adminName span').textContent = userData.name;
-            return true;
-        }
+    function loadTheme() {
+        const savedTheme = localStorage.getItem('adminTheme');
+        setTheme(savedTheme === 'dark' ? 'dark' : 'light');
+    }
 
-        function handleAdminLogout() {
-            localStorage.removeItem('token');
-            localStorage.removeItem('user');
-            window.location.href = 'index.html';
-        }
-
-        function setTheme(theme) {
-            const toggles = document.querySelectorAll('.toggle');
-            if (theme === 'dark') {
-                document.body.classList.add('dark-mode');
-                toggles.forEach(t => t.classList.remove('active'));
-                document.querySelectorAll('.toggle')[1].classList.add('active');
-                localStorage.setItem('adminTheme', 'dark');
-            } else {
-                document.body.classList.remove('dark-mode');
-                toggles.forEach(t => t.classList.remove('active'));
-                document.querySelectorAll('.toggle')[0].classList.add('active');
-                localStorage.setItem('adminTheme', 'light');
-            }
-        }
-
-        function loadTheme() {
-            const savedTheme = localStorage.getItem('adminTheme');
-            setTheme(savedTheme === 'dark' ? 'dark' : 'light');
-        }
-
-        // ============ TAB SWITCHING ============
-        function switchTab(tabName) {
-            document.querySelectorAll('.menu-item').forEach(item => {
-                item.classList.remove('active');
-                if (item.dataset.tab === tabName) item.classList.add('active');
-            });
-            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
-            const targetTab = document.getElementById(tabName + 'Tab');
-            if (targetTab) targetTab.classList.add('active');
-            
-            if (tabName === 'dashboard') loadStats();
-            else if (tabName === 'users') loadUsers();
-            else if (tabName === 'products') loadProducts();
-            else if (tabName === 'categories') loadCategories();
-            else if (tabName === 'coupons') loadCoupons();
-            else if (tabName === 'orders') loadOrders();
-        }
-
+    // ============ TAB SWITCHING ============
+    function switchTab(tabName) {
         document.querySelectorAll('.menu-item').forEach(item => {
-            item.addEventListener('click', () => switchTab(item.dataset.tab));
+            item.classList.remove('active');
+            if (item.dataset.tab === tabName) item.classList.add('active');
         });
+        document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+        const targetTab = document.getElementById(tabName + 'Tab');
+        if (targetTab) targetTab.classList.add('active');
+        
+        if (tabName === 'dashboard') loadStats();
+        else if (tabName === 'users') loadUsers();
+        else if (tabName === 'products') loadProducts();
+        else if (tabName === 'categories') loadCategories();
+        else if (tabName === 'coupons') loadCoupons();
+        else if (tabName === 'orders') loadOrders();
+    }
 
-        // ============ DASHBOARD ============
-        async function loadStats() {
+    document.querySelectorAll('.menu-item').forEach(item => {
+        item.addEventListener('click', () => switchTab(item.dataset.tab));
+    });
+
+    // ============ DASHBOARD ============
+    async function loadStats() {
+        try {
+            const token = localStorage.getItem('token');
+            if (!token) return;
+            const response = await fetch(`${API_URL}/admin/stats`, { headers: { 'Authorization': `Bearer ${token}` } });
+            if (!response.ok) throw new Error('Failed to load stats');
+            const stats = await response.json();
+            document.getElementById('statsContainer').innerHTML = `
+                <div class="stat-card"><div class="stat-info"><h3>Total Users</h3><div class="stat-number">${stats.totalUsers || 0}</div></div><div class="stat-icon"><i class="fas fa-users"></i></div></div>
+                <div class="stat-card"><div class="stat-info"><h3>Total Products</h3><div class="stat-number">${stats.totalProducts || 0}</div></div><div class="stat-icon"><i class="fas fa-box"></i></div></div>
+                <div class="stat-card"><div class="stat-info"><h3>Total Orders</h3><div class="stat-number">${stats.totalOrders || 0}</div></div><div class="stat-icon"><i class="fas fa-shopping-cart"></i></div></div>
+                <div class="stat-card"><div class="stat-info"><h3>Pending Orders</h3><div class="stat-number">${stats.pendingOrders || 0}</div></div><div class="stat-icon"><i class="fas fa-clock"></i></div></div>
+                <div class="stat-card"><div class="stat-info"><h3>Total Revenue</h3><div class="stat-number">Ksh ${(stats.totalRevenue || 0).toLocaleString()}</div></div><div class="stat-icon"><i class="fas fa-chart-line"></i></div></div>
+            `;
+        } catch (error) { console.error('Stats error:', error); }
+    }
+
+    // ============ PRODUCTS ============
+    async function loadProducts() {
+        try {
+            const response = await fetch(`${API_URL}/products`);
+            const products = await response.json();
+            const container = document.getElementById('productsContainer');
+            if (!products || products.length === 0) {
+                container.innerHTML = '<p style="text-align:center;padding:2rem;">No products yet.</p>';
+                return;
+            }
+            container.innerHTML = `
+                <table><thead><tr><th>Image</th><th>Name</th><th>Price</th><th>Category</th><th>Stock</th><th>Actions</th></tr></thead>
+                <tbody>${products.map(p => `
+                    <tr><td class="product-image-cell"><img src="${p.image || 'https://via.placeholder.com/50x50?text=Product'}" alt="${p.name}"></td>
+                    <td>${p.name}</td><td>Ksh ${p.price.toLocaleString()}</td>
+                    <td><span class="status-badge">${p.category}</span></td><td>${p.stock}</td>
+                    <td><button class="btn-edit" onclick="editProduct(${p.id})">Edit</button>
+                    <button class="btn-danger" onclick="deleteProduct(${p.id})">Delete</button></td></tr>
+                `).join('')}</tbody></table>
+            `;
+        } catch (error) { console.error('Products error:', error); }
+    }
+
+    function showAddProductModal() {
+        currentProductId = null;
+        document.getElementById('modalTitle').textContent = 'Add New Product';
+        document.getElementById('productForm').reset();
+        document.getElementById('previewImg').src = 'https://via.placeholder.com/100x100?text=Preview';
+        document.getElementById('productModal').style.display = 'flex';
+        refreshCategoryDropdown();
+    }
+
+    function closeProductModal() { document.getElementById('productModal').style.display = 'none'; }
+
+    async function refreshCategoryDropdown() {
+        const categorySelect = document.getElementById('productCategory');
+        if (!categorySelect) return;
+        try {
+            const response = await fetch(`${API_URL}/categories`);
+            const categories = await response.json();
+            const currentValue = categorySelect.value;
+            categorySelect.innerHTML = '<option value="">Select Category</option>' + categories.map(cat => `<option value="${cat.name.toLowerCase()}">${cat.name}</option>`).join('');
+            if (currentValue && categories.some(cat => cat.name.toLowerCase() === currentValue)) categorySelect.value = currentValue;
+        } catch (error) { console.error('Failed to refresh categories:', error); }
+    }
+
+    async function saveProduct() {
+        const product = {
+            name: document.getElementById('productName').value,
+            price: parseInt(document.getElementById('productPrice').value),
+            category: document.getElementById('productCategory').value,
+            stock: parseInt(document.getElementById('productStock').value),
+            image: document.getElementById('productImage').value || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=200',
+            description: document.getElementById('productDescription').value
+        };
+        if (!product.name || !product.price || !product.category) { showNotification('Please fill all required fields', 'error'); return; }
+        try {
+            const token = localStorage.getItem('token');
+            let response;
+            if (currentProductId) {
+                response = await fetch(`${API_URL}/products/${currentProductId}`, { method: 'PUT', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }, body: JSON.stringify(product) });
+            } else {
+                response = await fetch(`${API_URL}/products`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }, body: JSON.stringify(product) });
+            }
+            if (response.ok) { showNotification(currentProductId ? 'Product updated!' : 'Product added!'); closeProductModal(); loadProducts(); loadStats(); }
+        } catch (error) { showNotification('Error saving product', 'error'); }
+    }
+
+    async function editProduct(id) {
+        try {
+            const response = await fetch(`${API_URL}/products`);
+            const products = await response.json();
+            const product = products.find(p => p.id === id);
+            if (product) {
+                currentProductId = id;
+                document.getElementById('modalTitle').textContent = 'Edit Product';
+                document.getElementById('productName').value = product.name;
+                document.getElementById('productPrice').value = product.price;
+                document.getElementById('productCategory').value = product.category;
+                document.getElementById('productStock').value = product.stock;
+                document.getElementById('productImage').value = product.image || '';
+                document.getElementById('productDescription').value = product.description || '';
+                document.getElementById('previewImg').src = product.image || 'https://via.placeholder.com/100x100?text=Product';
+                document.getElementById('productModal').style.display = 'flex';
+                refreshCategoryDropdown();
+            }
+        } catch (error) { showNotification('Error loading product', 'error'); }
+    }
+
+    async function deleteProduct(id) {
+        if (confirm('Delete this product?')) {
             try {
                 const token = localStorage.getItem('token');
-                if (!token) return;
-                const response = await fetch(`${API_URL}/admin/stats`, { headers: { 'Authorization': `Bearer ${token}` } });
-                if (!response.ok) throw new Error('Failed to load stats');
-                const stats = await response.json();
-                document.getElementById('statsContainer').innerHTML = `
-                    <div class="stat-card"><div class="stat-info"><h3>Total Users</h3><div class="stat-number">${stats.totalUsers || 0}</div></div><div class="stat-icon"><i class="fas fa-users"></i></div></div>
-                    <div class="stat-card"><div class="stat-info"><h3>Total Products</h3><div class="stat-number">${stats.totalProducts || 0}</div></div><div class="stat-icon"><i class="fas fa-box"></i></div></div>
-                    <div class="stat-card"><div class="stat-info"><h3>Total Orders</h3><div class="stat-number">${stats.totalOrders || 0}</div></div><div class="stat-icon"><i class="fas fa-shopping-cart"></i></div></div>
-                    <div class="stat-card"><div class="stat-info"><h3>Pending Orders</h3><div class="stat-number">${stats.pendingOrders || 0}</div></div><div class="stat-icon"><i class="fas fa-clock"></i></div></div>
-                    <div class="stat-card"><div class="stat-info"><h3>Total Revenue</h3><div class="stat-number">Ksh ${(stats.totalRevenue || 0).toLocaleString()}</div></div><div class="stat-icon"><i class="fas fa-chart-line"></i></div></div>
-                `;
-            } catch (error) { console.error('Stats error:', error); }
+                await fetch(`${API_URL}/products/${id}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${token}` } });
+                showNotification('Product deleted');
+                loadProducts();
+                loadStats();
+            } catch (error) { showNotification('Error deleting product', 'error'); }
         }
+    }
 
-        // ============ PRODUCTS ============
-        async function loadProducts() {
+    async function autoFetchImage() {
+        const productName = document.getElementById('productName').value;
+        if (!productName) { showNotification('Please enter product name first', 'error'); return; }
+        document.getElementById('productImage').value = `https://source.unsplash.com/200x200/?${encodeURIComponent(productName)}`;
+        document.getElementById('previewImg').src = document.getElementById('productImage').value;
+    }
+
+    // ============ CATEGORIES ============
+    async function loadCategories() {
+        try {
+            const response = await fetch(`${API_URL}/categories`);
+            const categories = await response.json();
+            const container = document.getElementById('categoriesContainer');
+            if (!categories || categories.length === 0) { container.innerHTML = '<p style="text-align:center;padding:2rem;">No categories yet.</p>'; return; }
+            container.innerHTML = `<table><thead><tr><th>Icon</th><th>ID</th><th>Name</th><th>Created</th><th>Actions</th></tr></thead><tbody>${categories.map(c => `<tr><td><i class="fas ${c.icon}" style="font-size:1.5rem;color:var(--gradient-start);"></i></td><td>${c.id}</td><td><strong>${c.name}</strong></td><td>${new Date(c.createdAt).toLocaleDateString()}</td><td><button class="btn-edit" onclick="editCategory(${c.id})">Edit</button><button class="btn-danger" onclick="deleteCategory(${c.id})">Delete</button></td></tr>`).join('')}</tbody></table>`;
+        } catch (error) { console.error('Categories error:', error); }
+    }
+
+    function showAddCategoryModal() {
+        currentCategoryId = null;
+        document.getElementById('categoryModalTitle').textContent = 'Add New Category';
+        document.getElementById('categoryForm').reset();
+        document.getElementById('categoryModal').style.display = 'flex';
+    }
+
+    function closeCategoryModal() { document.getElementById('categoryModal').style.display = 'none'; }
+
+    async function saveCategory() {
+        const categoryName = document.getElementById('categoryName').value;
+        let categoryIcon = document.getElementById('categoryIcon').value;
+        if (!categoryName) { showNotification('Please enter category name', 'error'); return; }
+        if (categoryIcon && !categoryIcon.startsWith('fa-')) categoryIcon = 'fa-' + categoryIcon;
+        if (!categoryIcon) categoryIcon = 'fa-tag';
+        try {
+            const token = localStorage.getItem('token');
+            let response;
+            if (currentCategoryId) {
+                response = await fetch(`${API_URL}/categories/${currentCategoryId}`, { method: 'PUT', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }, body: JSON.stringify({ name: categoryName, icon: categoryIcon }) });
+            } else {
+                response = await fetch(`${API_URL}/categories`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }, body: JSON.stringify({ name: categoryName, icon: categoryIcon }) });
+            }
+            if (response.ok) { showNotification(currentCategoryId ? 'Category updated!' : 'Category added!'); closeCategoryModal(); loadCategories(); refreshCategoryDropdown(); }
+        } catch (error) { showNotification('Error saving category', 'error'); }
+    }
+
+    async function editCategory(id) {
+        try {
+            const response = await fetch(`${API_URL}/categories`);
+            const categories = await response.json();
+            const category = categories.find(c => c.id === id);
+            if (category) {
+                currentCategoryId = id;
+                document.getElementById('categoryModalTitle').textContent = 'Edit Category';
+                document.getElementById('categoryName').value = category.name;
+                document.getElementById('categoryIcon').value = category.icon;
+                document.getElementById('categoryModal').style.display = 'flex';
+            }
+        } catch (error) { showNotification('Error loading category', 'error'); }
+    }
+
+    async function deleteCategory(id) {
+        if (confirm('Delete this category?')) {
             try {
-                const response = await fetch(`${API_URL}/products`);
-                const products = await response.json();
-                const container = document.getElementById('productsContainer');
-                if (!products || products.length === 0) {
-                    container.innerHTML = '<p style="text-align:center;padding:2rem;">No products yet.</p>';
+                const token = localStorage.getItem('token');
+                await fetch(`${API_URL}/categories/${id}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${token}` } });
+                showNotification('Category deleted');
+                loadCategories();
+                refreshCategoryDropdown();
+            } catch (error) { showNotification('Error deleting category', 'error'); }
+        }
+    }
+
+    // ============ COUPONS ============
+    async function loadCoupons() {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await fetch(`${API_URL}/coupons`, { headers: { 'Authorization': `Bearer ${token}` } });
+            const coupons = await response.json();
+            const container = document.getElementById('couponsContainer');
+            if (!coupons || coupons.length === 0) { container.innerHTML = '<p style="text-align:center;padding:2rem;">No coupons created yet.</p>'; return; }
+            container.innerHTML = `<table><thead><tr><th>Code</th><th>Discount</th><th>Valid Until</th><th>Status</th><th>Actions</th></tr></thead><tbody>${coupons.map(c => `<tr><td><strong>${c.code}</strong></td><td>${c.discount}%</td><td>${new Date(c.validUntil).toLocaleDateString()}</td><td><span class="status-badge status-${c.active ? 'active' : 'inactive'}">${c.active ? 'Active' : 'Inactive'}</span></td><td><button class="btn-edit" onclick="editCoupon(${c.id})">Edit</button><button class="btn-danger" onclick="deleteCoupon(${c.id})">Delete</button></td></tr>`).join('')}</tbody></table>`;
+        } catch (error) { console.error('Coupons error:', error); }
+    }
+
+    function showAddCouponModal() {
+        currentCouponId = null;
+        document.getElementById('couponModalTitle').textContent = 'Create New Coupon';
+        document.getElementById('couponForm').reset();
+        document.getElementById('couponModal').style.display = 'flex';
+    }
+
+    function closeCouponModal() { document.getElementById('couponModal').style.display = 'none'; }
+
+    async function saveCoupon() {
+        const code = document.getElementById('couponCode').value.toUpperCase().trim();
+        const discount = document.getElementById('couponDiscount').value;
+        const validUntil = document.getElementById('couponValidUntil').value;
+        const status = document.getElementById('couponStatus').value;
+        if (!code || !discount || !validUntil) { showNotification('Please fill all required fields', 'error'); return; }
+        if (parseInt(discount) <= 0 || parseInt(discount) > 100) { showNotification('Discount must be between 1 and 100', 'error'); return; }
+        try {
+            const token = localStorage.getItem('token');
+            let response;
+            if (currentCouponId) {
+                response = await fetch(`${API_URL}/coupons/${currentCouponId}`, { method: 'PUT', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }, body: JSON.stringify({ code, discount: parseInt(discount), validUntil: new Date(validUntil).toISOString(), active: status === 'active' }) });
+            } else {
+                response = await fetch(`${API_URL}/coupons`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }, body: JSON.stringify({ code, discount: parseInt(discount), validUntil: new Date(validUntil).toISOString(), active: status === 'active' }) });
+            }
+            if (response.ok) { showNotification(currentCouponId ? 'Coupon updated!' : 'Coupon created!'); closeCouponModal(); loadCoupons(); }
+        } catch (error) { showNotification('Error saving coupon', 'error'); }
+    }
+
+    async function editCoupon(id) {
+        try {
+            const response = await fetch(`${API_URL}/coupons`);
+            const coupons = await response.json();
+            const coupon = coupons.find(c => c.id === id);
+            if (coupon) {
+                currentCouponId = id;
+                document.getElementById('couponModalTitle').textContent = 'Edit Coupon';
+                document.getElementById('couponCode').value = coupon.code;
+                document.getElementById('couponDiscount').value = coupon.discount;
+                document.getElementById('couponValidUntil').value = new Date(coupon.validUntil).toISOString().split('T')[0];
+                document.getElementById('couponStatus').value = coupon.active ? 'active' : 'inactive';
+                document.getElementById('couponModal').style.display = 'flex';
+            }
+        } catch (error) { showNotification('Error loading coupon', 'error'); }
+    }
+
+    async function deleteCoupon(id) {
+        if (confirm('Delete this coupon?')) {
+            try {
+                const token = localStorage.getItem('token');
+                await fetch(`${API_URL}/coupons/${id}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${token}` } });
+                showNotification('Coupon deleted');
+                loadCoupons();
+            } catch (error) { showNotification('Error deleting coupon', 'error'); }
+        }
+    }
+
+    // ============ ORDERS ============
+    async function loadOrders() {
+        try {
+            const token = localStorage.getItem('token');
+            if (!token) { document.getElementById('ordersContainer').innerHTML = '<p style="text-align:center;padding:2rem;color:red;">Please login first</p>'; return; }
+            const response = await fetch(`${API_URL}/admin/orders`, { headers: { 'Authorization': `Bearer ${token}` } });
+            if (!response.ok) throw new Error('Failed to load orders');
+            const ordersData = await response.json();
+            const container = document.getElementById('ordersContainer');
+            if (ordersData.length === 0) { container.innerHTML = '<p style="text-align:center;padding:2rem;">No orders yet</p>'; return; }
+            ordersList = ordersData;
+            container.innerHTML = `<table><thead><tr><th>Order ID</th><th>Customer</th><th>Total</th><th>Status</th><th>Date</th><th>Actions</th></tr></thead><tbody>${ordersData.map(order => `<tr><td>#${order.id}</td><td>${order.deliveryAddress || order.customerName || 'N/A'}</td><td>Ksh ${(order.totalAmount || 0).toLocaleString()}</td><td><select onchange="updateOrderStatus(${order.id}, this.value)" class="status-badge status-${order.orderStatus}"><option value="pending" ${order.orderStatus === 'pending' ? 'selected' : ''}>Pending</option><option value="approved" ${order.orderStatus === 'approved' ? 'selected' : ''}>Approved</option><option value="shipped" ${order.orderStatus === 'shipped' ? 'selected' : ''}>Shipped</option><option value="delivered" ${order.orderStatus === 'delivered' ? 'selected' : ''}>Delivered</option></select></td><td>${new Date(order.createdAt).toLocaleDateString()}</td><td><button class="btn-edit" onclick="viewOrderDetails(${order.id})">View</button></td></tr>`).join('')}</tbody></table>`;
+        } catch (error) { console.error('Orders error:', error); }
+    }
+
+    async function updateOrderStatus(orderId, status) {
+        try {
+            const token = localStorage.getItem('token');
+            await fetch(`${API_URL}/admin/orders/${orderId}/status`, { method: 'PUT', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }, body: JSON.stringify({ orderStatus: status }) });
+            showNotification('Order status updated');
+            loadOrders();
+        } catch (error) { showNotification('Error updating status', 'error'); }
+    }
+
+    function viewOrderDetails(orderId) {
+        const order = ordersList.find(o => o.id === orderId);
+        if (!order) { showNotification('Order not found', 'error'); return; }
+        document.getElementById('orderDetailsContent').innerHTML = `
+            <div class="order-info-section"><h4>Customer Information</h4><div class="order-info-grid">
+                <div class="info-item"><span class="info-label">Full Name</span><span class="info-value">${order.customerName || 'Customer'}</span></div>
+                <div class="info-item"><span class="info-label">Email</span><span class="info-value">${order.customerEmail || 'Not provided'}</span></div>
+                <div class="info-item"><span class="info-label">Phone</span><span class="info-value">${order.customerPhone || 'Not provided'}</span></div>
+                <div class="info-item"><span class="info-label">Order Date</span><span class="info-value">${new Date(order.createdAt).toLocaleString()}</span></div>
+            </div></div>
+            <div class="order-info-section"><h4>Delivery Address</h4><div class="info-value"><i class="fas fa-location-dot"></i> ${order.deliveryAddress || 'Nairobi, Kenya'}</div>
+            <div class="map-container"><iframe src="https://maps.google.com/maps?q=${encodeURIComponent(order.deliveryAddress || 'Nairobi, Kenya')}&output=embed" allowfullscreen></iframe></div>
+            <button class="directions-btn" onclick="window.open('https://www.google.com/maps/dir/Nairobi, Kenya/${encodeURIComponent(order.deliveryAddress || 'Nairobi, Kenya')}', '_blank')"><i class="fas fa-directions"></i> Get Directions</button></div>
+            <div class="order-info-section"><h4>Order Items</h4><div class="products-list">${order.products?.map(item => `<div class="product-item"><div><strong>${item.name}</strong><div>Quantity: ${item.quantity}</div></div><div>Ksh ${(item.price * item.quantity).toLocaleString()}</div></div>`).join('') || '<p>No items</p>'}</div></div>
+            <div class="order-info-section"><h4>Payment Summary</h4><div class="order-info-grid">
+                <div class="info-item"><span class="info-label">Payment Method</span><span class="info-value">${order.paymentMethod || 'Cash on Delivery'}</span></div>
+                <div class="info-item"><span class="info-label">Total Amount</span><span class="info-value" style="color:var(--gradient-start);font-size:1.25rem;">Ksh ${(order.totalAmount || 0).toLocaleString()}</span></div>
+            </div></div>
+        `;
+        document.getElementById('orderDetailsModal').style.display = 'flex';
+    }
+
+    function closeOrderDetailsModal() { document.getElementById('orderDetailsModal').style.display = 'none'; }
+
+    // ============ USERS ============
+    async function loadUsers() {
+        try {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                document.getElementById('usersContainer').innerHTML = '<p style="text-align:center;padding:2rem;color:red;">Please login first</p>';
+                return;
+            }
+            
+            const response = await fetch(`${API_URL}/admin/users`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            
+            if (!response.ok) {
+                if (response.status === 401) {
+                    document.getElementById('usersContainer').innerHTML = '<p style="text-align:center;padding:2rem;color:red;">Session expired. Please login again.</p>';
                     return;
                 }
-                container.innerHTML = `
-                    <table><thead><tr><th>Image</th><th>Name</th><th>Price</th><th>Category</th><th>Stock</th><th>Actions</th></tr></thead>
-                    <tbody>${products.map(p => `
-                        <tr><td class="product-image-cell"><img src="${p.image || 'https://via.placeholder.com/50x50?text=Product'}" alt="${p.name}"></td>
-                        <td>${p.name}</td><td>Ksh ${p.price.toLocaleString()}</td>
-                        <td><span class="status-badge">${p.category}</span></td><td>${p.stock}</td>
-                        <td><button class="btn-edit" onclick="editProduct(${p.id})">Edit</button>
-                        <button class="btn-danger" onclick="deleteProduct(${p.id})">Delete</button></td></tr>
-                    `).join('')}</tbody></table>
-                `;
-            } catch (error) { console.error('Products error:', error); }
-        }
-
-        function showAddProductModal() {
-            currentProductId = null;
-            document.getElementById('modalTitle').textContent = 'Add New Product';
-            document.getElementById('productForm').reset();
-            document.getElementById('previewImg').src = 'https://via.placeholder.com/100x100?text=Preview';
-            document.getElementById('productModal').style.display = 'flex';
-            refreshCategoryDropdown();
-        }
-
-        function closeProductModal() { document.getElementById('productModal').style.display = 'none'; }
-
-        async function refreshCategoryDropdown() {
-            const categorySelect = document.getElementById('productCategory');
-            if (!categorySelect) return;
-            try {
-                const response = await fetch(`${API_URL}/categories`);
-                const categories = await response.json();
-                const currentValue = categorySelect.value;
-                categorySelect.innerHTML = '<option value="">Select Category</option>' + categories.map(cat => `<option value="${cat.name.toLowerCase()}">${cat.name}</option>`).join('');
-                if (currentValue && categories.some(cat => cat.name.toLowerCase() === currentValue)) categorySelect.value = currentValue;
-            } catch (error) { console.error('Failed to refresh categories:', error); }
-        }
-
-        async function saveProduct() {
-            const product = {
-                name: document.getElementById('productName').value,
-                price: parseInt(document.getElementById('productPrice').value),
-                category: document.getElementById('productCategory').value,
-                stock: parseInt(document.getElementById('productStock').value),
-                image: document.getElementById('productImage').value || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=200',
-                description: document.getElementById('productDescription').value
-            };
-            if (!product.name || !product.price || !product.category) { showNotification('Please fill all required fields', 'error'); return; }
-            try {
-                const token = localStorage.getItem('token');
-                let response;
-                if (currentProductId) {
-                    response = await fetch(`${API_URL}/products/${currentProductId}`, { method: 'PUT', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }, body: JSON.stringify(product) });
-                } else {
-                    response = await fetch(`${API_URL}/products`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }, body: JSON.stringify(product) });
+                if (response.status === 403) {
+                    document.getElementById('usersContainer').innerHTML = '<p style="text-align:center;padding:2rem;color:red;">Admin access required.</p>';
+                    return;
                 }
-                if (response.ok) { showNotification(currentProductId ? 'Product updated!' : 'Product added!'); closeProductModal(); loadProducts(); loadStats(); }
-            } catch (error) { showNotification('Error saving product', 'error'); }
-        }
-
-        async function editProduct(id) {
-            try {
-                const response = await fetch(`${API_URL}/products`);
-                const products = await response.json();
-                const product = products.find(p => p.id === id);
-                if (product) {
-                    currentProductId = id;
-                    document.getElementById('modalTitle').textContent = 'Edit Product';
-                    document.getElementById('productName').value = product.name;
-                    document.getElementById('productPrice').value = product.price;
-                    document.getElementById('productCategory').value = product.category;
-                    document.getElementById('productStock').value = product.stock;
-                    document.getElementById('productImage').value = product.image || '';
-                    document.getElementById('productDescription').value = product.description || '';
-                    document.getElementById('previewImg').src = product.image || 'https://via.placeholder.com/100x100?text=Product';
-                    document.getElementById('productModal').style.display = 'flex';
-                    refreshCategoryDropdown();
-                }
-            } catch (error) { showNotification('Error loading product', 'error'); }
-        }
-
-        async function deleteProduct(id) {
-            if (confirm('Delete this product?')) {
-                try {
-                    const token = localStorage.getItem('token');
-                    await fetch(`${API_URL}/products/${id}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${token}` } });
-                    showNotification('Product deleted');
-                    loadProducts();
-                    loadStats();
-                } catch (error) { showNotification('Error deleting product', 'error'); }
+                throw new Error('Failed to load users');
             }
+            
+            allUsers = await response.json();
+            filteredUsers = [...allUsers];
+            
+            updateUserStats();
+            renderUsers();
+            
+        } catch (error) {
+            console.error('Users error:', error);
+            document.getElementById('usersContainer').innerHTML = '<p style="text-align:center;padding:2rem;color:red;">Failed to load users</p>';
         }
+    }
 
-        async function autoFetchImage() {
-            const productName = document.getElementById('productName').value;
-            if (!productName) { showNotification('Please enter product name first', 'error'); return; }
-            document.getElementById('productImage').value = `https://source.unsplash.com/200x200/?${encodeURIComponent(productName)}`;
-            document.getElementById('previewImg').src = document.getElementById('productImage').value;
+    function updateUserStats() {
+        const total = allUsers.length;
+        const admins = allUsers.filter(u => u.isAdmin === true).length;
+        const customers = allUsers.filter(u => u.isAdmin !== true).length;
+        const newUsers = allUsers.filter(u => {
+            if (!u.createdAt) return false;
+            const date = new Date(u.createdAt);
+            const daysAgo = (Date.now() - date.getTime()) / (1000 * 60 * 60 * 24);
+            return daysAgo <= 30;
+        }).length;
+        
+        document.getElementById('totalUsersCount').textContent = total;
+        document.getElementById('adminUsersCount').textContent = admins;
+        document.getElementById('customerUsersCount').textContent = customers;
+        document.getElementById('newUsersCount').textContent = newUsers;
+    }
+
+    function renderUsers() {
+        const container = document.getElementById('usersContainer');
+        
+        if (filteredUsers.length === 0) {
+            container.innerHTML = '<p style="text-align:center;padding:2rem;color:var(--text-secondary);">No users found</p>';
+            return;
         }
+        
+        container.innerHTML = `
+            <table>
+                <thead>
+                    <tr>
+                        <th>User</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Role</th>
+                        <th>Joined</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${filteredUsers.map(user => `
+                        <tr>
+                            <td>
+                                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                    <div style="width: 35px; height: 35px; border-radius: 50%; background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end)); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 0.875rem;">
+                                        ${user.name ? user.name.charAt(0).toUpperCase() : 'U'}
+                                    </div>
+                                    <div>
+                                        <div style="font-weight: 600; color: var(--text-primary);">${user.name || 'Unknown'}</div>
+                                        <div style="font-size: 0.65rem; color: var(--text-secondary);">ID: ${user.id ? String(user.id).slice(0, 8) : 'N/A'}</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td style="color: var(--text-primary);">${user.email}</td>
+                            <td style="color: var(--text-primary);">${user.phone || 'Not provided'}</td>
+                            <td>
+                                <span class="status-badge ${user.isAdmin ? 'status-approved' : 'status-pending'}" style="${user.isAdmin ? 'background:#6366f1;color:white;' : 'background:#fef3c7;color:#92400e;'}">
+                                    ${user.isAdmin ? '👑 Admin' : 'Customer'}
+                                </span>
+                            </td>
+                            <td style="color: var(--text-primary);">${user.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'N/A'}</td>
+                            <td>
+                                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                                    ${!user.isAdmin ? `
+                                        <button class="btn-edit" onclick="promoteToAdmin('${user.id}')" style="padding: 0.25rem 0.75rem; font-size: 0.75rem;">
+                                            <i class="fas fa-arrow-up"></i> Promote
+                                        </button>
+                                    ` : `
+                                        <button class="btn-edit" onclick="demoteFromAdmin('${user.id}')" style="padding: 0.25rem 0.75rem; font-size: 0.75rem; background: #f59e0b; color: white;">
+                                            <i class="fas fa-arrow-down"></i> Demote
+                                        </button>
+                                    `}
+                                    <button class="btn-edit" onclick="editUser('${user.id}')" style="padding: 0.25rem 0.75rem; font-size: 0.75rem; background: #3b82f6; color: white;">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    ${!user.isAdmin ? `
+                                        <button class="btn-danger" onclick="deleteUser('${user.id}')" style="padding: 0.25rem 0.75rem; font-size: 0.75rem;">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    ` : `
+                                        <span style="color: var(--text-secondary); font-size: 0.75rem; padding: 0.25rem 0.75rem; background: var(--bg-primary); border-radius: 4px;">Protected</span>
+                                    `}
+                                </div>
+                            </td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+        `;
+    }
 
-        // ============ CATEGORIES ============
-        async function loadCategories() {
-            try {
-                const response = await fetch(`${API_URL}/categories`);
-                const categories = await response.json();
-                const container = document.getElementById('categoriesContainer');
-                if (!categories || categories.length === 0) { container.innerHTML = '<p style="text-align:center;padding:2rem;">No categories yet.</p>'; return; }
-                container.innerHTML = `<table><thead><tr><th>Icon</th><th>ID</th><th>Name</th><th>Created</th><th>Actions</th></tr></thead><tbody>${categories.map(c => `<tr><td><i class="fas ${c.icon}" style="font-size:1.5rem;color:var(--gradient-start);"></i></td><td>${c.id}</td><td><strong>${c.name}</strong></td><td>${new Date(c.createdAt).toLocaleDateString()}</td><td><button class="btn-edit" onclick="editCategory(${c.id})">Edit</button><button class="btn-danger" onclick="deleteCategory(${c.id})">Delete</button></td></tr>`).join('')}</tbody></table>`;
-            } catch (error) { console.error('Categories error:', error); }
+    function filterUsers() {
+        const searchTerm = document.getElementById('userSearchInput').value.toLowerCase();
+        const roleFilter = document.getElementById('userRoleFilter').value;
+        
+        filteredUsers = allUsers.filter(user => {
+            const matchesSearch = 
+                (user.name && user.name.toLowerCase().includes(searchTerm)) ||
+                (user.email && user.email.toLowerCase().includes(searchTerm)) ||
+                (user.phone && user.phone.includes(searchTerm));
+            
+            const matchesRole = 
+                roleFilter === 'all' ||
+                (roleFilter === 'admin' && user.isAdmin) ||
+                (roleFilter === 'customer' && !user.isAdmin);
+            
+            return matchesSearch && matchesRole;
+        });
+        
+        renderUsers();
+    }
+
+    function refreshUsers() {
+        showNotification('Refreshing users...', 'success');
+        loadUsers();
+    }
+
+    // Promote to Admin
+    async function promoteToAdmin(userId) {
+        if (!userId) {
+            showNotification('User ID is required', 'error');
+            return;
         }
-
-        function showAddCategoryModal() {
-            currentCategoryId = null;
-            document.getElementById('categoryModalTitle').textContent = 'Add New Category';
-            document.getElementById('categoryForm').reset();
-            document.getElementById('categoryModal').style.display = 'flex';
-        }
-
-        function closeCategoryModal() { document.getElementById('categoryModal').style.display = 'none'; }
-
-        async function saveCategory() {
-            const categoryName = document.getElementById('categoryName').value;
-            let categoryIcon = document.getElementById('categoryIcon').value;
-            if (!categoryName) { showNotification('Please enter category name', 'error'); return; }
-            if (categoryIcon && !categoryIcon.startsWith('fa-')) categoryIcon = 'fa-' + categoryIcon;
-            if (!categoryIcon) categoryIcon = 'fa-tag';
-            try {
-                const token = localStorage.getItem('token');
-                let response;
-                if (currentCategoryId) {
-                    response = await fetch(`${API_URL}/categories/${currentCategoryId}`, { method: 'PUT', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }, body: JSON.stringify({ name: categoryName, icon: categoryIcon }) });
-                } else {
-                    response = await fetch(`${API_URL}/categories`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }, body: JSON.stringify({ name: categoryName, icon: categoryIcon }) });
-                }
-                if (response.ok) { showNotification(currentCategoryId ? 'Category updated!' : 'Category added!'); closeCategoryModal(); loadCategories(); refreshCategoryDropdown(); }
-            } catch (error) { showNotification('Error saving category', 'error'); }
-        }
-
-        async function editCategory(id) {
-            try {
-                const response = await fetch(`${API_URL}/categories`);
-                const categories = await response.json();
-                const category = categories.find(c => c.id === id);
-                if (category) {
-                    currentCategoryId = id;
-                    document.getElementById('categoryModalTitle').textContent = 'Edit Category';
-                    document.getElementById('categoryName').value = category.name;
-                    document.getElementById('categoryIcon').value = category.icon;
-                    document.getElementById('categoryModal').style.display = 'flex';
-                }
-            } catch (error) { showNotification('Error loading category', 'error'); }
-        }
-
-        async function deleteCategory(id) {
-            if (confirm('Delete this category?')) {
-                try {
-                    const token = localStorage.getItem('token');
-                    await fetch(`${API_URL}/categories/${id}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${token}` } });
-                    showNotification('Category deleted');
-                    loadCategories();
-                    refreshCategoryDropdown();
-                } catch (error) { showNotification('Error deleting category', 'error'); }
-            }
-        }
-
-        // ============ COUPONS ============
-        async function loadCoupons() {
-            try {
-                const token = localStorage.getItem('token');
-                const response = await fetch(`${API_URL}/coupons`, { headers: { 'Authorization': `Bearer ${token}` } });
-                const coupons = await response.json();
-                const container = document.getElementById('couponsContainer');
-                if (!coupons || coupons.length === 0) { container.innerHTML = '<p style="text-align:center;padding:2rem;">No coupons created yet.</p>'; return; }
-                container.innerHTML = `<table><thead><tr><th>Code</th><th>Discount</th><th>Valid Until</th><th>Status</th><th>Actions</th></tr></thead><tbody>${coupons.map(c => `<tr><td><strong>${c.code}</strong></td><td>${c.discount}%</td><td>${new Date(c.validUntil).toLocaleDateString()}</td><td><span class="status-badge status-${c.active ? 'active' : 'inactive'}">${c.active ? 'Active' : 'Inactive'}</span></td><td><button class="btn-edit" onclick="editCoupon(${c.id})">Edit</button><button class="btn-danger" onclick="deleteCoupon(${c.id})">Delete</button></td></tr>`).join('')}</tbody></table>`;
-            } catch (error) { console.error('Coupons error:', error); }
-        }
-
-        function showAddCouponModal() {
-            currentCouponId = null;
-            document.getElementById('couponModalTitle').textContent = 'Create New Coupon';
-            document.getElementById('couponForm').reset();
-            document.getElementById('couponModal').style.display = 'flex';
-        }
-
-        function closeCouponModal() { document.getElementById('couponModal').style.display = 'none'; }
-
-        async function saveCoupon() {
-            const code = document.getElementById('couponCode').value.toUpperCase().trim();
-            const discount = document.getElementById('couponDiscount').value;
-            const validUntil = document.getElementById('couponValidUntil').value;
-            const status = document.getElementById('couponStatus').value;
-            if (!code || !discount || !validUntil) { showNotification('Please fill all required fields', 'error'); return; }
-            if (parseInt(discount) <= 0 || parseInt(discount) > 100) { showNotification('Discount must be between 1 and 100', 'error'); return; }
-            try {
-                const token = localStorage.getItem('token');
-                let response;
-                if (currentCouponId) {
-                    response = await fetch(`${API_URL}/coupons/${currentCouponId}`, { method: 'PUT', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }, body: JSON.stringify({ code, discount: parseInt(discount), validUntil: new Date(validUntil).toISOString(), active: status === 'active' }) });
-                } else {
-                    response = await fetch(`${API_URL}/coupons`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }, body: JSON.stringify({ code, discount: parseInt(discount), validUntil: new Date(validUntil).toISOString(), active: status === 'active' }) });
-                }
-                if (response.ok) { showNotification(currentCouponId ? 'Coupon updated!' : 'Coupon created!'); closeCouponModal(); loadCoupons(); }
-            } catch (error) { showNotification('Error saving coupon', 'error'); }
-        }
-
-        async function editCoupon(id) {
-            try {
-                const response = await fetch(`${API_URL}/coupons`);
-                const coupons = await response.json();
-                const coupon = coupons.find(c => c.id === id);
-                if (coupon) {
-                    currentCouponId = id;
-                    document.getElementById('couponModalTitle').textContent = 'Edit Coupon';
-                    document.getElementById('couponCode').value = coupon.code;
-                    document.getElementById('couponDiscount').value = coupon.discount;
-                    document.getElementById('couponValidUntil').value = new Date(coupon.validUntil).toISOString().split('T')[0];
-                    document.getElementById('couponStatus').value = coupon.active ? 'active' : 'inactive';
-                    document.getElementById('couponModal').style.display = 'flex';
-                }
-            } catch (error) { showNotification('Error loading coupon', 'error'); }
-        }
-
-        async function deleteCoupon(id) {
-            if (confirm('Delete this coupon?')) {
-                try {
-                    const token = localStorage.getItem('token');
-                    await fetch(`${API_URL}/coupons/${id}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${token}` } });
-                    showNotification('Coupon deleted');
-                    loadCoupons();
-                } catch (error) { showNotification('Error deleting coupon', 'error'); }
-            }
-        }
-
-        // ============ ORDERS ============
-        async function loadOrders() {
-            try {
-                const token = localStorage.getItem('token');
-                if (!token) { document.getElementById('ordersContainer').innerHTML = '<p style="text-align:center;padding:2rem;color:red;">Please login first</p>'; return; }
-                const response = await fetch(`${API_URL}/admin/orders`, { headers: { 'Authorization': `Bearer ${token}` } });
-                if (!response.ok) throw new Error('Failed to load orders');
-                const ordersData = await response.json();
-                const container = document.getElementById('ordersContainer');
-                if (ordersData.length === 0) { container.innerHTML = '<p style="text-align:center;padding:2rem;">No orders yet</p>'; return; }
-                ordersList = ordersData;
-                container.innerHTML = `<table><thead><tr><th>Order ID</th><th>Customer</th><th>Total</th><th>Status</th><th>Date</th><th>Actions</th></tr></thead><tbody>${ordersData.map(order => `<tr><td>#${order.id}</td><td>${order.deliveryAddress || order.customerName || 'N/A'}</td><td>Ksh ${(order.totalAmount || 0).toLocaleString()}</td><td><select onchange="updateOrderStatus(${order.id}, this.value)" class="status-badge status-${order.orderStatus}"><option value="pending" ${order.orderStatus === 'pending' ? 'selected' : ''}>Pending</option><option value="approved" ${order.orderStatus === 'approved' ? 'selected' : ''}>Approved</option><option value="shipped" ${order.orderStatus === 'shipped' ? 'selected' : ''}>Shipped</option><option value="delivered" ${order.orderStatus === 'delivered' ? 'selected' : ''}>Delivered</option></select></td><td>${new Date(order.createdAt).toLocaleDateString()}</td><td><button class="btn-edit" onclick="viewOrderDetails(${order.id})">View</button></td></tr>`).join('')}</tbody></table>`;
-            } catch (error) { console.error('Orders error:', error); }
-        }
-
-        async function updateOrderStatus(orderId, status) {
-            try {
-                const token = localStorage.getItem('token');
-                await fetch(`${API_URL}/admin/orders/${orderId}/status`, { method: 'PUT', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }, body: JSON.stringify({ orderStatus: status }) });
-                showNotification('Order status updated');
-                loadOrders();
-            } catch (error) { showNotification('Error updating status', 'error'); }
-        }
-
-        function viewOrderDetails(orderId) {
-            const order = ordersList.find(o => o.id === orderId);
-            if (!order) { showNotification('Order not found', 'error'); return; }
-            document.getElementById('orderDetailsContent').innerHTML = `
-                <div class="order-info-section"><h4>Customer Information</h4><div class="order-info-grid">
-                    <div class="info-item"><span class="info-label">Full Name</span><span class="info-value">${order.customerName || 'Customer'}</span></div>
-                    <div class="info-item"><span class="info-label">Email</span><span class="info-value">${order.customerEmail || 'Not provided'}</span></div>
-                    <div class="info-item"><span class="info-label">Phone</span><span class="info-value">${order.customerPhone || 'Not provided'}</span></div>
-                    <div class="info-item"><span class="info-label">Order Date</span><span class="info-value">${new Date(order.createdAt).toLocaleString()}</span></div>
-                </div></div>
-                <div class="order-info-section"><h4>Delivery Address</h4><div class="info-value"><i class="fas fa-location-dot"></i> ${order.deliveryAddress || 'Nairobi, Kenya'}</div>
-                <div class="map-container"><iframe src="https://maps.google.com/maps?q=${encodeURIComponent(order.deliveryAddress || 'Nairobi, Kenya')}&output=embed" allowfullscreen></iframe></div>
-                <button class="directions-btn" onclick="window.open('https://www.google.com/maps/dir/Nairobi, Kenya/${encodeURIComponent(order.deliveryAddress || 'Nairobi, Kenya')}', '_blank')"><i class="fas fa-directions"></i> Get Directions</button></div>
-                <div class="order-info-section"><h4>Order Items</h4><div class="products-list">${order.products?.map(item => `<div class="product-item"><div><strong>${item.name}</strong><div>Quantity: ${item.quantity}</div></div><div>Ksh ${(item.price * item.quantity).toLocaleString()}</div></div>`).join('') || '<p>No items</p>'}</div></div>
-                <div class="order-info-section"><h4>Payment Summary</h4><div class="order-info-grid">
-                    <div class="info-item"><span class="info-label">Payment Method</span><span class="info-value">${order.paymentMethod || 'Cash on Delivery'}</span></div>
-                    <div class="info-item"><span class="info-label">Total Amount</span><span class="info-value" style="color:var(--gradient-start);font-size:1.25rem;">Ksh ${(order.totalAmount || 0).toLocaleString()}</span></div>
-                </div></div>
-            `;
-            document.getElementById('orderDetailsModal').style.display = 'flex';
-        }
-
-        function closeOrderDetailsModal() { document.getElementById('orderDetailsModal').style.display = 'none'; }
-
-        // ============ USERS ============
-        async function loadUsers() {
+        
+        if (confirm('Are you sure you want to promote this user to Admin?')) {
             try {
                 const token = localStorage.getItem('token');
                 if (!token) {
-                    document.getElementById('usersContainer').innerHTML = '<p style="text-align:center;padding:2rem;color:red;">Please login first</p>';
+                    showNotification('Please login first', 'error');
                     return;
                 }
                 
-                const response = await fetch(`${API_URL}/admin/users`, {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                
-                if (!response.ok) {
-                    if (response.status === 401) {
-                        document.getElementById('usersContainer').innerHTML = '<p style="text-align:center;padding:2rem;color:red;">Session expired. Please login again.</p>';
-                        return;
-                    }
-                    if (response.status === 403) {
-                        document.getElementById('usersContainer').innerHTML = '<p style="text-align:center;padding:2rem;color:red;">Admin access required.</p>';
-                        return;
-                    }
-                    throw new Error('Failed to load users');
+                const id = typeof userId === 'string' ? parseInt(userId) : userId;
+                if (isNaN(id)) {
+                    showNotification('Invalid user ID', 'error');
+                    return;
                 }
                 
-                allUsers = await response.json();
-                filteredUsers = [...allUsers];
-                
-                updateUserStats();
-                renderUsers();
-                
-            } catch (error) {
-                console.error('Users error:', error);
-                document.getElementById('usersContainer').innerHTML = '<p style="text-align:center;padding:2rem;color:red;">Failed to load users</p>';
-            }
-        }
-
-        function updateUserStats() {
-            const total = allUsers.length;
-            const admins = allUsers.filter(u => u.isAdmin === true).length;
-            const customers = allUsers.filter(u => u.isAdmin !== true).length;
-            const newUsers = allUsers.filter(u => {
-                if (!u.createdAt) return false;
-                const date = new Date(u.createdAt);
-                const daysAgo = (Date.now() - date.getTime()) / (1000 * 60 * 60 * 24);
-                return daysAgo <= 30;
-            }).length;
-            
-            document.getElementById('totalUsersCount').textContent = total;
-            document.getElementById('adminUsersCount').textContent = admins;
-            document.getElementById('customerUsersCount').textContent = customers;
-            document.getElementById('newUsersCount').textContent = newUsers;
-        }
-
-        // Delete User - FIXED
-async function deleteUser(userId) {
-    if (!userId) {
-        showNotification('User ID is required', 'error');
-        return;
-    }
-    
-    if (confirm('Are you sure you want to permanently delete this user? This action cannot be undone.')) {
-        try {
-            const token = localStorage.getItem('token');
-            if (!token) {
-                showNotification('Please login first', 'error');
-                return;
-            }
-            
-            // Convert userId to number if it's a string
-            const id = typeof userId === 'string' ? parseInt(userId) : userId;
-            
-            if (isNaN(id)) {
-                showNotification('Invalid user ID', 'error');
-                return;
-            }
-            
-            console.log('Deleting user with ID:', id);
-            
-            const response = await fetch(`${API_URL}/admin/users/${id}`, {
-                method: 'DELETE',
-                headers: { 
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}` 
-                }
-            });
-            
-            if (!response.ok) {
-                const error = await response.json();
-                throw new Error(error.error || 'Failed to delete user');
-            }
-            
-            showNotification('User deleted successfully!', 'success');
-            loadUsers();
-            loadStats();
-        } catch (error) {
-            console.error('Delete user error:', error);
-            showNotification(error.message || 'Error deleting user', 'error');
-        }
-    }
-}
-
-        function filterUsers() {
-            const searchTerm = document.getElementById('userSearchInput').value.toLowerCase();
-            const roleFilter = document.getElementById('userRoleFilter').value;
-            
-            filteredUsers = allUsers.filter(user => {
-                const matchesSearch = 
-                    (user.name && user.name.toLowerCase().includes(searchTerm)) ||
-                    (user.email && user.email.toLowerCase().includes(searchTerm)) ||
-                    (user.phone && user.phone.includes(searchTerm));
-                
-                const matchesRole = 
-                    roleFilter === 'all' ||
-                    (roleFilter === 'admin' && user.isAdmin) ||
-                    (roleFilter === 'customer' && !user.isAdmin);
-                
-                return matchesSearch && matchesRole;
-            });
-            
-            renderUsers();
-        }
-
-        function refreshUsers() {
-            showNotification('Refreshing users...', 'success');
-            loadUsers();
-        }
-
-        // Promote to Admin - FIXED
-async function promoteToAdmin(userId) {
-    if (!userId) {
-        showNotification('User ID is required', 'error');
-        return;
-    }
-    
-    if (confirm('Are you sure you want to promote this user to Admin?')) {
-        try {
-            const token = localStorage.getItem('token');
-            if (!token) {
-                showNotification('Please login first', 'error');
-                return;
-            }
-            
-            const id = typeof userId === 'string' ? parseInt(userId) : userId;
-            if (isNaN(id)) {
-                showNotification('Invalid user ID', 'error');
-                return;
-            }
-            
-            const user = allUsers.find(u => u.id === id);
-            if (!user) throw new Error('User not found');
-            
-            const response = await fetch(`${API_URL}/admin/users/${id}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify({ ...user, isAdmin: true })
-            });
-            
-            if (!response.ok) {
-                const error = await response.json();
-                throw new Error(error.error || 'Failed to promote user');
-            }
-            
-            showNotification('User promoted to Admin successfully!', 'success');
-            loadUsers();
-        } catch (error) {
-            console.error('Promote error:', error);
-            showNotification(error.message || 'Failed to promote user', 'error');
-        }
-    }
-}
-
-// Demote from Admin - FIXED
-async function demoteFromAdmin(userId) {
-    if (!userId) {
-        showNotification('User ID is required', 'error');
-        return;
-    }
-    
-    if (confirm('Are you sure you want to demote this Admin to Customer?')) {
-        try {
-            const token = localStorage.getItem('token');
-            if (!token) {
-                showNotification('Please login first', 'error');
-                return;
-            }
-            
-            const id = typeof userId === 'string' ? parseInt(userId) : userId;
-            if (isNaN(id)) {
-                showNotification('Invalid user ID', 'error');
-                return;
-            }
-            
-            const user = allUsers.find(u => u.id === id);
-            if (!user) throw new Error('User not found');
-            
-            // Check if this is the last admin
-            const admins = allUsers.filter(u => u.isAdmin === true);
-            if (admins.length <= 1) {
-                showNotification('Cannot demote the last admin!', 'error');
-                return;
-            }
-            
-            const response = await fetch(`${API_URL}/admin/users/${id}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify({ ...user, isAdmin: false })
-            });
-            
-            if (!response.ok) {
-                const error = await response.json();
-                throw new Error(error.error || 'Failed to demote user');
-            }
-            
-            showNotification('Admin demoted to Customer successfully!', 'success');
-            loadUsers();
-        } catch (error) {
-            console.error('Demote error:', error);
-            showNotification(error.message || 'Failed to demote user', 'error');
-        }
-    }
-}
-
-        // Add User
-        function showAddUserModal() {
-            document.getElementById('addUserModal').style.display = 'flex';
-            document.getElementById('addUserForm').reset();
-        }
-
-        function closeAddUserModal() {
-            document.getElementById('addUserModal').style.display = 'none';
-        }
-
-        async function addNewUser() {
-            const name = document.getElementById('addUserName').value;
-            const email = document.getElementById('addUserEmail').value;
-            const phone = document.getElementById('addUserPhone').value;
-            const password = document.getElementById('addUserPassword').value;
-            const role = document.getElementById('addUserRole').value;
-            
-            if (!name || !email || !password) {
-                showNotification('Please fill all required fields', 'error');
-                return;
-            }
-            
-            if (password.length < 6) {
-                showNotification('Password must be at least 6 characters', 'error');
-                return;
-            }
-            
-            try {
-                const token = localStorage.getItem('token');
-                const response = await fetch(`${API_URL}/auth/register`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ name, email, phone, password })
-                });
-                
-                const result = await response.json();
-                
-                if (!response.ok) {
-                    throw new Error(result.error || 'Failed to create user');
-                }
-                
-                // If role is admin, promote the new user
-                if (role === 'admin') {
-                    const loginRes = await fetch(`${API_URL}/auth/login`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ email, password })
-                    });
-                    
-                    const loginData = await loginRes.json();
-                    if (loginData.token) {
-                        const user = allUsers.find(u => u.email === email);
-                        if (user) {
-                            await fetch(`${API_URL}/admin/users/${user.id}`, {
-                                method: 'PUT',
-                                headers: {
-                                    'Content-Type': 'application/json',
-                                    'Authorization': `Bearer ${loginData.token}`
-                                },
-                                body: JSON.stringify({ ...user, isAdmin: true })
-                            });
-                        }
-                    }
-                }
-                
-                closeAddUserModal();
-                showNotification('User created successfully!', 'success');
-                loadUsers();
-            } catch (error) {
-                console.error('Create user error:', error);
-                showNotification(error.message, 'error');
-            }
-        }
-
-        // Edit User
-        function editUser(userId) {
-            const user = allUsers.find(u => u.id === userId);
-            if (!user) {
-                showNotification('User not found', 'error');
-                return;
-            }
-            
-            document.getElementById('editUserId').value = userId;
-            document.getElementById('editUserName').value = user.name || '';
-            document.getElementById('editUserEmail').value = user.email || '';
-            document.getElementById('editUserPhone').value = user.phone || '';
-            document.getElementById('editUserRole').value = user.isAdmin ? 'admin' : 'customer';
-            
-            document.getElementById('editUserModal').style.display = 'flex';
-        }
-
-        function closeEditUserModal() {
-            document.getElementById('editUserModal').style.display = 'none';
-        }
-
-        async function saveEditUser() {
-            const userId = document.getElementById('editUserId').value;
-            const name = document.getElementById('editUserName').value;
-            const email = document.getElementById('editUserEmail').value;
-            const phone = document.getElementById('editUserPhone').value;
-            const role = document.getElementById('editUserRole').value;
-            
-            if (!name || !email) {
-                showNotification('Please fill all required fields', 'error');
-                return;
-            }
-            
-            try {
-                const token = localStorage.getItem('token');
-                const user = allUsers.find(u => u.id === userId);
+                const user = allUsers.find(u => u.id === id);
                 if (!user) throw new Error('User not found');
                 
-                const updatedUser = {
-                    ...user,
-                    name,
-                    email,
-                    phone,
-                    isAdmin: role === 'admin'
-                };
-                
-                const response = await fetch(`${API_URL}/admin/users/${userId}`, {
+                const response = await fetch(`${API_URL}/admin/users/${id}`, {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
                         'Authorization': `Bearer ${token}`
                     },
-                    body: JSON.stringify(updatedUser)
+                    body: JSON.stringify({ ...user, isAdmin: true })
                 });
                 
                 if (!response.ok) {
                     const error = await response.json();
-                    throw new Error(error.error || 'Failed to update user');
+                    throw new Error(error.error || 'Failed to promote user');
                 }
                 
-                closeEditUserModal();
-                showNotification('User updated successfully!', 'success');
+                showNotification('User promoted to Admin successfully!', 'success');
                 loadUsers();
             } catch (error) {
-                console.error('Update user error:', error);
-                showNotification(error.message, 'error');
+                console.error('Promote error:', error);
+                showNotification(error.message || 'Failed to promote user', 'error');
             }
         }
-
-        // Delete User - FIXED
-async function deleteUser(userId) {
-    if (!userId) {
-        showNotification('User ID is required', 'error');
-        return;
     }
-    
-    if (confirm('Are you sure you want to permanently delete this user? This action cannot be undone.')) {
+
+    // Demote from Admin
+    async function demoteFromAdmin(userId) {
+        if (!userId) {
+            showNotification('User ID is required', 'error');
+            return;
+        }
+        
+        if (confirm('Are you sure you want to demote this Admin to Customer?')) {
+            try {
+                const token = localStorage.getItem('token');
+                if (!token) {
+                    showNotification('Please login first', 'error');
+                    return;
+                }
+                
+                const id = typeof userId === 'string' ? parseInt(userId) : userId;
+                if (isNaN(id)) {
+                    showNotification('Invalid user ID', 'error');
+                    return;
+                }
+                
+                const user = allUsers.find(u => u.id === id);
+                if (!user) throw new Error('User not found');
+                
+                const admins = allUsers.filter(u => u.isAdmin === true);
+                if (admins.length <= 1) {
+                    showNotification('Cannot demote the last admin!', 'error');
+                    return;
+                }
+                
+                const response = await fetch(`${API_URL}/admin/users/${id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ ...user, isAdmin: false })
+                });
+                
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.error || 'Failed to demote user');
+                }
+                
+                showNotification('Admin demoted to Customer successfully!', 'success');
+                loadUsers();
+            } catch (error) {
+                console.error('Demote error:', error);
+                showNotification(error.message || 'Failed to demote user', 'error');
+            }
+        }
+    }
+
+    // Add User
+    function showAddUserModal() {
+        document.getElementById('addUserModal').style.display = 'flex';
+        document.getElementById('addUserForm').reset();
+    }
+
+    function closeAddUserModal() {
+        document.getElementById('addUserModal').style.display = 'none';
+    }
+
+    async function addNewUser() {
+        const name = document.getElementById('addUserName').value;
+        const email = document.getElementById('addUserEmail').value;
+        const phone = document.getElementById('addUserPhone').value;
+        const password = document.getElementById('addUserPassword').value;
+        const role = document.getElementById('addUserRole').value;
+        
+        if (!name || !email || !password) {
+            showNotification('Please fill all required fields', 'error');
+            return;
+        }
+        
+        if (password.length < 6) {
+            showNotification('Password must be at least 6 characters', 'error');
+            return;
+        }
+        
         try {
             const token = localStorage.getItem('token');
             if (!token) {
@@ -1304,171 +1203,323 @@ async function deleteUser(userId) {
                 return;
             }
             
-            // Convert userId to number if it's a string
-            const id = typeof userId === 'string' ? parseInt(userId) : userId;
+            const response = await fetch(`${API_URL}/auth/register`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, email, phone, password })
+            });
             
-            if (isNaN(id)) {
-                showNotification('Invalid user ID', 'error');
+            const result = await response.json();
+            
+            if (!response.ok) {
+                throw new Error(result.error || 'Failed to create user');
+            }
+            
+            // If role is admin, promote the new user
+            if (role === 'admin') {
+                // First find the user by email
+                const user = allUsers.find(u => u.email === email);
+                if (user) {
+                    const promoteRes = await fetch(`${API_URL}/admin/users/${user.id}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: JSON.stringify({ ...user, isAdmin: true })
+                    });
+                    
+                    if (!promoteRes.ok) {
+                        const error = await promoteRes.json();
+                        throw new Error(error.error || 'Failed to promote user');
+                    }
+                }
+            }
+            
+            closeAddUserModal();
+            showNotification('User created successfully!', 'success');
+            loadUsers();
+            loadStats();
+        } catch (error) {
+            console.error('Create user error:', error);
+            showNotification(error.message, 'error');
+        }
+    }
+
+    // Edit User
+    function editUser(userId) {
+        if (!userId) {
+            showNotification('User ID is required', 'error');
+            return;
+        }
+        
+        const id = typeof userId === 'string' ? parseInt(userId) : userId;
+        const user = allUsers.find(u => u.id === id);
+        if (!user) {
+            showNotification('User not found', 'error');
+            return;
+        }
+        
+        document.getElementById('editUserId').value = id;
+        document.getElementById('editUserName').value = user.name || '';
+        document.getElementById('editUserEmail').value = user.email || '';
+        document.getElementById('editUserPhone').value = user.phone || '';
+        document.getElementById('editUserRole').value = user.isAdmin ? 'admin' : 'customer';
+        
+        document.getElementById('editUserModal').style.display = 'flex';
+    }
+
+    function closeEditUserModal() {
+        document.getElementById('editUserModal').style.display = 'none';
+    }
+
+    async function saveEditUser() {
+        const userId = document.getElementById('editUserId').value;
+        const name = document.getElementById('editUserName').value;
+        const email = document.getElementById('editUserEmail').value;
+        const phone = document.getElementById('editUserPhone').value;
+        const role = document.getElementById('editUserRole').value;
+        
+        if (!name || !email) {
+            showNotification('Please fill all required fields', 'error');
+            return;
+        }
+        
+        try {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                showNotification('Please login first', 'error');
                 return;
             }
             
-            console.log('Deleting user with ID:', id);
+            const id = typeof userId === 'string' ? parseInt(userId) : userId;
+            const user = allUsers.find(u => u.id === id);
+            if (!user) throw new Error('User not found');
+            
+            const updatedUser = {
+                ...user,
+                name,
+                email,
+                phone,
+                isAdmin: role === 'admin'
+            };
             
             const response = await fetch(`${API_URL}/admin/users/${id}`, {
-                method: 'DELETE',
-                headers: { 
+                method: 'PUT',
+                headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}` 
-                }
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify(updatedUser)
             });
             
             if (!response.ok) {
                 const error = await response.json();
-                throw new Error(error.error || 'Failed to delete user');
+                throw new Error(error.error || 'Failed to update user');
             }
             
-            showNotification('User deleted successfully!', 'success');
+            closeEditUserModal();
+            showNotification('User updated successfully!', 'success');
             loadUsers();
-            loadStats();
         } catch (error) {
-            console.error('Delete user error:', error);
-            showNotification(error.message || 'Error deleting user', 'error');
+            console.error('Update user error:', error);
+            showNotification(error.message, 'error');
         }
     }
-}
 
-        // ============ SETTINGS FUNCTIONS ============
-        function uploadAdminAvatar(event) {
-            const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    document.getElementById('adminProfileAvatar').src = e.target.result;
-                    localStorage.setItem('adminAvatar', e.target.result);
-                    showNotification('Profile picture updated!', 'success');
-                };
-                reader.readAsDataURL(file);
+    // Delete User
+    async function deleteUser(userId) {
+        if (!userId) {
+            showNotification('User ID is required', 'error');
+            return;
+        }
+        
+        if (confirm('Are you sure you want to permanently delete this user? This action cannot be undone.')) {
+            try {
+                const token = localStorage.getItem('token');
+                if (!token) {
+                    showNotification('Please login first', 'error');
+                    return;
+                }
+                
+                const id = typeof userId === 'string' ? parseInt(userId) : userId;
+                if (isNaN(id)) {
+                    showNotification('Invalid user ID', 'error');
+                    return;
+                }
+                
+                console.log('Deleting user with ID:', id);
+                
+                const response = await fetch(`${API_URL}/admin/users/${id}`, {
+                    method: 'DELETE',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}` 
+                    }
+                });
+                
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.error || 'Failed to delete user');
+                }
+                
+                showNotification('User deleted successfully!', 'success');
+                loadUsers();
+                loadStats();
+            } catch (error) {
+                console.error('Delete user error:', error);
+                showNotification(error.message || 'Error deleting user', 'error');
             }
         }
+    }
 
-        function saveAdminProfile() {
-            const name = document.getElementById('adminFullName').value;
-            const email = document.getElementById('adminEmail').value;
-            const phone = document.getElementById('adminPhone').value;
-            if (!name || !email) { showNotification('Please fill all fields', 'error'); return; }
-            const user = JSON.parse(localStorage.getItem('user'));
-            if (user) { user.name = name; user.email = email; user.phone = phone; localStorage.setItem('user', JSON.stringify(user)); }
-            document.querySelector('#adminName span').textContent = name;
-            showNotification('Profile updated!', 'success');
+    // ============ SETTINGS FUNCTIONS ============
+    function uploadAdminAvatar(event) {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('adminProfileAvatar').src = e.target.result;
+                localStorage.setItem('adminAvatar', e.target.result);
+                showNotification('Profile picture updated!', 'success');
+            };
+            reader.readAsDataURL(file);
         }
+    }
 
-        function changeAccentColor(color) {
-            document.documentElement.style.setProperty('--gradient-start', color);
-            document.documentElement.style.setProperty('--gradient-end', color);
-            localStorage.setItem('adminAccentColor', color);
-            showNotification('Accent color updated!', 'success');
+    function saveAdminProfile() {
+        const name = document.getElementById('adminFullName').value;
+        const email = document.getElementById('adminEmail').value;
+        const phone = document.getElementById('adminPhone').value;
+        if (!name || !email) { showNotification('Please fill all fields', 'error'); return; }
+        const user = JSON.parse(localStorage.getItem('user'));
+        if (user) { user.name = name; user.email = email; user.phone = phone; localStorage.setItem('user', JSON.stringify(user)); }
+        document.querySelector('#adminName span').textContent = name;
+        showNotification('Profile updated!', 'success');
+    }
+
+    function changeAccentColor(color) {
+        document.documentElement.style.setProperty('--gradient-start', color);
+        document.documentElement.style.setProperty('--gradient-end', color);
+        localStorage.setItem('adminAccentColor', color);
+        showNotification('Accent color updated!', 'success');
+    }
+
+    function saveStoreSettings() {
+        localStorage.setItem('storeName', document.getElementById('storeName').value);
+        localStorage.setItem('storeTagline', document.getElementById('storeTagline').value);
+        localStorage.setItem('storeLocation', document.getElementById('storeLocation').value);
+        showNotification('Store settings saved!', 'success');
+    }
+
+    function saveCurrencySettings() {
+        localStorage.setItem('defaultCurrency', document.getElementById('defaultCurrency').value);
+        localStorage.setItem('taxRate', document.getElementById('taxRate').value);
+        showNotification('Currency settings saved!', 'success');
+    }
+
+    function saveShippingSettings() {
+        localStorage.setItem('freeDeliveryThreshold', document.getElementById('freeDeliveryThreshold').value);
+        localStorage.setItem('deliveryTime', document.getElementById('deliveryTime').value);
+        showNotification('Shipping settings saved!', 'success');
+    }
+
+    function toggleSetting(id) {
+        const element = document.getElementById(id);
+        element.classList.toggle('active');
+        localStorage.setItem(id, element.classList.contains('active'));
+        showNotification(`${id.replace(/([A-Z])/g, ' $1').trim()} ${element.classList.contains('active') ? 'enabled' : 'disabled'}!`, 'success');
+    }
+
+    function enable2FA() { showNotification('2FA coming soon!', 'success'); }
+    
+    function showChangePassword() {
+        const newPassword = prompt('Enter new password:');
+        if (newPassword && newPassword.length >= 6) {
+            localStorage.setItem('adminPassword', newPassword);
+            showNotification('Password updated!', 'success');
+        } else if (newPassword) { showNotification('Password must be at least 6 characters!', 'error'); }
+    }
+
+    function deactivateAccount() {
+        if (!document.getElementById('deactivatePassword').value) { showNotification('Please enter your password', 'error'); return; }
+        if (confirm('Deactivate your account?')) {
+            localStorage.clear();
+            showNotification('Account deactivated.', 'success');
+            setTimeout(() => window.location.href = 'index.html', 2000);
         }
+    }
 
-        function saveStoreSettings() {
-            localStorage.setItem('storeName', document.getElementById('storeName').value);
-            localStorage.setItem('storeTagline', document.getElementById('storeTagline').value);
-            localStorage.setItem('storeLocation', document.getElementById('storeLocation').value);
-            showNotification('Store settings saved!', 'success');
-        }
-
-        function saveCurrencySettings() {
-            localStorage.setItem('defaultCurrency', document.getElementById('defaultCurrency').value);
-            localStorage.setItem('taxRate', document.getElementById('taxRate').value);
-            showNotification('Currency settings saved!', 'success');
-        }
-
-        function saveShippingSettings() {
-            localStorage.setItem('freeDeliveryThreshold', document.getElementById('freeDeliveryThreshold').value);
-            localStorage.setItem('deliveryTime', document.getElementById('deliveryTime').value);
-            showNotification('Shipping settings saved!', 'success');
-        }
-
-        function toggleSetting(id) {
-            const element = document.getElementById(id);
-            element.classList.toggle('active');
-            localStorage.setItem(id, element.classList.contains('active'));
-            showNotification(`${id.replace(/([A-Z])/g, ' $1').trim()} ${element.classList.contains('active') ? 'enabled' : 'disabled'}!`, 'success');
-        }
-
-        function enable2FA() { showNotification('2FA coming soon!', 'success'); }
-        function showChangePassword() {
-            const newPassword = prompt('Enter new password:');
-            if (newPassword && newPassword.length >= 6) {
-                localStorage.setItem('adminPassword', newPassword);
-                showNotification('Password updated!', 'success');
-            } else if (newPassword) { showNotification('Password must be at least 6 characters!', 'error'); }
-        }
-
-        function deactivateAccount() {
-            if (!document.getElementById('deactivatePassword').value) { showNotification('Please enter your password', 'error'); return; }
-            if (confirm('Deactivate your account?')) {
+    function deleteAccount() {
+        if (confirm('⚠️ WARNING: This action is permanent and cannot be undone. All your data will be lost.')) {
+            if (confirm('Are you absolutely sure you want to delete your account?')) {
                 localStorage.clear();
-                showNotification('Account deactivated.', 'success');
+                showNotification('Account deleted. Redirecting...', 'success');
                 setTimeout(() => window.location.href = 'index.html', 2000);
             }
         }
+    }
 
-        function downloadMyData() {
-            const data = { user: JSON.parse(localStorage.getItem('user')), timestamp: new Date().toISOString() };
-            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `shoppies-data-${new Date().toISOString().split('T')[0]}.json`;
-            a.click();
-            URL.revokeObjectURL(url);
-            showNotification('Data downloaded!', 'success');
-        }
+    function downloadMyData() {
+        const data = { user: JSON.parse(localStorage.getItem('user')), timestamp: new Date().toISOString() };
+        const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `shoppies-data-${new Date().toISOString().split('T')[0]}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+        showNotification('Data downloaded!', 'success');
+    }
 
-        function loadAllSettings() {
-            const user = JSON.parse(localStorage.getItem('user'));
-            if (user) {
-                document.getElementById('adminFullName').value = user.name || 'Admin User';
-                document.getElementById('adminEmail').value = user.email || 'admin@shoppies.com';
-                document.getElementById('adminPhone').value = user.phone || '0712345678';
-            }
-            const savedAvatar = localStorage.getItem('adminAvatar');
-            if (savedAvatar) document.getElementById('adminProfileAvatar').src = savedAvatar;
-            const savedAccent = localStorage.getItem('adminAccentColor');
-            if (savedAccent) {
-                document.documentElement.style.setProperty('--gradient-start', savedAccent);
-                document.documentElement.style.setProperty('--gradient-end', savedAccent);
-                document.getElementById('accentColorSelect').value = savedAccent;
-            }
-            document.getElementById('storeName').value = localStorage.getItem('storeName') || 'Shoppies';
-            document.getElementById('storeTagline').value = localStorage.getItem('storeTagline') || "Kenya's #1 Online Store";
-            document.getElementById('storeLocation').value = localStorage.getItem('storeLocation') || 'Nairobi, Kenya';
-            document.getElementById('defaultCurrency').value = localStorage.getItem('defaultCurrency') || 'KES';
-            document.getElementById('taxRate').value = localStorage.getItem('taxRate') || '16';
-            document.getElementById('freeDeliveryThreshold').value = localStorage.getItem('freeDeliveryThreshold') || '5000';
-            document.getElementById('deliveryTime').value = localStorage.getItem('deliveryTime') || '1-3 business days';
-            ['emailNotifications', 'orderAlerts', 'stockAlerts', 'marketingEmails'].forEach(id => {
-                const saved = localStorage.getItem(id);
-                if (saved !== null) {
-                    const element = document.getElementById(id);
-                    if (saved === 'true') element.classList.add('active');
-                    else element.classList.remove('active');
-                }
-            });
-        }
+    function managePrivacy() {
+        showNotification('Privacy settings will be available in the next update!', 'success');
+    }
 
-        // ============ INITIALIZE ============
-        if (checkAdminAuth()) {
-            loadTheme();
-            loadStats();
-            loadAllSettings();
-            
-            // Load users if tab is active
-            const activeTab = document.querySelector('.menu-item.active');
-            if (activeTab && activeTab.dataset.tab === 'users') {
-                loadUsers();
-            }
+    function loadAllSettings() {
+        const user = JSON.parse(localStorage.getItem('user'));
+        if (user) {
+            document.getElementById('adminFullName').value = user.name || 'Admin User';
+            document.getElementById('adminEmail').value = user.email || 'admin@shoppies.com';
+            document.getElementById('adminPhone').value = user.phone || '0712345678';
         }
-    </script>
+        const savedAvatar = localStorage.getItem('adminAvatar');
+        if (savedAvatar) document.getElementById('adminProfileAvatar').src = savedAvatar;
+        const savedAccent = localStorage.getItem('adminAccentColor');
+        if (savedAccent) {
+            document.documentElement.style.setProperty('--gradient-start', savedAccent);
+            document.documentElement.style.setProperty('--gradient-end', savedAccent);
+            document.getElementById('accentColorSelect').value = savedAccent;
+        }
+        document.getElementById('storeName').value = localStorage.getItem('storeName') || 'Shoppies';
+        document.getElementById('storeTagline').value = localStorage.getItem('storeTagline') || "Kenya's #1 Online Store";
+        document.getElementById('storeLocation').value = localStorage.getItem('storeLocation') || 'Nairobi, Kenya';
+        document.getElementById('defaultCurrency').value = localStorage.getItem('defaultCurrency') || 'KES';
+        document.getElementById('taxRate').value = localStorage.getItem('taxRate') || '16';
+        document.getElementById('freeDeliveryThreshold').value = localStorage.getItem('freeDeliveryThreshold') || '5000';
+        document.getElementById('deliveryTime').value = localStorage.getItem('deliveryTime') || '1-3 business days';
+        ['emailNotifications', 'orderAlerts', 'stockAlerts', 'marketingEmails'].forEach(id => {
+            const saved = localStorage.getItem(id);
+            if (saved !== null) {
+                const element = document.getElementById(id);
+                if (saved === 'true') element.classList.add('active');
+                else element.classList.remove('active');
+            }
+        });
+    }
+
+    // ============ INITIALIZE ============
+    if (checkAdminAuth()) {
+        loadTheme();
+        loadStats();
+        loadAllSettings();
+        
+        // Load users if tab is active
+        const activeTab = document.querySelector('.menu-item.active');
+        if (activeTab && activeTab.dataset.tab === 'users') {
+            loadUsers();
+        }
+    }
+</script>
 </body>
 </html>
