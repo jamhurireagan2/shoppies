@@ -1831,134 +1831,249 @@ loadAdminProfile();
             } catch (error) { console.error('Stats error:', error); }
         }
 
-        // ============ PRODUCTS ============
-        async function loadProducts() {
-            try {
-                const response = await fetch(`${API_URL}/products`);
-                const products = await response.json();
-                const container = document.getElementById('productsContainer');
-                if (!products || products.length === 0) {
-                    container.innerHTML = '<p style="text-align:center;padding:2rem;">No products yet.</p>';
-                    return;
-                }
-                container.innerHTML = `
-                    <table><thead><tr><th>Image</th><th>Name</th><th>Price</th><th>Category</th><th>Stock</th><th>Actions</th></tr></thead>
-                    <tbody>${products.map(p => `
-                        <tr><td class="product-image-cell"><img src="${p.image || 'https://via.placeholder.com/50x50?text=Product'}" alt="${p.name}"></td>
-                        <td>${p.name}</td><td>Ksh ${p.price.toLocaleString()}</td>
-                        <td><span class="status-badge">${p.category}</span></td><td>${p.stock}</td>
-                        <td><button class="btn-edit" onclick="editProduct(${p.id})">Edit</button>
-                        <button class="btn-danger" onclick="deleteProduct(${p.id})">Delete</button></td></tr>
-                    `).join('')}</tbody></table>
-                `;
-            } catch (error) { console.error('Products error:', error); }
+        // ============ PRODUCTS - FIXED ============
+async function loadProducts() {
+    try {
+        const response = await fetch(`${API_URL}/products`);
+        const products = await response.json();
+        const container = document.getElementById('productsContainer');
+        if (!products || products.length === 0) {
+            container.innerHTML = '<p style="text-align:center;padding:2rem;">No products yet. Click "Add Product" to get started.</p>';
+            return;
         }
+        container.innerHTML = `
+            <table>
+                <thead>
+                    <tr>
+                        <th>Image</th>
+                        <th>Name</th>
+                        <th>Price</th>
+                        <th>Category</th>
+                        <th>Stock</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${products.map(p => `
+                        <tr>
+                            <td class="product-image-cell">
+                                <img src="${p.image || 'https://via.placeholder.com/50x50?text=Product'}" alt="${p.name}" onerror="this.src='https://via.placeholder.com/50x50?text=Product'">
+                            </td>
+                            <td>${p.name}</td>
+                            <td>Ksh ${p.price.toLocaleString()}</td>
+                            <td><span class="status-badge">${p.category}</span></td>
+                            <td>${p.stock}</td>
+                            <td>
+                                <button class="btn-edit" onclick="editProduct('${p.id}')">
+                                    <i class="fas fa-edit"></i> Edit
+                                </button>
+                                <button class="btn-danger" onclick="deleteProduct('${p.id}')">
+                                    <i class="fas fa-trash"></i> Delete
+                                </button>
+                            </td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+        `;
+    } catch (error) { 
+        console.error('Products error:', error);
+        document.getElementById('productsContainer').innerHTML = '<p style="text-align:center;padding:2rem;color:red;">Failed to load products</p>';
+    }
+}
 
-        function showAddProductModal() {
-            currentProductId = null;
-            document.getElementById('modalTitle').textContent = 'Add New Product';
-            document.getElementById('productForm').reset();
-            document.getElementById('previewImg').src = 'https://via.placeholder.com/100x100?text=Preview';
-            document.getElementById('productModal').style.display = 'flex';
-            refreshCategoryDropdown();
+function showAddProductModal() {
+    currentProductId = null;
+    document.getElementById('modalTitle').textContent = 'Add New Product';
+    document.getElementById('productForm').reset();
+    document.getElementById('previewImg').src = 'https://via.placeholder.com/100x100?text=Preview';
+    document.getElementById('productModal').style.display = 'flex';
+    refreshCategoryDropdown();
+}
+
+function closeProductModal() { 
+    document.getElementById('productModal').style.display = 'none'; 
+}
+
+async function refreshCategoryDropdown() {
+    const categorySelect = document.getElementById('productCategory');
+    if (!categorySelect) return;
+    try {
+        const response = await fetch(`${API_URL}/categories`);
+        const categories = await response.json();
+        const currentValue = categorySelect.value;
+        categorySelect.innerHTML = '<option value="">Select Category</option>' + 
+            categories.map(cat => `<option value="${cat.name.toLowerCase()}">${cat.name}</option>`).join('');
+        if (currentValue && categories.some(cat => cat.name.toLowerCase() === currentValue)) {
+            categorySelect.value = currentValue;
         }
+    } catch (error) { 
+        console.error('Failed to refresh categories:', error); 
+    }
+}
 
-        function closeProductModal() {
-            document.getElementById('productModal').style.display = 'none';
+// SAVE PRODUCT - FIXED
+async function saveProduct() {
+    const product = {
+        name: document.getElementById('productName').value,
+        price: parseInt(document.getElementById('productPrice').value),
+        category: document.getElementById('productCategory').value,
+        stock: parseInt(document.getElementById('productStock').value),
+        image: document.getElementById('productImage').value || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=200',
+        description: document.getElementById('productDescription').value
+    };
+    
+    if (!product.name || !product.price || !product.category) {
+        showNotification('Please fill all required fields', 'error');
+        return;
+    }
+    
+    try {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            showNotification('Please login first', 'error');
+            return;
         }
-
-        async function refreshCategoryDropdown() {
-            const categorySelect = document.getElementById('productCategory');
-            if (!categorySelect) return;
-            try {
-                const response = await fetch(`${API_URL}/categories`);
-                const categories = await response.json();
-                const currentValue = categorySelect.value;
-                categorySelect.innerHTML = '<option value="">Select Category</option>' + 
-                    categories.map(cat => `<option value="${cat.name.toLowerCase()}">${cat.name}</option>`).join('');
-                if (currentValue && categories.some(cat => cat.name.toLowerCase() === currentValue)) {
-                    categorySelect.value = currentValue;
-                }
-            } catch (error) { console.error('Failed to refresh categories:', error); }
+        
+        let response;
+        let url;
+        
+        if (currentProductId) {
+            // UPDATE existing product
+            url = `${API_URL}/products/${currentProductId}`;
+            response = await fetch(url, { 
+                method: 'PUT', 
+                headers: { 
+                    'Content-Type': 'application/json', 
+                    'Authorization': `Bearer ${token}` 
+                }, 
+                body: JSON.stringify(product) 
+            });
+            console.log('Updating product:', currentProductId);
+        } else {
+            // ADD new product
+            url = `${API_URL}/products`;
+            response = await fetch(url, { 
+                method: 'POST', 
+                headers: { 
+                    'Content-Type': 'application/json', 
+                    'Authorization': `Bearer ${token}` 
+                }, 
+                body: JSON.stringify(product) 
+            });
+            console.log('Adding new product');
         }
+        
+        const result = await response.json();
+        console.log('Product save response:', result);
+        
+        if (response.ok) {
+            showNotification(currentProductId ? 'Product updated successfully!' : 'Product added successfully!');
+            closeProductModal();
+            loadProducts();
+            loadStats();
+        } else {
+            throw new Error(result.error || 'Failed to save product');
+        }
+    } catch (error) {
+        console.error('Save product error:', error);
+        showNotification(error.message || 'Error saving product', 'error');
+    }
+}
 
-        async function saveProduct() {
-            const product = {
-                name: document.getElementById('productName').value,
-                price: parseInt(document.getElementById('productPrice').value),
-                category: document.getElementById('productCategory').value,
-                stock: parseInt(document.getElementById('productStock').value),
-                image: document.getElementById('productImage').value || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=200',
-                description: document.getElementById('productDescription').value
-            };
-            if (!product.name || !product.price || !product.category) {
-                showNotification('Please fill all required fields', 'error');
+// EDIT PRODUCT - FIXED
+async function editProduct(id) {
+    if (!id) {
+        showNotification('Product ID is required', 'error');
+        return;
+    }
+    
+    try {
+        console.log('Editing product with ID:', id);
+        const response = await fetch(`${API_URL}/products`);
+        const products = await response.json();
+        const product = products.find(p => p.id == id); // Use == to compare number vs string
+        
+        if (!product) {
+            showNotification('Product not found', 'error');
+            return;
+        }
+        
+        currentProductId = id;
+        document.getElementById('modalTitle').textContent = 'Edit Product';
+        document.getElementById('productName').value = product.name;
+        document.getElementById('productPrice').value = product.price;
+        document.getElementById('productCategory').value = product.category;
+        document.getElementById('productStock').value = product.stock;
+        document.getElementById('productImage').value = product.image || '';
+        document.getElementById('productDescription').value = product.description || '';
+        document.getElementById('previewImg').src = product.image || 'https://via.placeholder.com/100x100?text=Product';
+        document.getElementById('productModal').style.display = 'flex';
+        
+        // Refresh categories dropdown
+        await refreshCategoryDropdown();
+        document.getElementById('productCategory').value = product.category;
+        
+    } catch (error) {
+        console.error('Edit product error:', error);
+        showNotification('Error loading product: ' + error.message, 'error');
+    }
+}
+
+// DELETE PRODUCT - FIXED
+async function deleteProduct(id) {
+    if (!id) {
+        showNotification('Product ID is required', 'error');
+        return;
+    }
+    
+    if (confirm('Are you sure you want to delete this product? This action cannot be undone.')) {
+        try {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                showNotification('Please login first', 'error');
                 return;
             }
-            try {
-                const token = localStorage.getItem('token');
-                let response;
-                if (currentProductId) {
-                    response = await fetch(`${API_URL}/products/${currentProductId}`, {
-                        method: 'PUT', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }, body: JSON.stringify(product)
-                    });
-                } else {
-                    response = await fetch(`${API_URL}/products`, {
-                        method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }, body: JSON.stringify(product)
-                    });
+            
+            console.log('Deleting product with ID:', id);
+            
+            const response = await fetch(`${API_URL}/products/${id}`, { 
+                method: 'DELETE',
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}` 
                 }
-                if (response.ok) {
-                    showNotification(currentProductId ? 'Product updated!' : 'Product added!');
-                    closeProductModal();
-                    loadProducts();
-                    loadStats();
-                }
-            } catch (error) { showNotification('Error saving product', 'error'); }
-        }
-
-        async function editProduct(id) {
-            try {
-                const response = await fetch(`${API_URL}/products`);
-                const products = await response.json();
-                const product = products.find(p => p.id === id);
-                if (product) {
-                    currentProductId = id;
-                    document.getElementById('modalTitle').textContent = 'Edit Product';
-                    document.getElementById('productName').value = product.name;
-                    document.getElementById('productPrice').value = product.price;
-                    document.getElementById('productCategory').value = product.category;
-                    document.getElementById('productStock').value = product.stock;
-                    document.getElementById('productImage').value = product.image || '';
-                    document.getElementById('productDescription').value = product.description || '';
-                    document.getElementById('previewImg').src = product.image || 'https://via.placeholder.com/100x100?text=Product';
-                    document.getElementById('productModal').style.display = 'flex';
-                    refreshCategoryDropdown();
-                }
-            } catch (error) { showNotification('Error loading product', 'error'); }
-        }
-
-        async function deleteProduct(id) {
-            if (confirm('Delete this product?')) {
-                try {
-                    const token = localStorage.getItem('token');
-                    await fetch(`${API_URL}/products/${id}`, { 
-                        method: 'DELETE',
-                        headers: { 'Authorization': `Bearer ${token}` }
-                    });
-                    showNotification('Product deleted');
-                    loadProducts();
-                    loadStats();
-                } catch (error) { showNotification('Error deleting product', 'error'); }
+            });
+            
+            const result = await response.json();
+            console.log('Delete response:', result);
+            
+            if (!response.ok) {
+                throw new Error(result.error || 'Failed to delete product');
             }
+            
+            showNotification('Product deleted successfully!', 'success');
+            loadProducts();
+            loadStats();
+        } catch (error) {
+            console.error('Delete product error:', error);
+            showNotification(error.message || 'Error deleting product', 'error');
         }
+    }
+}
 
-        async function autoFetchImage() {
-            const productName = document.getElementById('productName').value;
-            if (!productName) { showNotification('Please enter product name first', 'error'); return; }
-            const searchQuery = encodeURIComponent(productName);
-            document.getElementById('productImage').value = `https://source.unsplash.com/200x200/?${searchQuery}`;
-            document.getElementById('previewImg').src = document.getElementById('productImage').value;
-        }
+// AUTO FETCH IMAGE - FIXED
+async function autoFetchImage() {
+    const productName = document.getElementById('productName').value;
+    if (!productName) {
+        showNotification('Please enter product name first', 'error');
+        return;
+    }
+    showNotification('Fetching product image...', 'success');
+    const searchQuery = encodeURIComponent(productName);
+    document.getElementById('productImage').value = `https://source.unsplash.com/200x200/?${searchQuery}`;
+    document.getElementById('previewImg').src = document.getElementById('productImage').value;
+}
 
         // ============ CATEGORIES ============
         async function loadCategories() {
