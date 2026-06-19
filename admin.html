@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shoppies Admin Dashboard</title>
+    <title>Shoppies Admin Dashboard - Complete</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -39,7 +39,6 @@
             --border-color: #334155;
         }
 
-        /* Navbar */
         .admin-navbar {
             background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
             color: white;
@@ -50,36 +49,15 @@
             z-index: 1000;
             box-shadow: 0 4px 20px rgba(0,0,0,0.1);
         }
-        .admin-navbar .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            font-size: 1.5rem;
-            font-weight: bold;
-        }
+        .admin-navbar .container { max-width: 1400px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
+        .logo { display: flex; align-items: center; gap: 0.75rem; font-size: 1.5rem; font-weight: bold; }
         .logo i { font-size: 1.8rem; color: #6366f1; }
         .admin-info { display: flex; align-items: center; gap: 1.5rem; }
         .admin-name { display: flex; align-items: center; gap: 0.5rem; }
         .admin-name i { font-size: 1.2rem; color: #6366f1; }
-        .logout-btn {
-            background: rgba(239,68,68,0.2);
-            color: #ef4444;
-            border: none;
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
+        .logout-btn { background: rgba(239,68,68,0.2); color: #ef4444; border: none; padding: 0.5rem 1rem; border-radius: 8px; cursor: pointer; transition: all 0.3s; }
         .logout-btn:hover { background: #ef4444; color: white; }
 
-        /* Sidebar */
         .admin-sidebar {
             position: fixed;
             left: 0;
@@ -107,7 +85,6 @@
         .menu-item:hover { background: #f1f5f9; color: #6366f1; }
         .menu-item.active { background: linear-gradient(135deg, #6366f1, #8b5cf6); color: white; }
 
-        /* Main */
         .admin-main {
             margin-left: 260px;
             margin-top: 70px;
@@ -117,7 +94,6 @@
         .tab-content { display: none !important; }
         .tab-content.active { display: block !important; }
 
-        /* Stats */
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -137,24 +113,10 @@
         .stat-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-hover); }
         .stat-info h3 { font-size: 0.875rem; color: var(--text-secondary); margin-bottom: 0.5rem; }
         .stat-number { font-size: 2rem; font-weight: bold; color: var(--text-primary); }
-        .stat-icon {
-            width: 60px;
-            height: 60px;
-            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+        .stat-icon { width: 60px; height: 60px; background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end)); border-radius: 50%; display: flex; align-items: center; justify-content: center; }
         .stat-icon i { font-size: 1.8rem; color: white; }
 
-        /* Tables */
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-        }
+        .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
         .section-header h2 { font-size: 1.5rem; color: var(--text-primary); }
         .btn-primary {
             background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
@@ -183,12 +145,7 @@
         th { background: var(--bg-primary); font-weight: 600; color: var(--text-secondary); }
         tr:hover { background: var(--bg-primary); }
 
-        .status-badge {
-            padding: 0.25rem 0.75rem;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 600;
-        }
+        .status-badge { padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.75rem; font-weight: 600; }
         .status-pending { background: #fef3c7; color: #92400e; }
         .status-approved { background: #dbeafe; color: #1e40af; }
         .status-shipped { background: #e0e7ff; color: #3730a3; }
@@ -196,7 +153,6 @@
         .status-active { background: #d1fae5; color: #065f46; }
         .status-inactive { background: #fee2e2; color: #991b1b; }
 
-        /* Modals */
         .modal {
             display: none;
             position: fixed;
@@ -224,15 +180,9 @@
         .form-group { margin-bottom: 1rem; }
         .form-group label { display: block; margin-bottom: 0.5rem; font-weight: 500; }
         .form-group input, .form-group select, .form-group textarea {
-            width: 100%; padding: 0.75rem;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            font-family: inherit;
-            background: var(--bg-secondary);
-            color: var(--text-primary);
+            width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 8px; font-family: inherit; background: var(--bg-secondary); color: var(--text-primary);
         }
 
-        /* Order Details */
         .order-details-modal { max-width: 800px; width: 90%; }
         .order-details-header { background: linear-gradient(135deg, #6366f1, #8b5cf6); color: white; padding: 1.5rem; border-radius: 16px 16px 0 0; }
         .order-info-section { margin-bottom: 2rem; padding: 1rem; background: var(--bg-primary); border-radius: 12px; }
@@ -247,7 +197,6 @@
         .directions-btn { background: #3b82f6; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 8px; cursor: pointer; margin-top: 1rem; width: 100%; display: flex; align-items: center; justify-content: center; gap: 0.5rem; }
         .directions-btn:hover { background: #2563eb; }
 
-        /* Settings */
         .settings-content { padding: 0; }
         .settings-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border-color); }
         .settings-header h2 { font-size: 1.5rem; }
@@ -257,88 +206,29 @@
         .setting-section { margin-bottom: 2rem; }
         .setting-section h3 { font-size: 1rem; margin-bottom: 0.5rem; color: var(--text-primary); }
         .setting-section p { color: var(--text-secondary); font-size: 0.875rem; margin-bottom: 1rem; }
-        .setting-card {
-            background: var(--bg-primary);
-            border-radius: 12px;
-            padding: 1rem;
-            margin-bottom: 0.75rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border: 1px solid var(--border-color);
-        }
+        .setting-card { background: var(--bg-primary); border-radius: 12px; padding: 1rem; margin-bottom: 0.75rem; display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--border-color); }
         .setting-card-left { display: flex; align-items: center; gap: 1rem; }
         .setting-card-left i { font-size: 1.25rem; color: var(--gradient-start); }
         .setting-card-left .title { font-weight: 500; }
         .setting-card-left .desc { font-size: 0.75rem; color: var(--text-secondary); }
-        .toggle {
-            position: relative;
-            width: 48px;
-            height: 28px;
-            background: #cbd5e1;
-            border-radius: 50px;
-            cursor: pointer;
-            transition: background 0.3s;
-            flex-shrink: 0;
-        }
+        .toggle { position: relative; width: 48px; height: 28px; background: #cbd5e1; border-radius: 50px; cursor: pointer; transition: background 0.3s; flex-shrink: 0; }
         .toggle.active { background: var(--gradient-start); }
-        .toggle::after {
-            content: '';
-            position: absolute;
-            top: 3px;
-            left: 3px;
-            width: 22px;
-            height: 22px;
-            background: white;
-            border-radius: 50%;
-            transition: transform 0.3s;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-        }
+        .toggle::after { content: ''; position: absolute; top: 3px; left: 3px; width: 22px; height: 22px; background: white; border-radius: 50%; transition: transform 0.3s; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
         .toggle.active::after { transform: translateX(20px); }
-        .select-input {
-            padding: 0.5rem 1rem;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            background: var(--bg-secondary);
-            color: var(--text-primary);
-            font-family: inherit;
-            min-width: 200px;
-        }
-        .wallet-balance {
-            text-align: center;
-            padding: 1.5rem;
-            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
-            border-radius: 16px;
-            color: white;
-            margin-bottom: 1.5rem;
-        }
+        .select-input { padding: 0.5rem 1rem; border: 1px solid var(--border-color); border-radius: 8px; background: var(--bg-secondary); color: var(--text-primary); font-family: inherit; min-width: 200px; }
+        .wallet-balance { text-align: center; padding: 1.5rem; background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end)); border-radius: 16px; color: white; margin-bottom: 1.5rem; }
         .wallet-balance .amount { font-size: 2.5rem; font-weight: bold; }
         .wallet-balance .label { font-size: 0.875rem; opacity: 0.8; }
         .wallet-actions { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 1.5rem; }
-        .wallet-action {
-            background: var(--bg-primary);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 1rem;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
+        .wallet-action { background: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 12px; padding: 1rem; text-align: center; cursor: pointer; transition: all 0.3s; }
         .wallet-action:hover { border-color: var(--gradient-start); transform: translateY(-2px); }
         .wallet-action i { font-size: 1.5rem; color: var(--gradient-start); margin-bottom: 0.5rem; }
         .wallet-action .action-label { font-size: 0.75rem; color: var(--text-secondary); }
 
-        /* Danger Zone */
-        .danger-zone {
-            border: 2px solid #ef4444;
-            border-radius: 12px;
-            padding: 1.5rem;
-            background: #fef2f2;
-        }
+        .danger-zone { border: 2px solid #ef4444; border-radius: 12px; padding: 1.5rem; background: #fef2f2; }
         .danger-zone h4 { color: #ef4444; margin-bottom: 0.5rem; }
         .danger-zone p { color: #991b1b; font-size: 0.875rem; }
 
-        /* Notification */
         .notification {
             position: fixed;
             top: 80px;
@@ -357,7 +247,6 @@
         .notification.success { border-left: 4px solid #10b981; }
         .notification.error { border-left: 4px solid #ef4444; }
 
-        /* Product Image */
         .product-image-cell { width: 60px; }
         .product-image-cell img { width: 50px; height: 50px; object-fit: cover; border-radius: 8px; }
         .image-preview { margin-top: 0.5rem; text-align: center; }
@@ -365,7 +254,6 @@
         .fetch-image-btn { background: #3b82f6; color: white; border: none; padding: 0.5rem 1rem; border-radius: 8px; cursor: pointer; margin-top: 0.5rem; font-size: 0.875rem; }
         .fetch-image-btn:hover { background: #2563eb; }
 
-        /* Mobile */
         @media (max-width: 768px) {
             .admin-sidebar { transform: translateX(-100%); }
             .admin-sidebar.show { transform: translateX(0); }
@@ -381,18 +269,10 @@
 <body>
     <nav class="admin-navbar">
         <div class="container">
-            <div class="logo">
-                <i class="fas fa-crown"></i>
-                <span>Shoppies Admin</span>
-            </div>
+            <div class="logo"><i class="fas fa-crown"></i><span>Shoppies Admin</span></div>
             <div class="admin-info">
-                <div class="admin-name" id="adminName">
-                    <i class="fas fa-user-circle"></i>
-                    <span>Admin User</span>
-                </div>
-                <button class="logout-btn" onclick="handleAdminLogout()">
-                    <i class="fas fa-sign-out-alt"></i> Logout
-                </button>
+                <div class="admin-name" id="adminName"><i class="fas fa-user-circle"></i><span>Admin User</span></div>
+                <button class="logout-btn" onclick="handleAdminLogout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
             </div>
         </div>
     </nav>
@@ -451,506 +331,213 @@
         </div>
 
         <!-- Users Tab -->
-<div id="usersTab" class="tab-content">
-    <div class="section-header">
-        <h2><i class="fas fa-users"></i> Manage Users</h2>
-        <div style="display: flex; gap: 1rem;">
-            <button class="btn-primary" onclick="refreshUsers()">
-                <i class="fas fa-sync"></i> Refresh
-            </button>
-            <button class="btn-primary" onclick="showAddUserModal()">
-                <i class="fas fa-user-plus"></i> Add User
-            </button>
-        </div>
-    </div>
-    
-    <!-- User Stats -->
-    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 1.5rem;">
-        <div class="stat-card" style="padding: 1rem; text-align: center;">
-            <div style="font-size: 1.5rem; font-weight: bold; color: var(--gradient-start);" id="totalUsersCount">0</div>
-            <div style="font-size: 0.75rem; color: var(--text-secondary);">Total Users</div>
-        </div>
-        <div class="stat-card" style="padding: 1rem; text-align: center;">
-            <div style="font-size: 1.5rem; font-weight: bold; color: #10b981;" id="adminUsersCount">0</div>
-            <div style="font-size: 0.75rem; color: var(--text-secondary);">Admins</div>
-        </div>
-        <div class="stat-card" style="padding: 1rem; text-align: center;">
-            <div style="font-size: 1.5rem; font-weight: bold; color: #3b82f6;" id="customerUsersCount">0</div>
-            <div style="font-size: 0.75rem; color: var(--text-secondary);">Customers</div>
-        </div>
-        <div class="stat-card" style="padding: 1rem; text-align: center;">
-            <div style="font-size: 1.5rem; font-weight: bold; color: #f59e0b;" id="newUsersCount">0</div>
-            <div style="font-size: 0.75rem; color: var(--text-secondary);">New Users (30 days)</div>
-        </div>
-    </div>
+        <div id="usersTab" class="tab-content">
+            <div class="section-header">
+                <h2><i class="fas fa-users"></i> Manage Users</h2>
+                <div style="display: flex; gap: 1rem;">
+                    <button class="btn-primary" onclick="refreshUsers()"><i class="fas fa-sync"></i> Refresh</button>
+                    <button class="btn-primary" onclick="showAddUserModal()"><i class="fas fa-user-plus"></i> Add User</button>
+                </div>
+            </div>
+            
+            <!-- User Stats -->
+            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 1.5rem;">
+                <div class="stat-card" style="padding: 1rem; text-align: center;">
+                    <div style="font-size: 1.5rem; font-weight: bold; color: var(--gradient-start);" id="totalUsersCount">0</div>
+                    <div style="font-size: 0.75rem; color: var(--text-secondary);">Total Users</div>
+                </div>
+                <div class="stat-card" style="padding: 1rem; text-align: center;">
+                    <div style="font-size: 1.5rem; font-weight: bold; color: #10b981;" id="adminUsersCount">0</div>
+                    <div style="font-size: 0.75rem; color: var(--text-secondary);">Admins</div>
+                </div>
+                <div class="stat-card" style="padding: 1rem; text-align: center;">
+                    <div style="font-size: 1.5rem; font-weight: bold; color: #3b82f6;" id="customerUsersCount">0</div>
+                    <div style="font-size: 0.75rem; color: var(--text-secondary);">Customers</div>
+                </div>
+                <div class="stat-card" style="padding: 1rem; text-align: center;">
+                    <div style="font-size: 1.5rem; font-weight: bold; color: #f59e0b;" id="newUsersCount">0</div>
+                    <div style="font-size: 0.75rem; color: var(--text-secondary);">New Users (30 days)</div>
+                </div>
+            </div>
 
-    <!-- Search & Filter -->
-    <div style="display: flex; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
-        <div style="flex: 1; min-width: 200px; position: relative;">
-            <i class="fas fa-search" style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--text-secondary);"></i>
-            <input type="text" id="userSearchInput" placeholder="Search users by name, email, or phone..." 
-                   style="width: 100%; padding: 0.75rem 1rem 0.75rem 2.5rem; border: 1px solid var(--border-color); border-radius: 12px; background: var(--bg-secondary); color: var(--text-primary);" 
-                   onkeyup="filterUsers()">
-        </div>
-        <select id="userRoleFilter" onchange="filterUsers()" style="padding: 0.75rem 1rem; border: 1px solid var(--border-color); border-radius: 12px; background: var(--bg-secondary); color: var(--text-primary); min-width: 150px;">
-            <option value="all">All Roles</option>
-            <option value="admin">Admins</option>
-            <option value="customer">Customers</option>
-        </select>
-    </div>
+            <!-- Search & Filter -->
+            <div style="display: flex; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
+                <div style="flex: 1; min-width: 200px; position: relative;">
+                    <i class="fas fa-search" style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--text-secondary);"></i>
+                    <input type="text" id="userSearchInput" placeholder="Search users by name, email, or phone..." 
+                           style="width: 100%; padding: 0.75rem 1rem 0.75rem 2.5rem; border: 1px solid var(--border-color); border-radius: 12px; background: var(--bg-secondary); color: var(--text-primary);" 
+                           onkeyup="filterUsers()">
+                </div>
+                <select id="userRoleFilter" onchange="filterUsers()" style="padding: 0.75rem 1rem; border: 1px solid var(--border-color); border-radius: 12px; background: var(--bg-secondary); color: var(--text-primary); min-width: 150px;">
+                    <option value="all">All Roles</option>
+                    <option value="admin">Admins</option>
+                    <option value="customer">Customers</option>
+                </select>
+            </div>
 
-    <div class="users-container" id="usersContainer">
-        <!-- Users loaded via JS -->
-    </div>
-</div>
+            <div class="users-container" id="usersContainer"></div>
+        </div>
 
-<!-- Add User Modal -->
-<div id="addUserModal" class="modal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h3>👤 Add New User</h3>
-            <span style="cursor: pointer; font-size: 1.5rem;" onclick="closeAddUserModal()">&times;</span>
+        <!-- Add User Modal -->
+        <div id="addUserModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header"><h3>👤 Add New User</h3><span style="cursor: pointer; font-size: 1.5rem;" onclick="closeAddUserModal()">&times;</span></div>
+                <div class="modal-body">
+                    <form id="addUserForm">
+                        <div class="form-group"><label>Full Name</label><input type="text" id="addUserName" required placeholder="e.g., John Doe"></div>
+                        <div class="form-group"><label>Email Address</label><input type="email" id="addUserEmail" required placeholder="john@example.com"></div>
+                        <div class="form-group"><label>Phone Number</label><input type="tel" id="addUserPhone" required placeholder="0712345678"></div>
+                        <div class="form-group"><label>Password</label><input type="password" id="addUserPassword" required placeholder="Min 6 characters"></div>
+                        <div class="form-group"><label>Role</label><select id="addUserRole"><option value="customer">Customer</option><option value="admin">Admin</option></select></div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn-primary" onclick="addNewUser()">Create User</button>
+                    <button style="background: #64748b;" class="btn-primary" onclick="closeAddUserModal()">Cancel</button>
+                </div>
+            </div>
         </div>
-        <div class="modal-body">
-            <form id="addUserForm">
-                <div class="form-group">
-                    <label>Full Name</label>
-                    <input type="text" id="addUserName" required placeholder="e.g., John Doe">
-                </div>
-                <div class="form-group">
-                    <label>Email Address</label>
-                    <input type="email" id="addUserEmail" required placeholder="john@example.com">
-                </div>
-                <div class="form-group">
-                    <label>Phone Number</label>
-                    <input type="tel" id="addUserPhone" required placeholder="0712345678">
-                </div>
-                <div class="form-group">
-                    <label>Password</label>
-                    <input type="password" id="addUserPassword" required placeholder="Min 6 characters">
-                </div>
-                <div class="form-group">
-                    <label>Role</label>
-                    <select id="addUserRole">
-                        <option value="customer">Customer</option>
-                        <option value="admin">Admin</option>
-                    </select>
-                </div>
-            </form>
-        </div>
-        <div class="modal-footer">
-            <button class="btn-primary" onclick="addNewUser()">Create User</button>
-            <button style="background: #64748b;" class="btn-primary" onclick="closeAddUserModal()">Cancel</button>
-        </div>
-    </div>
-</div>
 
-<!-- Edit User Modal -->
-<div id="editUserModal" class="modal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h3>✏️ Edit User</h3>
-            <span style="cursor: pointer; font-size: 1.5rem;" onclick="closeEditUserModal()">&times;</span>
+        <!-- Edit User Modal -->
+        <div id="editUserModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header"><h3>✏️ Edit User</h3><span style="cursor: pointer; font-size: 1.5rem;" onclick="closeEditUserModal()">&times;</span></div>
+                <div class="modal-body">
+                    <form id="editUserForm">
+                        <input type="hidden" id="editUserId">
+                        <div class="form-group"><label>Full Name</label><input type="text" id="editUserName" required></div>
+                        <div class="form-group"><label>Email Address</label><input type="email" id="editUserEmail" required></div>
+                        <div class="form-group"><label>Phone Number</label><input type="tel" id="editUserPhone" required></div>
+                        <div class="form-group"><label>Role</label><select id="editUserRole"><option value="customer">Customer</option><option value="admin">Admin</option></select></div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn-primary" onclick="saveEditUser()">Save Changes</button>
+                    <button style="background: #64748b;" class="btn-primary" onclick="closeEditUserModal()">Cancel</button>
+                </div>
+            </div>
         </div>
-        <div class="modal-body">
-            <form id="editUserForm">
-                <input type="hidden" id="editUserId">
-                <div class="form-group">
-                    <label>Full Name</label>
-                    <input type="text" id="editUserName" required>
-                </div>
-                <div class="form-group">
-                    <label>Email Address</label>
-                    <input type="email" id="editUserEmail" required>
-                </div>
-                <div class="form-group">
-                    <label>Phone Number</label>
-                    <input type="tel" id="editUserPhone" required>
-                </div>
-                <div class="form-group">
-                    <label>Role</label>
-                    <select id="editUserRole">
-                        <option value="customer">Customer</option>
-                        <option value="admin">Admin</option>
-                    </select>
-                </div>
-            </form>
-        </div>
-        <div class="modal-footer">
-            <button class="btn-primary" onclick="saveEditUser()">Save Changes</button>
-            <button style="background: #64748b;" class="btn-primary" onclick="closeEditUserModal()">Cancel</button>
-        </div>
-    </div>
-</div>
 
         <!-- Settings Tab -->
-<div id="settingsTab" class="tab-content">
-    <div class="settings-content">
-        <div class="settings-header">
-            <div>
-                <h2>⚙️ Store Settings</h2>
-                <div class="subtitle">Manage your store preferences and configurations</div>
-            </div>
-            <button class="back-btn" onclick="switchTab('dashboard')">
-                <i class="fas fa-arrow-left"></i> Back to Dashboard
-            </button>
-        </div>
-
-        <!-- Admin Profile -->
-        <div class="setting-section">
-            <h3>👤 Admin Profile</h3>
-            <p>Manage your profile information and avatar</p>
-            
-            <div class="setting-card" style="display: flex; gap: 2rem; align-items: center; padding: 1.5rem;">
-                <div style="text-align: center;">
-                    <img id="adminProfileAvatar" src="https://ui-avatars.com/api/?background=6366f1&color=fff&bold=true&name=Admin" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 3px solid var(--gradient-start);">
-                    <div style="margin-top: 0.5rem;">
-                        <label for="adminAvatarUpload" style="background: var(--gradient-start); color: white; padding: 0.25rem 1rem; border-radius: 50px; cursor: pointer; font-size: 0.75rem;">
-                            <i class="fas fa-camera"></i> Change Photo
-                        </label>
-                        <input type="file" id="adminAvatarUpload" accept="image/*" style="display: none;" onchange="uploadAdminAvatar(event)">
-                    </div>
+        <div id="settingsTab" class="tab-content">
+            <div class="settings-content">
+                <div class="settings-header">
+                    <div><h2>⚙️ Store Settings</h2><div class="subtitle">Manage your store preferences and configurations</div></div>
+                    <button class="back-btn" onclick="switchTab('dashboard')"><i class="fas fa-arrow-left"></i> Back to Dashboard</button>
                 </div>
-                <div style="flex: 1;">
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-                        <div>
-                            <label style="font-size: 0.75rem; color: var(--text-secondary);">Full Name</label>
-                            <input type="text" id="adminFullName" value="Admin User" style="width: 100%; padding: 0.5rem; border: 1px solid var(--border-color); border-radius: 8px; background: var(--bg-secondary); color: var(--text-primary);">
+
+                <!-- Admin Profile -->
+                <div class="setting-section">
+                    <h3>👤 Admin Profile</h3>
+                    <p>Manage your profile information and avatar</p>
+                    <div class="setting-card" style="display: flex; gap: 2rem; align-items: center; padding: 1.5rem;">
+                        <div style="text-align: center;">
+                            <img id="adminProfileAvatar" src="https://ui-avatars.com/api/?background=6366f1&color=fff&bold=true&name=Admin" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 3px solid var(--gradient-start);">
+                            <div style="margin-top: 0.5rem;">
+                                <label for="adminAvatarUpload" style="background: var(--gradient-start); color: white; padding: 0.25rem 1rem; border-radius: 50px; cursor: pointer; font-size: 0.75rem;"><i class="fas fa-camera"></i> Change Photo</label>
+                                <input type="file" id="adminAvatarUpload" accept="image/*" style="display: none;" onchange="uploadAdminAvatar(event)">
+                            </div>
                         </div>
-                        <div>
-                            <label style="font-size: 0.75rem; color: var(--text-secondary);">Email Address</label>
-                            <input type="email" id="adminEmail" value="admin@shoppies.com" style="width: 100%; padding: 0.5rem; border: 1px solid var(--border-color); border-radius: 8px; background: var(--bg-secondary); color: var(--text-primary);">
-                        </div>
-                        <div>
-                            <label style="font-size: 0.75rem; color: var(--text-secondary);">Phone Number</label>
-                            <input type="tel" id="adminPhone" value="0712345678" style="width: 100%; padding: 0.5rem; border: 1px solid var(--border-color); border-radius: 8px; background: var(--bg-secondary); color: var(--text-primary);">
-                        </div>
-                        <div style="display: flex; align-items: flex-end;">
-                            <button class="btn-primary" onclick="saveAdminProfile()" style="padding: 0.5rem 1.5rem;">Save Profile</button>
+                        <div style="flex: 1;">
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                                <div><label style="font-size: 0.75rem; color: var(--text-secondary);">Full Name</label><input type="text" id="adminFullName" value="Admin User" style="width: 100%; padding: 0.5rem; border: 1px solid var(--border-color); border-radius: 8px; background: var(--bg-secondary); color: var(--text-primary);"></div>
+                                <div><label style="font-size: 0.75rem; color: var(--text-secondary);">Email Address</label><input type="email" id="adminEmail" value="admin@shoppies.com" style="width: 100%; padding: 0.5rem; border: 1px solid var(--border-color); border-radius: 8px; background: var(--bg-secondary); color: var(--text-primary);"></div>
+                                <div><label style="font-size: 0.75rem; color: var(--text-secondary);">Phone Number</label><input type="tel" id="adminPhone" value="0712345678" style="width: 100%; padding: 0.5rem; border: 1px solid var(--border-color); border-radius: 8px; background: var(--bg-secondary); color: var(--text-primary);"></div>
+                                <div style="display: flex; align-items: flex-end;"><button class="btn-primary" onclick="saveAdminProfile()" style="padding: 0.5rem 1.5rem;">Save Profile</button></div>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
 
-        <!-- Appearance -->
-        <div class="setting-section">
-            <h3>🎨 Appearance</h3>
-            <p>Customize your admin panel appearance</p>
-            
-            <div class="setting-card">
-                <div class="setting-card-left">
-                    <i class="fas fa-sun"></i>
-                    <div>
-                        <div class="title">Light Mode</div>
-                        <div class="desc">Default light theme for the admin panel</div>
-                    </div>
+                <!-- Appearance -->
+                <div class="setting-section">
+                    <h3>🎨 Appearance</h3>
+                    <p>Customize your admin panel appearance</p>
+                    <div class="setting-card"><div class="setting-card-left"><i class="fas fa-sun"></i><div><div class="title">Light Mode</div><div class="desc">Default light theme for the admin panel</div></div></div><div class="toggle active" onclick="setTheme('light')"></div></div>
+                    <div class="setting-card"><div class="setting-card-left"><i class="fas fa-moon"></i><div><div class="title">Dark Mode</div><div class="desc">Dark theme for low light environments</div></div></div><div class="toggle" onclick="setTheme('dark')"></div></div>
+                    <div class="setting-card"><div class="setting-card-left"><i class="fas fa-palette"></i><div><div class="title">Accent Color</div><div class="desc">Choose your preferred accent color</div></div></div><select class="select-input" id="accentColorSelect" onchange="changeAccentColor(this.value)" style="width: auto;"><option value="#6366f1">💜 Purple (Default)</option><option value="#3b82f6">💙 Blue</option><option value="#10b981">💚 Green</option><option value="#ef4444">❤️ Red</option><option value="#f59e0b">🧡 Orange</option><option value="#ec4899">💗 Pink</option></select></div>
                 </div>
-                <div class="toggle active" onclick="setTheme('light')"></div>
-            </div>
-            
-            <div class="setting-card">
-                <div class="setting-card-left">
-                    <i class="fas fa-moon"></i>
-                    <div>
-                        <div class="title">Dark Mode</div>
-                        <div class="desc">Dark theme for low light environments</div>
-                    </div>
-                </div>
-                <div class="toggle" onclick="setTheme('dark')"></div>
-            </div>
-            
-            <div class="setting-card">
-                <div class="setting-card-left">
-                    <i class="fas fa-palette"></i>
-                    <div>
-                        <div class="title">Accent Color</div>
-                        <div class="desc">Choose your preferred accent color</div>
-                    </div>
-                </div>
-                <select class="select-input" id="accentColorSelect" onchange="changeAccentColor(this.value)" style="width: auto;">
-                    <option value="#6366f1">💜 Purple (Default)</option>
-                    <option value="#3b82f6">💙 Blue</option>
-                    <option value="#10b981">💚 Green</option>
-                    <option value="#ef4444">❤️ Red</option>
-                    <option value="#f59e0b">🧡 Orange</option>
-                    <option value="#ec4899">💗 Pink</option>
-                </select>
-            </div>
-        </div>
 
-        <!-- Store Information -->
-        <div class="setting-section">
-            <h3>🏪 Store Information</h3>
-            <p>Configure your store details</p>
-            
-            <div class="setting-card">
-                <div class="setting-card-left">
-                    <i class="fas fa-store"></i>
-                    <div>
-                        <div class="title">Store Name</div>
-                        <div class="desc">Your store name displayed throughout the platform</div>
-                    </div>
+                <!-- Store Information -->
+                <div class="setting-section">
+                    <h3>🏪 Store Information</h3>
+                    <p>Configure your store details</p>
+                    <div class="setting-card"><div class="setting-card-left"><i class="fas fa-store"></i><div><div class="title">Store Name</div><div class="desc">Your store name displayed throughout the platform</div></div></div><input type="text" id="storeName" value="Shoppies" style="padding: 0.5rem 1rem; border: 1px solid var(--border-color); border-radius: 8px; background: var(--bg-secondary); color: var(--text-primary); width: 200px;"></div>
+                    <div class="setting-card"><div class="setting-card-left"><i class="fas fa-tag"></i><div><div class="title">Store Tagline</div><div class="desc">Your store's tagline or slogan</div></div></div><input type="text" id="storeTagline" value="Kenya's #1 Online Store" style="padding: 0.5rem 1rem; border: 1px solid var(--border-color); border-radius: 8px; background: var(--bg-secondary); color: var(--text-primary); width: 200px;"></div>
+                    <div class="setting-card"><div class="setting-card-left"><i class="fas fa-map-marker-alt"></i><div><div class="title">Store Location</div><div class="desc">Your store's physical location</div></div></div><input type="text" id="storeLocation" value="Nairobi, Kenya" style="padding: 0.5rem 1rem; border: 1px solid var(--border-color); border-radius: 8px; background: var(--bg-secondary); color: var(--text-primary); width: 200px;"></div>
+                    <button class="btn-primary" onclick="saveStoreSettings()" style="padding: 0.5rem 1.5rem; margin-top: 0.5rem;">Save Store Settings</button>
                 </div>
-                <input type="text" id="storeName" value="Shoppies" style="padding: 0.5rem 1rem; border: 1px solid var(--border-color); border-radius: 8px; background: var(--bg-secondary); color: var(--text-primary); width: 200px;">
-            </div>
-            
-            <div class="setting-card">
-                <div class="setting-card-left">
-                    <i class="fas fa-tag"></i>
-                    <div>
-                        <div class="title">Store Tagline</div>
-                        <div class="desc">Your store's tagline or slogan</div>
-                    </div>
-                </div>
-                <input type="text" id="storeTagline" value="Kenya's #1 Online Store" style="padding: 0.5rem 1rem; border: 1px solid var(--border-color); border-radius: 8px; background: var(--bg-secondary); color: var(--text-primary); width: 200px;">
-            </div>
-            
-            <div class="setting-card">
-                <div class="setting-card-left">
-                    <i class="fas fa-map-marker-alt"></i>
-                    <div>
-                        <div class="title">Store Location</div>
-                        <div class="desc">Your store's physical location</div>
-                    </div>
-                </div>
-                <input type="text" id="storeLocation" value="Nairobi, Kenya" style="padding: 0.5rem 1rem; border: 1px solid var(--border-color); border-radius: 8px; background: var(--bg-secondary); color: var(--text-primary); width: 200px;">
-            </div>
-            
-            <div class="setting-card">
-                <div class="setting-card-left">
-                    <i class="fas fa-save"></i>
-                    <div>
-                        <div class="title">Save Store Settings</div>
-                        <div class="desc">Save all store information changes</div>
-                    </div>
-                </div>
-                <button class="btn-primary" onclick="saveStoreSettings()" style="padding: 0.5rem 1.5rem;">Save Store Settings</button>
-            </div>
-        </div>
 
-        <!-- Currency & Pricing -->
-        <div class="setting-section">
-            <h3>💰 Currency & Pricing</h3>
-            <p>Manage your store currency and pricing settings</p>
-            
-            <div class="setting-card">
-                <div class="setting-card-left">
-                    <i class="fas fa-dollar-sign"></i>
-                    <div>
-                        <div class="title">Default Currency</div>
-                        <div class="desc">Set your store's default currency</div>
-                    </div>
+                <!-- Currency & Pricing -->
+                <div class="setting-section">
+                    <h3>💰 Currency & Pricing</h3>
+                    <p>Manage your store currency and pricing settings</p>
+                    <div class="setting-card"><div class="setting-card-left"><i class="fas fa-dollar-sign"></i><div><div class="title">Default Currency</div><div class="desc">Set your store's default currency</div></div></div><select class="select-input" id="defaultCurrency" style="width: auto;"><option value="KES">KES - Kenyan Shilling (Ksh)</option><option value="USD">USD - US Dollar ($)</option><option value="EUR">EUR - Euro (€)</option><option value="GBP">GBP - British Pound (£)</option></select></div>
+                    <div class="setting-card"><div class="setting-card-left"><i class="fas fa-percent"></i><div><div class="title">Tax Rate</div><div class="desc">Default tax rate applied to all products</div></div></div><div style="display: flex; align-items: center; gap: 0.5rem;"><input type="number" id="taxRate" value="16" style="padding: 0.5rem 1rem; border: 1px solid var(--border-color); border-radius: 8px; background: var(--bg-secondary); color: var(--text-primary); width: 80px;"><span style="color: var(--text-secondary);">%</span><button class="btn-edit" onclick="saveCurrencySettings()" style="padding: 0.5rem 1rem; margin-left: 0.5rem;">Save</button></div></div>
                 </div>
-                <select class="select-input" id="defaultCurrency" style="width: auto;">
-                    <option value="KES">KES - Kenyan Shilling (Ksh)</option>
-                    <option value="USD">USD - US Dollar ($)</option>
-                    <option value="EUR">EUR - Euro (€)</option>
-                    <option value="GBP">GBP - British Pound (£)</option>
-                </select>
-            </div>
-            
-            <div class="setting-card">
-                <div class="setting-card-left">
-                    <i class="fas fa-percent"></i>
-                    <div>
-                        <div class="title">Tax Rate</div>
-                        <div class="desc">Default tax rate applied to all products</div>
-                    </div>
-                </div>
-                <div style="display: flex; align-items: center; gap: 0.5rem;">
-                    <input type="number" id="taxRate" value="16" style="padding: 0.5rem 1rem; border: 1px solid var(--border-color); border-radius: 8px; background: var(--bg-secondary); color: var(--text-primary); width: 80px;">
-                    <span style="color: var(--text-secondary);">%</span>
-                    <button class="btn-edit" onclick="saveCurrencySettings()" style="padding: 0.5rem 1rem; margin-left: 0.5rem;">Save</button>
-                </div>
-            </div>
-        </div>
 
-        <!-- Shipping Settings -->
-        <div class="setting-section">
-            <h3>🚚 Shipping Settings</h3>
-            <p>Configure delivery options and fees</p>
-            
-            <div class="setting-card">
-                <div class="setting-card-left">
-                    <i class="fas fa-truck"></i>
-                    <div>
-                        <div class="title">Free Delivery Threshold</div>
-                        <div class="desc">Orders above this amount get free delivery</div>
-                    </div>
+                <!-- Shipping Settings -->
+                <div class="setting-section">
+                    <h3>🚚 Shipping Settings</h3>
+                    <p>Configure delivery options and fees</p>
+                    <div class="setting-card"><div class="setting-card-left"><i class="fas fa-truck"></i><div><div class="title">Free Delivery Threshold</div><div class="desc">Orders above this amount get free delivery</div></div></div><div style="display: flex; align-items: center; gap: 0.5rem;"><span style="color: var(--text-secondary);">Ksh</span><input type="number" id="freeDeliveryThreshold" value="5000" style="padding: 0.5rem 1rem; border: 1px solid var(--border-color); border-radius: 8px; background: var(--bg-secondary); color: var(--text-primary); width: 120px;"><button class="btn-edit" onclick="saveShippingSettings()" style="padding: 0.5rem 1rem; margin-left: 0.5rem;">Save</button></div></div>
+                    <div class="setting-card"><div class="setting-card-left"><i class="fas fa-clock"></i><div><div class="title">Delivery Time</div><div class="desc">Estimated delivery time</div></div></div><input type="text" id="deliveryTime" value="1-3 business days" style="padding: 0.5rem 1rem; border: 1px solid var(--border-color); border-radius: 8px; background: var(--bg-secondary); color: var(--text-primary); width: 200px;"></div>
+                    <button class="btn-primary" onclick="saveShippingSettings()" style="padding: 0.5rem 1.5rem; margin-top: 0.5rem;">Save Shipping</button>
                 </div>
-                <div style="display: flex; align-items: center; gap: 0.5rem;">
-                    <span style="color: var(--text-secondary);">Ksh</span>
-                    <input type="number" id="freeDeliveryThreshold" value="5000" style="padding: 0.5rem 1rem; border: 1px solid var(--border-color); border-radius: 8px; background: var(--bg-secondary); color: var(--text-primary); width: 120px;">
-                    <button class="btn-edit" onclick="saveShippingSettings()" style="padding: 0.5rem 1rem; margin-left: 0.5rem;">Save</button>
-                </div>
-            </div>
-            
-            <div class="setting-card">
-                <div class="setting-card-left">
-                    <i class="fas fa-clock"></i>
-                    <div>
-                        <div class="title">Delivery Time</div>
-                        <div class="desc">Estimated delivery time</div>
-                    </div>
-                </div>
-                <input type="text" id="deliveryTime" value="1-3 business days" style="padding: 0.5rem 1rem; border: 1px solid var(--border-color); border-radius: 8px; background: var(--bg-secondary); color: var(--text-primary); width: 200px;">
-            </div>
-            
-            <div class="setting-card">
-                <div class="setting-card-left">
-                    <i class="fas fa-save"></i>
-                    <div>
-                        <div class="title">Save Shipping Settings</div>
-                        <div class="desc">Save all shipping configuration changes</div>
-                    </div>
-                </div>
-                <button class="btn-primary" onclick="saveShippingSettings()" style="padding: 0.5rem 1.5rem;">Save Shipping</button>
-            </div>
-        </div>
 
-        <!-- Notification Settings -->
-        <div class="setting-section">
-            <h3>🔔 Notification Settings</h3>
-            <p>Control how and when you receive notifications</p>
-            
-            <div class="setting-card">
-                <div class="setting-card-left">
-                    <i class="fas fa-envelope"></i>
-                    <div>
-                        <div class="title">Email Notifications</div>
-                        <div class="desc">Receive store updates via email</div>
-                    </div>
+                <!-- Notification Settings -->
+                <div class="setting-section">
+                    <h3>🔔 Notification Settings</h3>
+                    <p>Control how and when you receive notifications</p>
+                    <div class="setting-card"><div class="setting-card-left"><i class="fas fa-envelope"></i><div><div class="title">Email Notifications</div><div class="desc">Receive store updates via email</div></div></div><div class="toggle active" id="emailNotifications" onclick="toggleSetting('emailNotifications')"></div></div>
+                    <div class="setting-card"><div class="setting-card-left"><i class="fas fa-bell"></i><div><div class="title">Order Alerts</div><div class="desc">Get notified when a new order is placed</div></div></div><div class="toggle active" id="orderAlerts" onclick="toggleSetting('orderAlerts')"></div></div>
+                    <div class="setting-card"><div class="setting-card-left"><i class="fas fa-box"></i><div><div class="title">Low Stock Alerts</div><div class="desc">Get notified when products are low in stock</div></div></div><div class="toggle active" id="stockAlerts" onclick="toggleSetting('stockAlerts')"></div></div>
+                    <div class="setting-card"><div class="setting-card-left"><i class="fas fa-bullhorn"></i><div><div class="title">Marketing Emails</div><div class="desc">Receive promotions and offers</div></div></div><div class="toggle" id="marketingEmails" onclick="toggleSetting('marketingEmails')"></div></div>
                 </div>
-                <div class="toggle active" id="emailNotifications" onclick="toggleSetting('emailNotifications')"></div>
-            </div>
-            
-            <div class="setting-card">
-                <div class="setting-card-left">
-                    <i class="fas fa-bell"></i>
-                    <div>
-                        <div class="title">Order Alerts</div>
-                        <div class="desc">Get notified when a new order is placed</div>
-                    </div>
-                </div>
-                <div class="toggle active" id="orderAlerts" onclick="toggleSetting('orderAlerts')"></div>
-            </div>
-            
-            <div class="setting-card">
-                <div class="setting-card-left">
-                    <i class="fas fa-box"></i>
-                    <div>
-                        <div class="title">Low Stock Alerts</div>
-                        <div class="desc">Get notified when products are low in stock</div>
-                    </div>
-                </div>
-                <div class="toggle active" id="stockAlerts" onclick="toggleSetting('stockAlerts')"></div>
-            </div>
-            
-            <div class="setting-card">
-                <div class="setting-card-left">
-                    <i class="fas fa-bullhorn"></i>
-                    <div>
-                        <div class="title">Marketing Emails</div>
-                        <div class="desc">Receive promotions and offers</div>
-                    </div>
-                </div>
-                <div class="toggle" id="marketingEmails" onclick="toggleSetting('marketingEmails')"></div>
-            </div>
-        </div>
 
-        <!-- Security Settings -->
-        <div class="setting-section">
-            <h3>🔒 Security Settings</h3>
-            <p>Enhance your account security</p>
-            
-            <div class="setting-card">
-                <div class="setting-card-left">
-                    <i class="fas fa-shield-alt"></i>
-                    <div>
-                        <div class="title">Two-Factor Authentication (2FA)</div>
-                        <div class="desc">Add an extra layer of security to your account</div>
-                    </div>
+                <!-- Security Settings -->
+                <div class="setting-section">
+                    <h3>🔒 Security Settings</h3>
+                    <p>Enhance your account security</p>
+                    <div class="setting-card"><div class="setting-card-left"><i class="fas fa-shield-alt"></i><div><div class="title">Two-Factor Authentication (2FA)</div><div class="desc">Add an extra layer of security to your account</div></div></div><button class="btn-primary" onclick="enable2FA()" style="padding: 0.5rem 1rem;">Enable</button></div>
+                    <div class="setting-card"><div class="setting-card-left"><i class="fas fa-lock"></i><div><div class="title">Change Password</div><div class="desc">Update your account password</div></div></div><button class="btn-primary" onclick="showChangePassword()" style="padding: 0.5rem 1rem;">Change</button></div>
                 </div>
-                <button class="btn-primary" onclick="enable2FA()" style="padding: 0.5rem 1rem;">Enable</button>
-            </div>
-            
-            <div class="setting-card">
-                <div class="setting-card-left">
-                    <i class="fas fa-lock"></i>
-                    <div>
-                        <div class="title">Change Password</div>
-                        <div class="desc">Update your account password</div>
-                    </div>
-                </div>
-                <button class="btn-primary" onclick="showChangePassword()" style="padding: 0.5rem 1rem;">Change</button>
-            </div>
-        </div>
 
-        <!-- Danger Zone -->
-        <div class="setting-section">
-            <h3 style="color: #ef4444;">⚠️ Danger Zone</h3>
-            <p style="color: #991b1b;">Irreversible account actions</p>
-            
-            <div class="danger-zone">
-                <h4>🗑️ Deactivate Account</h4>
-                <p>Once you deactivate your account, you will not be able to login until an admin reactivates it.</p>
-                <div style="margin-top: 0.75rem; display: flex; gap: 0.5rem; align-items: center;">
-                    <input type="password" id="deactivatePassword" placeholder="Enter your password to confirm" style="padding: 0.5rem 1rem; border: 1px solid var(--border-color); border-radius: 8px; background: var(--bg-secondary); color: var(--text-primary); flex: 1;">
-                    <button class="btn-danger" onclick="deactivateAccount()">Deactivate</button>
+                <!-- Danger Zone -->
+                <div class="setting-section">
+                    <h3 style="color: #ef4444;">⚠️ Danger Zone</h3>
+                    <p style="color: #991b1b;">Irreversible account actions</p>
+                    <div class="danger-zone">
+                        <h4>🗑️ Deactivate Account</h4>
+                        <p>Once you deactivate your account, you will not be able to login until an admin reactivates it.</p>
+                        <div style="margin-top: 0.75rem; display: flex; gap: 0.5rem; align-items: center;">
+                            <input type="password" id="deactivatePassword" placeholder="Enter your password to confirm" style="padding: 0.5rem 1rem; border: 1px solid var(--border-color); border-radius: 8px; background: var(--bg-secondary); color: var(--text-primary); flex: 1;">
+                            <button class="btn-danger" onclick="deactivateAccount()">Deactivate</button>
+                        </div>
+                    </div>
+                    <div class="danger-zone" style="margin-top: 1rem;">
+                        <h4>🗑️ Delete Account</h4>
+                        <p>Permanently delete your account and all data. This action cannot be undone.</p>
+                        <button class="btn-danger" style="margin-top: 0.75rem;" onclick="deleteAccount()"><i class="fas fa-exclamation-triangle"></i> Delete Account</button>
+                        <p style="margin-top: 0.5rem; font-size: 0.75rem; color: #991b1b;">Account deletion is disabled. Please contact administrator for assistance.</p>
+                    </div>
                 </div>
-            </div>
-            
-            <div class="danger-zone" style="margin-top: 1rem;">
-                <h4>🗑️ Delete Account</h4>
-                <p>Permanently delete your account and all data. This action cannot be undone.</p>
-                <button class="btn-danger" style="margin-top: 0.75rem;" onclick="deleteAccount()">
-                    <i class="fas fa-exclamation-triangle"></i> Delete Account
-                </button>
-                <p style="margin-top: 0.5rem; font-size: 0.75rem; color: #991b1b;">
-                    Account deletion is disabled. Please contact administrator for assistance.
-                </p>
-            </div>
-        </div>
 
-        <!-- Data & Privacy -->
-        <div class="setting-section">
-            <h3>🔐 Data & Privacy</h3>
-            <p>Manage your data and privacy settings</p>
-            
-            <div class="setting-card">
-                <div class="setting-card-left">
-                    <i class="fas fa-download"></i>
-                    <div>
-                        <div class="title">Download My Data</div>
-                        <div class="desc">Export all your account data</div>
-                    </div>
+                <!-- Data & Privacy -->
+                <div class="setting-section">
+                    <h3>🔐 Data & Privacy</h3>
+                    <p>Manage your data and privacy settings</p>
+                    <div class="setting-card"><div class="setting-card-left"><i class="fas fa-download"></i><div><div class="title">Download My Data</div><div class="desc">Export all your account data</div></div></div><button class="btn-primary" onclick="downloadMyData()">Download</button></div>
+                    <div class="setting-card"><div class="setting-card-left"><i class="fas fa-user-secret"></i><div><div class="title">Privacy Settings</div><div class="desc">Control your privacy preferences</div></div></div><button class="btn-primary" onclick="managePrivacy()">Manage</button></div>
                 </div>
-                <button class="btn-primary" onclick="downloadMyData()">Download</button>
-            </div>
-            
-            <div class="setting-card">
-                <div class="setting-card-left">
-                    <i class="fas fa-user-secret"></i>
-                    <div>
-                        <div class="title">Privacy Settings</div>
-                        <div class="desc">Control your privacy preferences</div>
-                    </div>
-                </div>
-                <button class="btn-primary" onclick="managePrivacy()">Manage</button>
             </div>
         </div>
-    </div>
-</div>
     </main>
 
     <!-- Product Modal -->
     <div id="productModal" class="modal">
         <div class="modal-content">
-            <div class="modal-header">
-                <h3 id="modalTitle">Add New Product</h3>
-                <span style="cursor:pointer;font-size:1.5rem;" onclick="closeProductModal()">&times;</span>
-            </div>
+            <div class="modal-header"><h3 id="modalTitle">Add New Product</h3><span style="cursor:pointer;font-size:1.5rem;" onclick="closeProductModal()">&times;</span></div>
             <div class="modal-body">
                 <form id="productForm">
                     <div class="form-group"><label>Product Name</label><input type="text" id="productName" required></div>
@@ -983,10 +570,7 @@
     <!-- Category Modal -->
     <div id="categoryModal" class="modal">
         <div class="modal-content">
-            <div class="modal-header">
-                <h3 id="categoryModalTitle">Add New Category</h3>
-                <span style="cursor:pointer;font-size:1.5rem;" onclick="closeCategoryModal()">&times;</span>
-            </div>
+            <div class="modal-header"><h3 id="categoryModalTitle">Add New Category</h3><span style="cursor:pointer;font-size:1.5rem;" onclick="closeCategoryModal()">&times;</span></div>
             <div class="modal-body">
                 <form id="categoryForm">
                     <div class="form-group"><label>Category Name</label><input type="text" id="categoryName" required placeholder="e.g., Electronics"></div>
@@ -1012,10 +596,7 @@
     <!-- Coupon Modal -->
     <div id="couponModal" class="modal">
         <div class="modal-content">
-            <div class="modal-header">
-                <h3 id="couponModalTitle">Create New Coupon</h3>
-                <span style="cursor:pointer;font-size:1.5rem;" onclick="closeCouponModal()">&times;</span>
-            </div>
+            <div class="modal-header"><h3 id="couponModalTitle">Create New Coupon</h3><span style="cursor:pointer;font-size:1.5rem;" onclick="closeCouponModal()">&times;</span></div>
             <div class="modal-body">
                 <form id="couponForm">
                     <div class="form-group"><label>Coupon Code</label><input type="text" id="couponCode" required placeholder="e.g., SAVE20" style="text-transform:uppercase;"><small style="color:var(--text-secondary);">Use uppercase letters and numbers only</small></div>
@@ -1053,694 +634,8 @@
         let currentCategoryId = null;
         let currentCouponId = null;
         let ordersList = [];
-
-        // ============ USER MANAGEMENT ============
-let allUsers = [];
-let filteredUsers = [];
-
-async function loadUsers() {
-    try {
-        const token = localStorage.getItem('token');
-        if (!token) {
-            document.getElementById('usersContainer').innerHTML = '<p style="text-align:center;padding:2rem;color:red;">Please login first</p>';
-            return;
-        }
-        
-        console.log('Loading users...');
-        const response = await fetch(`${API_URL}/admin/users`, {
-            headers: { 'Authorization': `Bearer ${token}` }
-        });
-        
-        if (!response.ok) {
-            if (response.status === 401) {
-                document.getElementById('usersContainer').innerHTML = '<p style="text-align:center;padding:2rem;color:red;">Session expired. Please login again.</p>';
-                return;
-            }
-            if (response.status === 403) {
-                document.getElementById('usersContainer').innerHTML = '<p style="text-align:center;padding:2rem;color:red;">Admin access required.</p>';
-                return;
-            }
-            throw new Error('Failed to load users');
-        }
-        
-        allUsers = await response.json();
-        filteredUsers = [...allUsers];
-        
-        console.log('Users loaded:', allUsers.length);
-        
-        updateUserStats();
-        renderUsers();
-        
-    } catch (error) {
-        console.error('Users error:', error);
-        document.getElementById('usersContainer').innerHTML = '<p style="text-align:center;padding:2rem;color:red;">Failed to load users</p>';
-    }
-}
-
-function updateUserStats() {
-    const total = allUsers.length;
-    const admins = allUsers.filter(u => u.isAdmin === true).length;
-    const customers = allUsers.filter(u => u.isAdmin !== true).length;
-    const newUsers = allUsers.filter(u => {
-        if (!u.createdAt) return false;
-        const date = new Date(u.createdAt);
-        const daysAgo = (Date.now() - date.getTime()) / (1000 * 60 * 60 * 24);
-        return daysAgo <= 30;
-    }).length;
-    
-    document.getElementById('totalUsersCount').textContent = total;
-    document.getElementById('adminUsersCount').textContent = admins;
-    document.getElementById('customerUsersCount').textContent = customers;
-    document.getElementById('newUsersCount').textContent = newUsers;
-}
-
-function renderUsers() {
-    const container = document.getElementById('usersContainer');
-    
-    if (filteredUsers.length === 0) {
-        container.innerHTML = '<p style="text-align:center;padding:2rem;color:var(--text-secondary);">No users found</p>';
-        return;
-    }
-    
-    container.innerHTML = `
-        <table>
-            <thead>
-                <tr>
-                    <th>User</th>
-                    <th>Email</th>
-                    <th>Phone</th>
-                    <th>Role</th>
-                    <th>Joined</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                ${filteredUsers.map(user => `
-                    <tr>
-                        <td>
-                            <div style="display: flex; align-items: center; gap: 0.75rem;">
-                                <div style="width: 35px; height: 35px; border-radius: 50%; background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end)); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 0.875rem;">
-                                    ${user.name ? user.name.charAt(0).toUpperCase() : 'U'}
-                                </div>
-                                <div>
-                                    <div style="font-weight: 600; color: var(--text-primary);">${user.name || 'Unknown'}</div>
-                                    <div style="font-size: 0.65rem; color: var(--text-secondary);">ID: ${user.id ? user.id.slice(0, 8) : 'N/A'}</div>
-                                </div>
-                            </div>
-                        </td>
-                        <td style="color: var(--text-primary);">${user.email}</td>
-                        <td style="color: var(--text-primary);">${user.phone || 'Not provided'}</td>
-                        <td>
-                            <span class="status-badge ${user.isAdmin ? 'status-approved' : 'status-pending'}" style="${user.isAdmin ? 'background:#6366f1;color:white;' : 'background:#fef3c7;color:#92400e;'}">
-                                ${user.isAdmin ? '👑 Admin' : 'Customer'}
-                            </span>
-                        </td>
-                        <td style="color: var(--text-primary);">${user.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'N/A'}</td>
-                        <td>
-                            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-                                ${!user.isAdmin ? `
-                                    <button class="btn-edit" onclick="promoteToAdmin('${user.id}')" style="padding: 0.25rem 0.75rem; font-size: 0.75rem;">
-                                        <i class="fas fa-arrow-up"></i> Promote
-                                    </button>
-                                ` : `
-                                    <button class="btn-edit" onclick="demoteFromAdmin('${user.id}')" style="padding: 0.25rem 0.75rem; font-size: 0.75rem; background: #f59e0b; color: white;">
-                                        <i class="fas fa-arrow-down"></i> Demote
-                                    </button>
-                                `}
-                                <button class="btn-edit" onclick="editUser('${user.id}')" style="padding: 0.25rem 0.75rem; font-size: 0.75rem; background: #3b82f6; color: white;">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                                ${!user.isAdmin ? `
-                                    <button class="btn-danger" onclick="deleteUser('${user.id}')" style="padding: 0.25rem 0.75rem; font-size: 0.75rem;">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                ` : `
-                                    <span style="color: var(--text-secondary); font-size: 0.75rem; padding: 0.25rem 0.75rem; background: var(--bg-primary); border-radius: 4px;">Protected</span>
-                                `}
-                            </div>
-                        </td>
-                    </tr>
-                `).join('')}
-            </tbody>
-        </table>
-    `;
-}
-
-function filterUsers() {
-    const searchTerm = document.getElementById('userSearchInput').value.toLowerCase();
-    const roleFilter = document.getElementById('userRoleFilter').value;
-    
-    filteredUsers = allUsers.filter(user => {
-        const matchesSearch = 
-            (user.name && user.name.toLowerCase().includes(searchTerm)) ||
-            (user.email && user.email.toLowerCase().includes(searchTerm)) ||
-            (user.phone && user.phone.includes(searchTerm));
-        
-        const matchesRole = 
-            roleFilter === 'all' ||
-            (roleFilter === 'admin' && user.isAdmin) ||
-            (roleFilter === 'customer' && !user.isAdmin);
-        
-        return matchesSearch && matchesRole;
-    });
-    
-    renderUsers();
-}
-
-function refreshUsers() {
-    showNotification('Refreshing users...', 'success');
-    loadUsers();
-}
-
-// Promote to Admin
-async function promoteToAdmin(userId) {
-    if (confirm('Are you sure you want to promote this user to Admin?')) {
-        try {
-            const token = localStorage.getItem('token');
-            const user = allUsers.find(u => u.id === userId);
-            if (!user) throw new Error('User not found');
-            
-            const response = await fetch(`${API_URL}/admin/users/${userId}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify({ ...user, isAdmin: true })
-            });
-            
-            if (!response.ok) {
-                const error = await response.json();
-                throw new Error(error.error || 'Failed to promote user');
-            }
-            
-            showNotification('User promoted to Admin successfully!', 'success');
-            loadUsers();
-        } catch (error) {
-            console.error('Promote error:', error);
-            showNotification(error.message || 'Failed to promote user', 'error');
-        }
-    }
-}
-
-// Demote from Admin
-async function demoteFromAdmin(userId) {
-    if (confirm('Are you sure you want to demote this Admin to Customer?')) {
-        try {
-            const token = localStorage.getItem('token');
-            const user = allUsers.find(u => u.id === userId);
-            if (!user) throw new Error('User not found');
-            
-            // Check if this is the last admin
-            const admins = allUsers.filter(u => u.isAdmin === true);
-            if (admins.length <= 1) {
-                showNotification('Cannot demote the last admin!', 'error');
-                return;
-            }
-            
-            const response = await fetch(`${API_URL}/admin/users/${userId}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify({ ...user, isAdmin: false })
-            });
-            
-            if (!response.ok) {
-                const error = await response.json();
-                throw new Error(error.error || 'Failed to demote user');
-            }
-            
-            showNotification('Admin demoted to Customer successfully!', 'success');
-            loadUsers();
-        } catch (error) {
-            console.error('Demote error:', error);
-            showNotification(error.message || 'Failed to demote user', 'error');
-        }
-    }
-}
-
-// Add User
-function showAddUserModal() {
-    document.getElementById('addUserModal').style.display = 'flex';
-    document.getElementById('addUserForm').reset();
-}
-
-function closeAddUserModal() {
-    document.getElementById('addUserModal').style.display = 'none';
-}
-
-async function addNewUser() {
-    const name = document.getElementById('addUserName').value;
-    const email = document.getElementById('addUserEmail').value;
-    const phone = document.getElementById('addUserPhone').value;
-    const password = document.getElementById('addUserPassword').value;
-    const role = document.getElementById('addUserRole').value;
-    
-    if (!name || !email || !password) {
-        showNotification('Please fill in all required fields', 'error');
-        return;
-    }
-    
-    if (password.length < 6) {
-        showNotification('Password must be at least 6 characters', 'error');
-        return;
-    }
-    
-    try {
-        const token = localStorage.getItem('token');
-        const response = await fetch(`${API_URL}/auth/register`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ name, email, phone, password })
-        });
-        
-        const result = await response.json();
-        
-        if (!response.ok) {
-            throw new Error(result.error || 'Failed to create user');
-        }
-        
-        // If role is admin, promote the new user
-        if (role === 'admin') {
-            const loginRes = await fetch(`${API_URL}/auth/login`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, password })
-            });
-            
-            const loginData = await loginRes.json();
-            if (loginData.token) {
-                const user = allUsers.find(u => u.email === email);
-                if (user) {
-                    await fetch(`${API_URL}/admin/users/${user.id}`, {
-                        method: 'PUT',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${loginData.token}`
-                        },
-                        body: JSON.stringify({ ...user, isAdmin: true })
-                    });
-                }
-            }
-        }
-        
-        closeAddUserModal();
-        showNotification('User created successfully!', 'success');
-        loadUsers();
-    } catch (error) {
-        console.error('Create user error:', error);
-        showNotification(error.message, 'error');
-    }
-}
-
-// Edit User
-function editUser(userId) {
-    const user = allUsers.find(u => u.id === userId);
-    if (!user) {
-        showNotification('User not found', 'error');
-        return;
-    }
-    
-    document.getElementById('editUserId').value = userId;
-    document.getElementById('editUserName').value = user.name || '';
-    document.getElementById('editUserEmail').value = user.email || '';
-    document.getElementById('editUserPhone').value = user.phone || '';
-    document.getElementById('editUserRole').value = user.isAdmin ? 'admin' : 'customer';
-    
-    document.getElementById('editUserModal').style.display = 'flex';
-}
-
-function closeEditUserModal() {
-    document.getElementById('editUserModal').style.display = 'none';
-}
-
-async function saveEditUser() {
-    const userId = document.getElementById('editUserId').value;
-    const name = document.getElementById('editUserName').value;
-    const email = document.getElementById('editUserEmail').value;
-    const phone = document.getElementById('editUserPhone').value;
-    const role = document.getElementById('editUserRole').value;
-    
-    if (!name || !email) {
-        showNotification('Please fill in all required fields', 'error');
-        return;
-    }
-    
-    try {
-        const token = localStorage.getItem('token');
-        const user = allUsers.find(u => u.id === userId);
-        if (!user) throw new Error('User not found');
-        
-        const updatedUser = {
-            ...user,
-            name,
-            email,
-            phone,
-            isAdmin: role === 'admin'
-        };
-        
-        const response = await fetch(`${API_URL}/admin/users/${userId}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            },
-            body: JSON.stringify(updatedUser)
-        });
-        
-        if (!response.ok) {
-            const error = await response.json();
-            throw new Error(error.error || 'Failed to update user');
-        }
-        
-        closeEditUserModal();
-        showNotification('User updated successfully!', 'success');
-        loadUsers();
-    } catch (error) {
-        console.error('Update user error:', error);
-        showNotification(error.message, 'error');
-    }
-}
-
-// Delete User
-async function deleteUser(userId) {
-    if (confirm('Are you sure you want to permanently delete this user? This action cannot be undone.')) {
-        try {
-            const token = localStorage.getItem('token');
-            const response = await fetch(`${API_URL}/admin/users/${userId}`, {
-                method: 'DELETE',
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
-            
-            if (!response.ok) {
-                const error = await response.json();
-                throw new Error(error.error || 'Failed to delete user');
-            }
-            
-            showNotification('User deleted successfully!', 'success');
-            loadUsers();
-        } catch (error) {
-            console.error('Delete user error:', error);
-            showNotification(error.message, 'error');
-        }
-    }
-}
-
-        // ============ SETTINGS FUNCTIONS ============
-
-// Admin Profile
-function uploadAdminAvatar(event) {
-    const file = event.target.files[0];
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            const avatarUrl = e.target.result;
-            document.getElementById('adminProfileAvatar').src = avatarUrl;
-            localStorage.setItem('adminAvatar', avatarUrl);
-            showNotification('Profile picture updated!', 'success');
-        };
-        reader.readAsDataURL(file);
-    }
-}
-
-function saveAdminProfile() {
-    const name = document.getElementById('adminFullName').value;
-    const email = document.getElementById('adminEmail').value;
-    const phone = document.getElementById('adminPhone').value;
-    
-    if (!name || !email) {
-        showNotification('Please fill in all required fields', 'error');
-        return;
-    }
-    
-    const user = JSON.parse(localStorage.getItem('user'));
-    if (user) {
-        user.name = name;
-        user.email = email;
-        user.phone = phone;
-        localStorage.setItem('user', JSON.stringify(user));
-    }
-    
-    document.querySelector('#adminName span').textContent = name;
-    showNotification('Profile updated successfully!', 'success');
-}
-
-// Appearance
-function changeAccentColor(color) {
-    document.documentElement.style.setProperty('--gradient-start', color);
-    document.documentElement.style.setProperty('--gradient-end', color);
-    localStorage.setItem('adminAccentColor', color);
-    showNotification('Accent color updated!', 'success');
-}
-
-// Store Settings
-function saveStoreSettings() {
-    const storeName = document.getElementById('storeName').value;
-    const tagline = document.getElementById('storeTagline').value;
-    const location = document.getElementById('storeLocation').value;
-    
-    localStorage.setItem('storeName', storeName);
-    localStorage.setItem('storeTagline', tagline);
-    localStorage.setItem('storeLocation', location);
-    
-    showNotification('Store settings saved successfully!', 'success');
-}
-
-// Currency Settings
-function saveCurrencySettings() {
-    const currency = document.getElementById('defaultCurrency').value;
-    const taxRate = document.getElementById('taxRate').value;
-    
-    localStorage.setItem('defaultCurrency', currency);
-    localStorage.setItem('taxRate', taxRate);
-    
-    showNotification('Currency settings saved!', 'success');
-}
-
-// Shipping Settings
-function saveShippingSettings() {
-    const threshold = document.getElementById('freeDeliveryThreshold').value;
-    const deliveryTime = document.getElementById('deliveryTime').value;
-    
-    localStorage.setItem('freeDeliveryThreshold', threshold);
-    localStorage.setItem('deliveryTime', deliveryTime);
-    
-    showNotification('Shipping settings saved!', 'success');
-}
-
-// Notification Toggles
-function toggleSetting(id) {
-    const element = document.getElementById(id);
-    element.classList.toggle('active');
-    const isActive = element.classList.contains('active');
-    localStorage.setItem(id, isActive);
-    showNotification(`${id.replace(/([A-Z])/g, ' $1').trim()} ${isActive ? 'enabled' : 'disabled'}!`, 'success');
-}
-
-// Security Functions
-function enable2FA() {
-    showNotification('2FA setup will be available in the next update!', 'success');
-}
-
-function showChangePassword() {
-    const newPassword = prompt('Enter your new password:');
-    if (newPassword && newPassword.length >= 6) {
-        localStorage.setItem('adminPassword', newPassword);
-        showNotification('Password updated successfully!', 'success');
-    } else if (newPassword) {
-        showNotification('Password must be at least 6 characters!', 'error');
-    }
-}
-
-// Danger Zone
-function deactivateAccount() {
-    const password = document.getElementById('deactivatePassword').value;
-    if (!password) {
-        showNotification('Please enter your password to confirm', 'error');
-        return;
-    }
-    
-    if (confirm('Are you sure you want to deactivate your account? You will need admin approval to reactivate.')) {
-        localStorage.removeItem('user');
-        localStorage.removeItem('token');
-        showNotification('Account deactivated. Redirecting...', 'success');
-        setTimeout(() => {
-            window.location.href = 'index.html';
-        }, 2000);
-    }
-}
-
-function deleteAccount() {
-    if (confirm('⚠️ WARNING: This action is permanent and cannot be undone. All your data will be lost.')) {
-        if (confirm('Are you absolutely sure you want to delete your account?')) {
-            localStorage.clear();
-            showNotification('Account deleted. Redirecting...', 'success');
-            setTimeout(() => {
-                window.location.href = 'index.html';
-            }, 2000);
-        }
-    }
-}
-
-// Data & Privacy
-function downloadMyData() {
-    const data = {
-        user: JSON.parse(localStorage.getItem('user')),
-        settings: {
-            theme: localStorage.getItem('adminTheme'),
-            accent: localStorage.getItem('adminAccentColor'),
-            currency: localStorage.getItem('defaultCurrency'),
-            taxRate: localStorage.getItem('taxRate'),
-            notifications: {
-                email: localStorage.getItem('emailNotifications'),
-                orders: localStorage.getItem('orderAlerts'),
-                stock: localStorage.getItem('stockAlerts'),
-                marketing: localStorage.getItem('marketingEmails')
-            }
-        },
-        timestamp: new Date().toISOString()
-    };
-    
-    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `shoppies-data-${new Date().toISOString().split('T')[0]}.json`;
-    a.click();
-    URL.revokeObjectURL(url);
-    
-    showNotification('Data downloaded successfully!', 'success');
-}
-
-function managePrivacy() {
-    showNotification('Privacy settings will be available in the next update!', 'success');
-}
-
-// Load all settings
-function loadAllSettings() {
-    // Load admin profile
-    const user = JSON.parse(localStorage.getItem('user'));
-    if (user) {
-        document.getElementById('adminFullName').value = user.name || 'Admin User';
-        document.getElementById('adminEmail').value = user.email || 'admin@shoppies.com';
-        document.getElementById('adminPhone').value = user.phone || '0712345678';
-    }
-    
-    // Load avatar
-    const savedAvatar = localStorage.getItem('adminAvatar');
-    if (savedAvatar) {
-        document.getElementById('adminProfileAvatar').src = savedAvatar;
-    }
-    
-    // Load accent color
-    const savedAccent = localStorage.getItem('adminAccentColor');
-    if (savedAccent) {
-        document.documentElement.style.setProperty('--gradient-start', savedAccent);
-        document.documentElement.style.setProperty('--gradient-end', savedAccent);
-        document.getElementById('accentColorSelect').value = savedAccent;
-    }
-    
-    // Load store settings
-    document.getElementById('storeName').value = localStorage.getItem('storeName') || 'Shoppies';
-    document.getElementById('storeTagline').value = localStorage.getItem('storeTagline') || "Kenya's #1 Online Store";
-    document.getElementById('storeLocation').value = localStorage.getItem('storeLocation') || 'Nairobi, Kenya';
-    
-    // Load currency settings
-    document.getElementById('defaultCurrency').value = localStorage.getItem('defaultCurrency') || 'KES';
-    document.getElementById('taxRate').value = localStorage.getItem('taxRate') || '16';
-    
-    // Load shipping settings
-    document.getElementById('freeDeliveryThreshold').value = localStorage.getItem('freeDeliveryThreshold') || '5000';
-    document.getElementById('deliveryTime').value = localStorage.getItem('deliveryTime') || '1-3 business days';
-    
-    // Load notification toggles
-    const toggleIds = ['emailNotifications', 'orderAlerts', 'stockAlerts', 'marketingEmails'];
-    toggleIds.forEach(id => {
-        const saved = localStorage.getItem(id);
-        if (saved !== null) {
-            const element = document.getElementById(id);
-            if (saved === 'true') {
-                element.classList.add('active');
-            } else {
-                element.classList.remove('active');
-            }
-        }
-    });
-}
-
-// Call this in the initialize section
-loadAllSettings();
-        // ============ ADMIN PROFILE ============
-function uploadAdminAvatar(event) {
-    const file = event.target.files[0];
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            const avatarUrl = e.target.result;
-            document.getElementById('adminProfileAvatar').src = avatarUrl;
-            localStorage.setItem('adminAvatar', avatarUrl);
-            showNotification('Profile picture updated!', 'success');
-        };
-        reader.readAsDataURL(file);
-    }
-}
-
-function saveAdminProfile() {
-    const name = document.getElementById('adminFullName').value;
-    const email = document.getElementById('adminEmail').value;
-    const phone = document.getElementById('adminPhone').value;
-    
-    if (!name || !email) {
-        showNotification('Please fill in all required fields', 'error');
-        return;
-    }
-    
-    // Update localStorage
-    const user = JSON.parse(localStorage.getItem('user'));
-    if (user) {
-        user.name = name;
-        user.email = email;
-        user.phone = phone;
-        localStorage.setItem('user', JSON.stringify(user));
-    }
-    
-    // Update display
-    document.querySelector('#adminName span').textContent = name;
-    showNotification('Profile updated successfully!', 'success');
-}
-
-function changeAccentColor(color) {
-    document.documentElement.style.setProperty('--gradient-start', color);
-    document.documentElement.style.setProperty('--gradient-end', color);
-    localStorage.setItem('adminAccentColor', color);
-    showNotification('Accent color updated!', 'success');
-}
-
-function loadAdminProfile() {
-    const user = JSON.parse(localStorage.getItem('user'));
-    if (user) {
-        document.getElementById('adminFullName').value = user.name || 'Admin User';
-        document.getElementById('adminEmail').value = user.email || 'admin@shoppies.com';
-        document.getElementById('adminPhone').value = user.phone || '0712345678';
-    }
-    
-    const savedAvatar = localStorage.getItem('adminAvatar');
-    if (savedAvatar) {
-        document.getElementById('adminProfileAvatar').src = savedAvatar;
-    }
-    
-    const savedAccent = localStorage.getItem('adminAccentColor');
-    if (savedAccent) {
-        document.documentElement.style.setProperty('--gradient-start', savedAccent);
-        document.documentElement.style.setProperty('--gradient-end', savedAccent);
-    }
-}
-
-// Call loadAdminProfile in the initialize section
-// Add this to your initialize block:
-loadAdminProfile();
+        let allUsers = [];
+        let filteredUsers = [];
 
         // ============ NOTIFICATION ============
         function showNotification(message, type = 'success') {
@@ -2241,43 +1136,605 @@ loadAdminProfile();
         async function loadUsers() {
             try {
                 const token = localStorage.getItem('token');
+                if (!token) {
+                    document.getElementById('usersContainer').innerHTML = '<p style="text-align:center;padding:2rem;color:red;">Please login first</p>';
+                    return;
+                }
+                
                 const response = await fetch(`${API_URL}/admin/users`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
-                const users = await response.json();
-                const container = document.getElementById('usersContainer');
-                container.innerHTML = `
-                    <table><thead><tr><th>Name</th><th>Email</th><th>Phone</th><th>Role</th><th>Joined</th><th>Actions</th></tr></thead>
-                    <tbody>${users.map(u => `
-                        <tr><td><i class="fas fa-user-circle" style="color:var(--gradient-start);"></i> ${u.name}</td>
-                        <td>${u.email}</td><td>${u.phone || 'Not provided'}</td>
-                        <td>${u.isAdmin ? '<span class="status-badge" style="background:var(--gradient-start);color:white;">Admin</span>' : '<span class="status-badge" style="background:#10b981;color:white;">Customer</span>'}</td>
-                        <td>${new Date(u.createdAt || Date.now()).toLocaleDateString()}</td>
-                        <td>${!u.isAdmin ? `<button class="btn-danger" onclick="deleteUser(${u.id})">Delete</button>` : 'Protected'}</td></tr>
-                    `).join('')}</tbody></table>
-                `;
-            } catch (error) { console.error('Users error:', error); }
+                
+                if (!response.ok) {
+                    if (response.status === 401) {
+                        document.getElementById('usersContainer').innerHTML = '<p style="text-align:center;padding:2rem;color:red;">Session expired. Please login again.</p>';
+                        return;
+                    }
+                    if (response.status === 403) {
+                        document.getElementById('usersContainer').innerHTML = '<p style="text-align:center;padding:2rem;color:red;">Admin access required.</p>';
+                        return;
+                    }
+                    throw new Error('Failed to load users');
+                }
+                
+                allUsers = await response.json();
+                filteredUsers = [...allUsers];
+                
+                updateUserStats();
+                renderUsers();
+                
+            } catch (error) {
+                console.error('Users error:', error);
+                document.getElementById('usersContainer').innerHTML = '<p style="text-align:center;padding:2rem;color:red;">Failed to load users</p>';
+            }
         }
 
-        async function deleteUser(userId) {
-            if (confirm('Delete this user?')) {
+        function updateUserStats() {
+            const total = allUsers.length;
+            const admins = allUsers.filter(u => u.isAdmin === true).length;
+            const customers = allUsers.filter(u => u.isAdmin !== true).length;
+            const newUsers = allUsers.filter(u => {
+                if (!u.createdAt) return false;
+                const date = new Date(u.createdAt);
+                const daysAgo = (Date.now() - date.getTime()) / (1000 * 60 * 60 * 24);
+                return daysAgo <= 30;
+            }).length;
+            
+            document.getElementById('totalUsersCount').textContent = total;
+            document.getElementById('adminUsersCount').textContent = admins;
+            document.getElementById('customerUsersCount').textContent = customers;
+            document.getElementById('newUsersCount').textContent = newUsers;
+        }
+
+        function renderUsers() {
+            const container = document.getElementById('usersContainer');
+            
+            if (filteredUsers.length === 0) {
+                container.innerHTML = '<p style="text-align:center;padding:2rem;color:var(--text-secondary);">No users found</p>';
+                return;
+            }
+            
+            container.innerHTML = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>User</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>Role</th>
+                            <th>Joined</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${filteredUsers.map(user => `
+                            <tr>
+                                <td>
+                                    <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                        <div style="width: 35px; height: 35px; border-radius: 50%; background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end)); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 0.875rem;">
+                                            ${user.name ? user.name.charAt(0).toUpperCase() : 'U'}
+                                        </div>
+                                        <div>
+                                            <div style="font-weight: 600; color: var(--text-primary);">${user.name || 'Unknown'}</div>
+                                            <div style="font-size: 0.65rem; color: var(--text-secondary);">ID: ${user.id ? user.id.slice(0, 8) : 'N/A'}</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td style="color: var(--text-primary);">${user.email}</td>
+                                <td style="color: var(--text-primary);">${user.phone || 'Not provided'}</td>
+                                <td>
+                                    <span class="status-badge ${user.isAdmin ? 'status-approved' : 'status-pending'}" style="${user.isAdmin ? 'background:#6366f1;color:white;' : 'background:#fef3c7;color:#92400e;'}">
+                                        ${user.isAdmin ? '👑 Admin' : 'Customer'}
+                                    </span>
+                                </td>
+                                <td style="color: var(--text-primary);">${user.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'N/A'}</td>
+                                <td>
+                                    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                                        ${!user.isAdmin ? `
+                                            <button class="btn-edit" onclick="promoteToAdmin('${user.id}')" style="padding: 0.25rem 0.75rem; font-size: 0.75rem;">
+                                                <i class="fas fa-arrow-up"></i> Promote
+                                            </button>
+                                        ` : `
+                                            <button class="btn-edit" onclick="demoteFromAdmin('${user.id}')" style="padding: 0.25rem 0.75rem; font-size: 0.75rem; background: #f59e0b; color: white;">
+                                                <i class="fas fa-arrow-down"></i> Demote
+                                            </button>
+                                        `}
+                                        <button class="btn-edit" onclick="editUser('${user.id}')" style="padding: 0.25rem 0.75rem; font-size: 0.75rem; background: #3b82f6; color: white;">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        ${!user.isAdmin ? `
+                                            <button class="btn-danger" onclick="deleteUser('${user.id}')" style="padding: 0.25rem 0.75rem; font-size: 0.75rem;">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        ` : `
+                                            <span style="color: var(--text-secondary); font-size: 0.75rem; padding: 0.25rem 0.75rem; background: var(--bg-primary); border-radius: 4px;">Protected</span>
+                                        `}
+                                    </div>
+                                </td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+        }
+
+        function filterUsers() {
+            const searchTerm = document.getElementById('userSearchInput').value.toLowerCase();
+            const roleFilter = document.getElementById('userRoleFilter').value;
+            
+            filteredUsers = allUsers.filter(user => {
+                const matchesSearch = 
+                    (user.name && user.name.toLowerCase().includes(searchTerm)) ||
+                    (user.email && user.email.toLowerCase().includes(searchTerm)) ||
+                    (user.phone && user.phone.includes(searchTerm));
+                
+                const matchesRole = 
+                    roleFilter === 'all' ||
+                    (roleFilter === 'admin' && user.isAdmin) ||
+                    (roleFilter === 'customer' && !user.isAdmin);
+                
+                return matchesSearch && matchesRole;
+            });
+            
+            renderUsers();
+        }
+
+        function refreshUsers() {
+            showNotification('Refreshing users...', 'success');
+            loadUsers();
+        }
+
+        // Promote to Admin
+        async function promoteToAdmin(userId) {
+            if (confirm('Are you sure you want to promote this user to Admin?')) {
                 try {
                     const token = localStorage.getItem('token');
-                    await fetch(`${API_URL}/admin/users/${userId}`, { 
+                    const user = allUsers.find(u => u.id === userId);
+                    if (!user) throw new Error('User not found');
+                    
+                    const response = await fetch(`${API_URL}/admin/users/${userId}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: JSON.stringify({ ...user, isAdmin: true })
+                    });
+                    
+                    if (!response.ok) {
+                        const error = await response.json();
+                        throw new Error(error.error || 'Failed to promote user');
+                    }
+                    
+                    showNotification('User promoted to Admin successfully!', 'success');
+                    loadUsers();
+                } catch (error) {
+                    console.error('Promote error:', error);
+                    showNotification(error.message || 'Failed to promote user', 'error');
+                }
+            }
+        }
+
+        // Demote from Admin
+        async function demoteFromAdmin(userId) {
+            if (confirm('Are you sure you want to demote this Admin to Customer?')) {
+                try {
+                    const token = localStorage.getItem('token');
+                    const user = allUsers.find(u => u.id === userId);
+                    if (!user) throw new Error('User not found');
+                    
+                    // Check if this is the last admin
+                    const admins = allUsers.filter(u => u.isAdmin === true);
+                    if (admins.length <= 1) {
+                        showNotification('Cannot demote the last admin!', 'error');
+                        return;
+                    }
+                    
+                    const response = await fetch(`${API_URL}/admin/users/${userId}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: JSON.stringify({ ...user, isAdmin: false })
+                    });
+                    
+                    if (!response.ok) {
+                        const error = await response.json();
+                        throw new Error(error.error || 'Failed to demote user');
+                    }
+                    
+                    showNotification('Admin demoted to Customer successfully!', 'success');
+                    loadUsers();
+                } catch (error) {
+                    console.error('Demote error:', error);
+                    showNotification(error.message || 'Failed to demote user', 'error');
+                }
+            }
+        }
+
+        // Add User
+        function showAddUserModal() {
+            document.getElementById('addUserModal').style.display = 'flex';
+            document.getElementById('addUserForm').reset();
+        }
+
+        function closeAddUserModal() {
+            document.getElementById('addUserModal').style.display = 'none';
+        }
+
+        async function addNewUser() {
+            const name = document.getElementById('addUserName').value;
+            const email = document.getElementById('addUserEmail').value;
+            const phone = document.getElementById('addUserPhone').value;
+            const password = document.getElementById('addUserPassword').value;
+            const role = document.getElementById('addUserRole').value;
+            
+            if (!name || !email || !password) {
+                showNotification('Please fill in all required fields', 'error');
+                return;
+            }
+            
+            if (password.length < 6) {
+                showNotification('Password must be at least 6 characters', 'error');
+                return;
+            }
+            
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch(`${API_URL}/auth/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, email, phone, password })
+                });
+                
+                const result = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(result.error || 'Failed to create user');
+                }
+                
+                // If role is admin, promote the new user
+                if (role === 'admin') {
+                    const loginRes = await fetch(`${API_URL}/auth/login`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ email, password })
+                    });
+                    
+                    const loginData = await loginRes.json();
+                    if (loginData.token) {
+                        const user = allUsers.find(u => u.email === email);
+                        if (user) {
+                            await fetch(`${API_URL}/admin/users/${user.id}`, {
+                                method: 'PUT',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'Authorization': `Bearer ${loginData.token}`
+                                },
+                                body: JSON.stringify({ ...user, isAdmin: true })
+                            });
+                        }
+                    }
+                }
+                
+                closeAddUserModal();
+                showNotification('User created successfully!', 'success');
+                loadUsers();
+            } catch (error) {
+                console.error('Create user error:', error);
+                showNotification(error.message, 'error');
+            }
+        }
+
+        // Edit User
+        function editUser(userId) {
+            const user = allUsers.find(u => u.id === userId);
+            if (!user) {
+                showNotification('User not found', 'error');
+                return;
+            }
+            
+            document.getElementById('editUserId').value = userId;
+            document.getElementById('editUserName').value = user.name || '';
+            document.getElementById('editUserEmail').value = user.email || '';
+            document.getElementById('editUserPhone').value = user.phone || '';
+            document.getElementById('editUserRole').value = user.isAdmin ? 'admin' : 'customer';
+            
+            document.getElementById('editUserModal').style.display = 'flex';
+        }
+
+        function closeEditUserModal() {
+            document.getElementById('editUserModal').style.display = 'none';
+        }
+
+        async function saveEditUser() {
+            const userId = document.getElementById('editUserId').value;
+            const name = document.getElementById('editUserName').value;
+            const email = document.getElementById('editUserEmail').value;
+            const phone = document.getElementById('editUserPhone').value;
+            const role = document.getElementById('editUserRole').value;
+            
+            if (!name || !email) {
+                showNotification('Please fill in all required fields', 'error');
+                return;
+            }
+            
+            try {
+                const token = localStorage.getItem('token');
+                const user = allUsers.find(u => u.id === userId);
+                if (!user) throw new Error('User not found');
+                
+                const updatedUser = {
+                    ...user,
+                    name,
+                    email,
+                    phone,
+                    isAdmin: role === 'admin'
+                };
+                
+                const response = await fetch(`${API_URL}/admin/users/${userId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(updatedUser)
+                });
+                
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.error || 'Failed to update user');
+                }
+                
+                closeEditUserModal();
+                showNotification('User updated successfully!', 'success');
+                loadUsers();
+            } catch (error) {
+                console.error('Update user error:', error);
+                showNotification(error.message, 'error');
+            }
+        }
+
+        // Delete User
+        async function deleteUser(userId) {
+            if (confirm('Are you sure you want to permanently delete this user? This action cannot be undone.')) {
+                try {
+                    const token = localStorage.getItem('token');
+                    const response = await fetch(`${API_URL}/admin/users/${userId}`, {
                         method: 'DELETE',
                         headers: { 'Authorization': `Bearer ${token}` }
                     });
-                    showNotification('User deleted');
+                    
+                    if (!response.ok) {
+                        const error = await response.json();
+                        throw new Error(error.error || 'Failed to delete user');
+                    }
+                    
+                    showNotification('User deleted successfully!', 'success');
                     loadUsers();
-                    loadStats();
-                } catch (error) { showNotification('Error deleting user', 'error'); }
+                } catch (error) {
+                    console.error('Delete user error:', error);
+                    showNotification(error.message, 'error');
+                }
             }
+        }
+
+        // ============ SETTINGS FUNCTIONS ============
+        function uploadAdminAvatar(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const avatarUrl = e.target.result;
+                    document.getElementById('adminProfileAvatar').src = avatarUrl;
+                    localStorage.setItem('adminAvatar', avatarUrl);
+                    showNotification('Profile picture updated!', 'success');
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function saveAdminProfile() {
+            const name = document.getElementById('adminFullName').value;
+            const email = document.getElementById('adminEmail').value;
+            const phone = document.getElementById('adminPhone').value;
+            
+            if (!name || !email) {
+                showNotification('Please fill in all required fields', 'error');
+                return;
+            }
+            
+            const user = JSON.parse(localStorage.getItem('user'));
+            if (user) {
+                user.name = name;
+                user.email = email;
+                user.phone = phone;
+                localStorage.setItem('user', JSON.stringify(user));
+            }
+            
+            document.querySelector('#adminName span').textContent = name;
+            showNotification('Profile updated successfully!', 'success');
+        }
+
+        function changeAccentColor(color) {
+            document.documentElement.style.setProperty('--gradient-start', color);
+            document.documentElement.style.setProperty('--gradient-end', color);
+            localStorage.setItem('adminAccentColor', color);
+            showNotification('Accent color updated!', 'success');
+        }
+
+        function saveStoreSettings() {
+            const storeName = document.getElementById('storeName').value;
+            const tagline = document.getElementById('storeTagline').value;
+            const location = document.getElementById('storeLocation').value;
+            
+            localStorage.setItem('storeName', storeName);
+            localStorage.setItem('storeTagline', tagline);
+            localStorage.setItem('storeLocation', location);
+            
+            showNotification('Store settings saved successfully!', 'success');
+        }
+
+        function saveCurrencySettings() {
+            const currency = document.getElementById('defaultCurrency').value;
+            const taxRate = document.getElementById('taxRate').value;
+            
+            localStorage.setItem('defaultCurrency', currency);
+            localStorage.setItem('taxRate', taxRate);
+            
+            showNotification('Currency settings saved!', 'success');
+        }
+
+        function saveShippingSettings() {
+            const threshold = document.getElementById('freeDeliveryThreshold').value;
+            const deliveryTime = document.getElementById('deliveryTime').value;
+            
+            localStorage.setItem('freeDeliveryThreshold', threshold);
+            localStorage.setItem('deliveryTime', deliveryTime);
+            
+            showNotification('Shipping settings saved!', 'success');
+        }
+
+        function toggleSetting(id) {
+            const element = document.getElementById(id);
+            element.classList.toggle('active');
+            const isActive = element.classList.contains('active');
+            localStorage.setItem(id, isActive);
+            showNotification(`${id.replace(/([A-Z])/g, ' $1').trim()} ${isActive ? 'enabled' : 'disabled'}!`, 'success');
+        }
+
+        function enable2FA() {
+            showNotification('2FA setup will be available in the next update!', 'success');
+        }
+
+        function showChangePassword() {
+            const newPassword = prompt('Enter your new password:');
+            if (newPassword && newPassword.length >= 6) {
+                localStorage.setItem('adminPassword', newPassword);
+                showNotification('Password updated successfully!', 'success');
+            } else if (newPassword) {
+                showNotification('Password must be at least 6 characters!', 'error');
+            }
+        }
+
+        function deactivateAccount() {
+            const password = document.getElementById('deactivatePassword').value;
+            if (!password) {
+                showNotification('Please enter your password to confirm', 'error');
+                return;
+            }
+            
+            if (confirm('Are you sure you want to deactivate your account? You will need admin approval to reactivate.')) {
+                localStorage.removeItem('user');
+                localStorage.removeItem('token');
+                showNotification('Account deactivated. Redirecting...', 'success');
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 2000);
+            }
+        }
+
+        function deleteAccount() {
+            if (confirm('⚠️ WARNING: This action is permanent and cannot be undone. All your data will be lost.')) {
+                if (confirm('Are you absolutely sure you want to delete your account?')) {
+                    localStorage.clear();
+                    showNotification('Account deleted. Redirecting...', 'success');
+                    setTimeout(() => {
+                        window.location.href = 'index.html';
+                    }, 2000);
+                }
+            }
+        }
+
+        function downloadMyData() {
+            const data = {
+                user: JSON.parse(localStorage.getItem('user')),
+                settings: {
+                    theme: localStorage.getItem('adminTheme'),
+                    accent: localStorage.getItem('adminAccentColor'),
+                    currency: localStorage.getItem('defaultCurrency'),
+                    taxRate: localStorage.getItem('taxRate'),
+                    notifications: {
+                        email: localStorage.getItem('emailNotifications'),
+                        orders: localStorage.getItem('orderAlerts'),
+                        stock: localStorage.getItem('stockAlerts'),
+                        marketing: localStorage.getItem('marketingEmails')
+                    }
+                },
+                timestamp: new Date().toISOString()
+            };
+            
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `shoppies-data-${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            
+            showNotification('Data downloaded successfully!', 'success');
+        }
+
+        function managePrivacy() {
+            showNotification('Privacy settings will be available in the next update!', 'success');
+        }
+
+        function loadAllSettings() {
+            const user = JSON.parse(localStorage.getItem('user'));
+            if (user) {
+                document.getElementById('adminFullName').value = user.name || 'Admin User';
+                document.getElementById('adminEmail').value = user.email || 'admin@shoppies.com';
+                document.getElementById('adminPhone').value = user.phone || '0712345678';
+            }
+            
+            const savedAvatar = localStorage.getItem('adminAvatar');
+            if (savedAvatar) {
+                document.getElementById('adminProfileAvatar').src = savedAvatar;
+            }
+            
+            const savedAccent = localStorage.getItem('adminAccentColor');
+            if (savedAccent) {
+                document.documentElement.style.setProperty('--gradient-start', savedAccent);
+                document.documentElement.style.setProperty('--gradient-end', savedAccent);
+                document.getElementById('accentColorSelect').value = savedAccent;
+            }
+            
+            document.getElementById('storeName').value = localStorage.getItem('storeName') || 'Shoppies';
+            document.getElementById('storeTagline').value = localStorage.getItem('storeTagline') || "Kenya's #1 Online Store";
+            document.getElementById('storeLocation').value = localStorage.getItem('storeLocation') || 'Nairobi, Kenya';
+            
+            document.getElementById('defaultCurrency').value = localStorage.getItem('defaultCurrency') || 'KES';
+            document.getElementById('taxRate').value = localStorage.getItem('taxRate') || '16';
+            
+            document.getElementById('freeDeliveryThreshold').value = localStorage.getItem('freeDeliveryThreshold') || '5000';
+            document.getElementById('deliveryTime').value = localStorage.getItem('deliveryTime') || '1-3 business days';
+            
+            const toggleIds = ['emailNotifications', 'orderAlerts', 'stockAlerts', 'marketingEmails'];
+            toggleIds.forEach(id => {
+                const saved = localStorage.getItem(id);
+                if (saved !== null) {
+                    const element = document.getElementById(id);
+                    if (saved === 'true') {
+                        element.classList.add('active');
+                    } else {
+                        element.classList.remove('active');
+                    }
+                }
+            });
         }
 
         // ============ INITIALIZE ============
         if (checkAdminAuth()) {
             loadTheme();
             loadStats();
+            loadAllSettings();
+            
+            // Load users if tab is active
+            const activeTab = document.querySelector('.menu-item.active');
+            if (activeTab && activeTab.dataset.tab === 'users') {
+                loadUsers();
+            }
         }
     </script>
 </body>
