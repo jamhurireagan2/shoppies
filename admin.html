@@ -971,77 +971,53 @@
             document.getElementById('newUsersCount').textContent = newUsers;
         }
 
-        function renderUsers() {
-            const container = document.getElementById('usersContainer');
-            
-            if (filteredUsers.length === 0) {
-                container.innerHTML = '<p style="text-align:center;padding:2rem;color:var(--text-secondary);">No users found</p>';
+        // Delete User - FIXED
+async function deleteUser(userId) {
+    if (!userId) {
+        showNotification('User ID is required', 'error');
+        return;
+    }
+    
+    if (confirm('Are you sure you want to permanently delete this user? This action cannot be undone.')) {
+        try {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                showNotification('Please login first', 'error');
                 return;
             }
             
-            container.innerHTML = `
-                <table>
-                    <thead>
-                        <tr>
-                            <th>User</th>
-                            <th>Email</th>
-                            <th>Phone</th>
-                            <th>Role</th>
-                            <th>Joined</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${filteredUsers.map(user => `
-                            <tr>
-                                <td>
-                                    <div style="display: flex; align-items: center; gap: 0.75rem;">
-                                        <div style="width: 35px; height: 35px; border-radius: 50%; background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end)); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 0.875rem;">
-                                            ${user.name ? user.name.charAt(0).toUpperCase() : 'U'}
-                                        </div>
-                                        <div>
-                                            <div style="font-weight: 600; color: var(--text-primary);">${user.name || 'Unknown'}</div>
-                                            <div style="font-size: 0.65rem; color: var(--text-secondary);">ID: ${user.id ? String(user.id).slice(0, 8) : 'N/A'}</div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td style="color: var(--text-primary);">${user.email}</td>
-                                <td style="color: var(--text-primary);">${user.phone || 'Not provided'}</td>
-                                <td>
-                                    <span class="status-badge ${user.isAdmin ? 'status-approved' : 'status-pending'}" style="${user.isAdmin ? 'background:#6366f1;color:white;' : 'background:#fef3c7;color:#92400e;'}">
-                                        ${user.isAdmin ? '👑 Admin' : 'Customer'}
-                                    </span>
-                                </td>
-                                <td style="color: var(--text-primary);">${user.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'N/A'}</td>
-                                <td>
-                                    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-                                        ${!user.isAdmin ? `
-                                            <button class="btn-edit" onclick="promoteToAdmin('${user.id}')" style="padding: 0.25rem 0.75rem; font-size: 0.75rem;">
-                                                <i class="fas fa-arrow-up"></i> Promote
-                                            </button>
-                                        ` : `
-                                            <button class="btn-edit" onclick="demoteFromAdmin('${user.id}')" style="padding: 0.25rem 0.75rem; font-size: 0.75rem; background: #f59e0b; color: white;">
-                                                <i class="fas fa-arrow-down"></i> Demote
-                                            </button>
-                                        `}
-                                        <button class="btn-edit" onclick="editUser('${user.id}')" style="padding: 0.25rem 0.75rem; font-size: 0.75rem; background: #3b82f6; color: white;">
-                                            <i class="fas fa-edit"></i>
-                                        </button>
-                                        ${!user.isAdmin ? `
-                                            <button class="btn-danger" onclick="deleteUser('${user.id}')" style="padding: 0.25rem 0.75rem; font-size: 0.75rem;">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                        ` : `
-                                            <span style="color: var(--text-secondary); font-size: 0.75rem; padding: 0.25rem 0.75rem; background: var(--bg-primary); border-radius: 4px;">Protected</span>
-                                        `}
-                                    </div>
-                                </td>
-                            </tr>
-                        `).join('')}
-                    </tbody>
-                </table>
-            `;
+            // Convert userId to number if it's a string
+            const id = typeof userId === 'string' ? parseInt(userId) : userId;
+            
+            if (isNaN(id)) {
+                showNotification('Invalid user ID', 'error');
+                return;
+            }
+            
+            console.log('Deleting user with ID:', id);
+            
+            const response = await fetch(`${API_URL}/admin/users/${id}`, {
+                method: 'DELETE',
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}` 
+                }
+            });
+            
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(error.error || 'Failed to delete user');
+            }
+            
+            showNotification('User deleted successfully!', 'success');
+            loadUsers();
+            loadStats();
+        } catch (error) {
+            console.error('Delete user error:', error);
+            showNotification(error.message || 'Error deleting user', 'error');
         }
+    }
+}
 
         function filterUsers() {
             const searchTerm = document.getElementById('userSearchInput').value.toLowerCase();
@@ -1069,74 +1045,106 @@
             loadUsers();
         }
 
-        // Promote to Admin
-        async function promoteToAdmin(userId) {
-            if (confirm('Are you sure you want to promote this user to Admin?')) {
-                try {
-                    const token = localStorage.getItem('token');
-                    const user = allUsers.find(u => u.id === userId);
-                    if (!user) throw new Error('User not found');
-                    
-                    const response = await fetch(`${API_URL}/admin/users/${userId}`, {
-                        method: 'PUT',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${token}`
-                        },
-                        body: JSON.stringify({ ...user, isAdmin: true })
-                    });
-                    
-                    if (!response.ok) {
-                        const error = await response.json();
-                        throw new Error(error.error || 'Failed to promote user');
-                    }
-                    
-                    showNotification('User promoted to Admin successfully!', 'success');
-                    loadUsers();
-                } catch (error) {
-                    console.error('Promote error:', error);
-                    showNotification(error.message || 'Failed to promote user', 'error');
-                }
+        // Promote to Admin - FIXED
+async function promoteToAdmin(userId) {
+    if (!userId) {
+        showNotification('User ID is required', 'error');
+        return;
+    }
+    
+    if (confirm('Are you sure you want to promote this user to Admin?')) {
+        try {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                showNotification('Please login first', 'error');
+                return;
             }
+            
+            const id = typeof userId === 'string' ? parseInt(userId) : userId;
+            if (isNaN(id)) {
+                showNotification('Invalid user ID', 'error');
+                return;
+            }
+            
+            const user = allUsers.find(u => u.id === id);
+            if (!user) throw new Error('User not found');
+            
+            const response = await fetch(`${API_URL}/admin/users/${id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ ...user, isAdmin: true })
+            });
+            
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(error.error || 'Failed to promote user');
+            }
+            
+            showNotification('User promoted to Admin successfully!', 'success');
+            loadUsers();
+        } catch (error) {
+            console.error('Promote error:', error);
+            showNotification(error.message || 'Failed to promote user', 'error');
         }
+    }
+}
 
-        // Demote from Admin
-        async function demoteFromAdmin(userId) {
-            if (confirm('Are you sure you want to demote this Admin to Customer?')) {
-                try {
-                    const token = localStorage.getItem('token');
-                    const user = allUsers.find(u => u.id === userId);
-                    if (!user) throw new Error('User not found');
-                    
-                    // Check if this is the last admin
-                    const admins = allUsers.filter(u => u.isAdmin === true);
-                    if (admins.length <= 1) {
-                        showNotification('Cannot demote the last admin!', 'error');
-                        return;
-                    }
-                    
-                    const response = await fetch(`${API_URL}/admin/users/${userId}`, {
-                        method: 'PUT',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${token}`
-                        },
-                        body: JSON.stringify({ ...user, isAdmin: false })
-                    });
-                    
-                    if (!response.ok) {
-                        const error = await response.json();
-                        throw new Error(error.error || 'Failed to demote user');
-                    }
-                    
-                    showNotification('Admin demoted to Customer successfully!', 'success');
-                    loadUsers();
-                } catch (error) {
-                    console.error('Demote error:', error);
-                    showNotification(error.message || 'Failed to demote user', 'error');
-                }
+// Demote from Admin - FIXED
+async function demoteFromAdmin(userId) {
+    if (!userId) {
+        showNotification('User ID is required', 'error');
+        return;
+    }
+    
+    if (confirm('Are you sure you want to demote this Admin to Customer?')) {
+        try {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                showNotification('Please login first', 'error');
+                return;
             }
+            
+            const id = typeof userId === 'string' ? parseInt(userId) : userId;
+            if (isNaN(id)) {
+                showNotification('Invalid user ID', 'error');
+                return;
+            }
+            
+            const user = allUsers.find(u => u.id === id);
+            if (!user) throw new Error('User not found');
+            
+            // Check if this is the last admin
+            const admins = allUsers.filter(u => u.isAdmin === true);
+            if (admins.length <= 1) {
+                showNotification('Cannot demote the last admin!', 'error');
+                return;
+            }
+            
+            const response = await fetch(`${API_URL}/admin/users/${id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ ...user, isAdmin: false })
+            });
+            
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(error.error || 'Failed to demote user');
+            }
+            
+            showNotification('Admin demoted to Customer successfully!', 'success');
+            loadUsers();
+        } catch (error) {
+            console.error('Demote error:', error);
+            showNotification(error.message || 'Failed to demote user', 'error');
         }
+    }
+}
 
         // Add User
         function showAddUserModal() {
@@ -1214,20 +1222,26 @@
 
         // Edit User
         function editUser(userId) {
-            const user = allUsers.find(u => u.id === userId);
-            if (!user) {
-                showNotification('User not found', 'error');
-                return;
-            }
-            
-            document.getElementById('editUserId').value = userId;
-            document.getElementById('editUserName').value = user.name || '';
-            document.getElementById('editUserEmail').value = user.email || '';
-            document.getElementById('editUserPhone').value = user.phone || '';
-            document.getElementById('editUserRole').value = user.isAdmin ? 'admin' : 'customer';
-            
-            document.getElementById('editUserModal').style.display = 'flex';
-        }
+    if (!userId) {
+        showNotification('User ID is required', 'error');
+        return;
+    }
+    
+    const id = typeof userId === 'string' ? parseInt(userId) : userId;
+    const user = allUsers.find(u => u.id === id);
+    if (!user) {
+        showNotification('User not found', 'error');
+        return;
+    }
+    
+    document.getElementById('editUserId').value = id;
+    document.getElementById('editUserName').value = user.name || '';
+    document.getElementById('editUserEmail').value = user.email || '';
+    document.getElementById('editUserPhone').value = user.phone || '';
+    document.getElementById('editUserRole').value = user.isAdmin ? 'admin' : 'customer';
+    
+    document.getElementById('editUserModal').style.display = 'flex';
+}
 
         function closeEditUserModal() {
             document.getElementById('editUserModal').style.display = 'none';
@@ -1281,29 +1295,53 @@
             }
         }
 
-        // Delete User
-        async function deleteUser(userId) {
-            if (confirm('Are you sure you want to permanently delete this user? This action cannot be undone.')) {
-                try {
-                    const token = localStorage.getItem('token');
-                    const response = await fetch(`${API_URL}/admin/users/${userId}`, {
-                        method: 'DELETE',
-                        headers: { 'Authorization': `Bearer ${token}` }
-                    });
-                    
-                    if (!response.ok) {
-                        const error = await response.json();
-                        throw new Error(error.error || 'Failed to delete user');
-                    }
-                    
-                    showNotification('User deleted successfully!', 'success');
-                    loadUsers();
-                } catch (error) {
-                    console.error('Delete user error:', error);
-                    showNotification(error.message, 'error');
-                }
+        // Delete User - FIXED
+async function deleteUser(userId) {
+    if (!userId) {
+        showNotification('User ID is required', 'error');
+        return;
+    }
+    
+    if (confirm('Are you sure you want to permanently delete this user? This action cannot be undone.')) {
+        try {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                showNotification('Please login first', 'error');
+                return;
             }
+            
+            // Convert userId to number if it's a string
+            const id = typeof userId === 'string' ? parseInt(userId) : userId;
+            
+            if (isNaN(id)) {
+                showNotification('Invalid user ID', 'error');
+                return;
+            }
+            
+            console.log('Deleting user with ID:', id);
+            
+            const response = await fetch(`${API_URL}/admin/users/${id}`, {
+                method: 'DELETE',
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}` 
+                }
+            });
+            
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(error.error || 'Failed to delete user');
+            }
+            
+            showNotification('User deleted successfully!', 'success');
+            loadUsers();
+            loadStats();
+        } catch (error) {
+            console.error('Delete user error:', error);
+            showNotification(error.message || 'Error deleting user', 'error');
         }
+    }
+}
 
         // ============ SETTINGS FUNCTIONS ============
         function uploadAdminAvatar(event) {
