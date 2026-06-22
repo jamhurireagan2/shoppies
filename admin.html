@@ -652,24 +652,17 @@
                 </thead>
                 <tbody>
                     ${products.map(p => `
-                        <tr>
-                            <td class="product-image-cell">
-                                <img src="${p.image || 'https://ui-avatars.com/api/?background=6366f1&color=fff&bold=true&name=' + encodeURIComponent(p.name)}" alt="${p.name}" style="width:50px;height:50px;object-fit:cover;border-radius:8px;" onerror="this.src='https://ui-avatars.com/api/?background=6366f1&color=fff&bold=true&name=Product'">
-                            </td>
-                            <td>${p.name}</td>
-                            <td>Ksh ${p.price.toLocaleString()}</td>
-                            <td><span class="status-badge">${p.category}</span></td>
-                            <td>${p.stock}</td>
-                            <td>
-                                <button class="btn-edit" onclick="editProduct('${p.id}')">
-                                    <i class="fas fa-edit"></i> Edit
-                                </button>
-                                <button class="btn-danger" onclick="deleteProduct('${p.id}')">
-                                    <i class="fas fa-trash"></i> Delete
-                                </button>
-                            </td>
-                        </tr>
-                    `).join('')}
+  <tr>
+    <td>${p.name}</td>
+    <td>Ksh ${p.price.toLocaleString()}</td>
+    <td>${p.category}</td>
+    <td>${p.stock}</td>
+    <td>
+      <button class="btn-edit" onclick="editProduct('${p._id || p.id}')">Edit</button>
+      <button class="btn-danger" onclick="deleteProduct('${p._id || p.id}')">Delete</button>
+    </td>
+  </tr>
+`).join('')}
                 </tbody>
             </table>
         `;
@@ -799,7 +792,7 @@ async function autoFetchImage() {
                 console.log('Editing product with ID:', id);
                 const response = await fetch(`${API_URL}/products`);
                 const products = await response.json();
-                const product = products.find(p => p.id == id); // Use == to compare number vs string
+                const product = products.find(p => (p._id || p.id) == id); // Use == to compare number vs string
                 
                 if (!product) {
                     showNotification('Product not found', 'error');
@@ -893,15 +886,15 @@ async function autoFetchImage() {
                     return;
                 }
                 container.innerHTML = `
-                    <table><thead><tr><th>Icon</th><th>ID</th><th>Name</th><th>Created</th><th>Actions</th></tr></thead>
-                    <tbody>${categories.map(c => `
-                        <tr><td><i class="fas ${c.icon}" style="font-size:1.5rem;color:var(--gradient-start);"></i></td>
-                        <td>${c.id}</td><td><strong>${c.name}</strong></td>
-                        <td>${new Date(c.createdAt).toLocaleDateString()}</td>
-                        <td><button class="btn-edit" onclick="editCategory(${c.id})">Edit</button>
-                        <button class="btn-danger" onclick="deleteCategory(${c.id})">Delete</button></td></tr>
-                    `).join('')}</tbody></table>
-                `;
+    <table><thead><tr><th>Icon</th><th>ID</th><th>Name</th><th>Created</th><th>Actions</th></tr></thead>
+    <tbody>${categories.map(c => `
+        <tr><td><i class="fas ${c.icon}" style="font-size:1.5rem;color:var(--gradient-start);"></i></td>
+        <td>${c._id || c.id}</td><td><strong>${c.name}</strong></td>
+        <td>${new Date(c.createdAt).toLocaleDateString()}</td>
+        <td><button class="btn-edit" onclick="editCategory('${c._id || c.id}')">Edit</button>
+        <button class="btn-danger" onclick="deleteCategory('${c._id || c.id}')">Delete</button></td></tr>
+    `).join('')}</tbody></table>
+`;
             } catch (error) { console.error('Categories error:', error); }
         }
 
@@ -947,7 +940,7 @@ async function autoFetchImage() {
             try {
                 const response = await fetch(`${API_URL}/categories`);
                 const categories = await response.json();
-                const category = categories.find(c => c.id === id);
+                const category = categories.find(c => (c._id || c.id) == id);
                 if (category) {
                     currentCategoryId = id;
                     document.getElementById('categoryModalTitle').textContent = 'Edit Category';
@@ -959,13 +952,16 @@ async function autoFetchImage() {
         }
 
         async function deleteCategory(id) {
-            if (confirm('Delete this category?')) {
-                try {
-                    const token = localStorage.getItem('token');
-                    await fetch(`${API_URL}/categories/${id}`, { 
-                        method: 'DELETE',
-                        headers: { 'Authorization': `Bearer ${token}` }
-                    });
+    if (confirm('Delete this category?')) {
+        try {
+            const token = localStorage.getItem('token');
+            await fetch(`${API_URL}/categories/${id}`, { 
+                method: 'DELETE',
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}` 
+                }
+            });
                     showNotification('Category deleted');
                     loadCategories();
                     refreshCategoryDropdown();
@@ -987,16 +983,16 @@ async function autoFetchImage() {
                     return;
                 }
                 container.innerHTML = `
-                    <table><thead><tr><th>Code</th><th>Discount</th><th>Valid Until</th><th>Status</th><th>Actions</th></tr></thead>
-                    <tbody>${coupons.map(c => `
-                        <tr><td><strong>${c.code}</strong></td>
-                        <td>${c.discount}%</td>
-                        <td>${new Date(c.validUntil).toLocaleDateString()}</td>
-                        <td><span class="status-badge status-${c.active ? 'active' : 'inactive'}">${c.active ? 'Active' : 'Inactive'}</span></td>
-                        <td><button class="btn-edit" onclick="editCoupon(${c.id})">Edit</button>
-                        <button class="btn-danger" onclick="deleteCoupon(${c.id})">Delete</button></td></tr>
-                    `).join('')}</tbody></table>
-                `;
+    <table><thead><tr><th>Code</th><th>Discount</th><th>Valid Until</th><th>Status</th><th>Actions</th></tr></thead>
+    <tbody>${coupons.map(c => `
+        <tr><td><strong>${c.code}</strong></td>
+        <td>${c.discount}%</td>
+        <td>${new Date(c.validUntil).toLocaleDateString()}</td>
+        <td><span class="status-badge status-${c.active ? 'active' : 'inactive'}">${c.active ? 'Active' : 'Inactive'}</span></td>
+        <td><button class="btn-edit" onclick="editCoupon('${c._id || c.id}')">Edit</button>
+        <button class="btn-danger" onclick="deleteCoupon('${c._id || c.id}')">Delete</button></td></tr>
+    `).join('')}</tbody></table>
+`;
             } catch (error) { console.error('Coupons error:', error); }
         }
 
@@ -1042,7 +1038,7 @@ async function autoFetchImage() {
             try {
                 const response = await fetch(`${API_URL}/coupons`);
                 const coupons = await response.json();
-                const coupon = coupons.find(c => c.id === id);
+                const coupon = coupons.find(c => (c._id || c.id) == id);
                 if (coupon) {
                     currentCouponId = id;
                     document.getElementById('couponModalTitle').textContent = 'Edit Coupon';
@@ -1056,13 +1052,16 @@ async function autoFetchImage() {
         }
 
         async function deleteCoupon(id) {
-            if (confirm('Delete this coupon?')) {
-                try {
-                    const token = localStorage.getItem('token');
-                    await fetch(`${API_URL}/coupons/${id}`, { 
-                        method: 'DELETE',
-                        headers: { 'Authorization': `Bearer ${token}` }
-                    });
+    if (confirm('Delete this coupon?')) {
+        try {
+            const token = localStorage.getItem('token');
+            await fetch(`${API_URL}/coupons/${id}`, { 
+                method: 'DELETE',
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}` 
+                }
+            });
                     showNotification('Coupon deleted');
                     loadCoupons();
                 } catch (error) { showNotification('Error deleting coupon', 'error'); }
